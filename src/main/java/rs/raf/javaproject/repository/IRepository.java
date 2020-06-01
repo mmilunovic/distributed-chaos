@@ -13,7 +13,4 @@ public interface IRepository {
 
     Collection<INode> getAllNodes();
 
-
-
-
 }

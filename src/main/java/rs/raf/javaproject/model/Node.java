@@ -2,6 +2,8 @@ package rs.raf.javaproject.model;
 
 import lombok.Data;
 
+import java.util.Objects;
+
 @Data
 public class Node implements INode {
 
@@ -17,7 +19,7 @@ public class Node implements INode {
 
     @Override
     public String getID() {
-        return ip + ":" + port;
+        return ip + DELIMITER + port;
     }
 
     @Override
@@ -43,5 +45,20 @@ public class Node implements INode {
     @Override
     public String getRegionID() {
         return regionID;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof INode){
+            INode other = (INode)obj;
+            return this.getID().equals(other.getID());
+        }
+
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ip, port);
     }
 }
