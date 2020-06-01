@@ -1,12 +1,11 @@
 package rs.raf.javaproject.requests.bootstrap;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
 import rs.raf.javaproject.config.MyConfig;
 import rs.raf.javaproject.model.Node;
 import rs.raf.javaproject.requests.ARequest;
 
-import java.io.IOException;
 
 public class Hail extends ARequest<Node> {
 
@@ -16,7 +15,7 @@ public class Hail extends ARequest<Node> {
                 .url(url)
                 .get()
                 .build();
-        returnClass = Node.class;
+        returnClass = new TypeReference<Node>() {};
     }
 
 }

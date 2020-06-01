@@ -1,5 +1,6 @@
 package rs.raf.javaproject.requests;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
@@ -14,7 +15,7 @@ public abstract class ARequest<T>{
     protected ObjectMapper objectMapper = new ObjectMapper();
     protected Request request;
     protected String url;
-    protected Class<T> returnClass;
+    protected TypeReference<T> returnClass;
 
     public T execute(){
         try {
@@ -29,6 +30,10 @@ public abstract class ARequest<T>{
     private static OkHttpClient defaultClient = new OkHttpClient();
     private static OkHttpClient lowBounderyClient = new OkHttpClient();
     private static OkHttpClient highBounderyClient = new OkHttpClient();
+
+    static{
+        // TODO: set timeouts for clients
+    }
 
     protected static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
