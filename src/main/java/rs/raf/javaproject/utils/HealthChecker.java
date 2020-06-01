@@ -1,5 +1,6 @@
 package rs.raf.javaproject.utils;
 
+import rs.raf.javaproject.model.Node;
 import rs.raf.javaproject.requests.node.Ping;
 
 public class HealthChecker implements Runnable{
@@ -21,21 +22,21 @@ public class HealthChecker implements Runnable{
 
     private boolean isAlive() {
         // TODO: Dohvati sledbenika
-        String nodeID = "";
-        Ping pingRequest = new Ping(nodeID, TimeoutType.LOW);
-        Boolean pingResult = pingRequest.execute();
-
-        if(pingResult == null){
-            // TODO: Dohvatamo prethodnika
-            String predecesorID = ""; // Ovo je za prethodnika
-            Ping longPingRequest = new Ping(predecesorID, TimeoutType.LOW);
-            Boolean longPingResult = longPingRequest.execute();
-
-            if(longPingResult == null){
-                return false;
-            }
-            return true;
-        }
+//        Node node = null;
+//        Ping pingRequest = new Ping(node, TimeoutType.LOW);
+//        Boolean pingResult = pingRequest.execute();
+//
+//        if(pingResult == null){
+//            // TODO: Dohvatamo prethodnika
+//            String predecesorID = ""; // Ovo je za prethodnika
+//            Ping longPingRequest = new Ping(predecesorID, TimeoutType.LOW);
+//            Boolean longPingResult = longPingRequest.execute();
+//
+//            if(longPingResult == null){
+//                return false;
+//            }
+//            return true;
+//        }
 
         return true;
     }

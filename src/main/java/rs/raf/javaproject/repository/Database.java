@@ -37,6 +37,11 @@ public class Database {
         return allNodes;
     }
 
+    public boolean addNodes(Collection<Node> nodes) {
+        System.out.println(nodes);
+        return allNodes.addAll(nodes);
+    }
+
     public boolean remove(Job job) {
         return allJobs.remove(job);
     }
@@ -45,13 +50,21 @@ public class Database {
         return allJobs.add(job);
     }
 
-    public boolean addNodes(Collection<Node> nodes) {
-        System.out.println(nodes);
-        return allNodes.addAll(nodes);
+    public boolean addJobs(Collection<Job> jobs){
+        return allJobs.addAll(jobs);
     }
 
     public Collection<Job> getAllJobs() {
         return allJobs;
+    }
+
+    public Job getJobByJobID(String jobID){
+        for(Job job: allJobs){
+            if(job.getID().equals(jobID)){
+                return job;
+            }
+        }
+        return null;
     }
 
     public Node getPredecessor(){

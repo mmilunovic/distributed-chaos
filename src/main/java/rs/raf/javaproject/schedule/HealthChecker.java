@@ -14,5 +14,6 @@ public class HealthChecker {
     @Scheduled(fixedDelay = 1000)
     public void check(){
         System.out.println("test");
+
     }
 }
