@@ -1,5 +1,6 @@
 package rs.raf.javaproject.service;
 
+import org.springframework.stereotype.Service;
 import rs.raf.javaproject.config.MyConfig;
 import rs.raf.javaproject.model.INode;
 import rs.raf.javaproject.repository.IRepository;
@@ -7,6 +8,7 @@ import rs.raf.javaproject.repository.InMemoryDatabase;
 
 import java.util.Collection;
 
+@Service
 public class NodeService {
 
 

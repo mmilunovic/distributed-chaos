@@ -15,23 +15,43 @@ public class InMemoryDatabase implements IRepository{
 
     private static InMemoryDatabase instance;
 
-    private INode myInfo = INode.parseNode(MyConfig.id());
+    private INode me = INode.parseNode(MyConfig.id());
 
     private InMemoryDatabase(){
         allNodes = new ArrayList<>();
-        allNodes.add(myInfo);
+        allNodes.add(me);
 
         allJobs = new ArrayList<>();
     }
 
     @Override
     public INode getInfo() {
-        return myInfo;
+        return me;
+    }
+
+    @Override
+    public boolean remove(INode node) {
+        return allNodes.remove(node);
+    }
+
+    @Override
+    public boolean newNode(INode node) {
+        return allNodes.add(node);
     }
 
     @Override
     public Collection<INode> getAllNodes() {
         return allNodes;
+    }
+
+    @Override
+    public boolean remove(IJob job) {
+        return allJobs.remove(job);
+    }
+
+    @Override
+    public boolean addJob(IJob job) {
+        return allJobs.add(job);
     }
 
     public static InMemoryDatabase getInstance() {
@@ -40,4 +60,6 @@ public class InMemoryDatabase implements IRepository{
         }
         return instance;
     }
+
+
 }

@@ -1,5 +1,6 @@
 package rs.raf.javaproject.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.util.Objects;
@@ -7,10 +8,14 @@ import java.util.Objects;
 @Data
 public class Node implements INode {
 
-    private final String ip;
-    private final long port;
+    private String ip;
+    private long port;
     private String jobID;
     private String regionID;
+
+    public Node(){
+
+    }
 
     public Node(String ip, long port) {
         this.ip = ip;

@@ -1,5 +1,6 @@
 package rs.raf.javaproject.service;
 
+import org.springframework.stereotype.Service;
 import rs.raf.javaproject.model.IJob;
 import rs.raf.javaproject.repository.IRepository;
 import rs.raf.javaproject.repository.InMemoryDatabase;
@@ -9,6 +10,7 @@ import rs.raf.javaproject.response.StatusResponse;
 import java.awt.*;
 import java.util.Collection;
 
+@Service
 public class JobService {
 
     public IRepository repository;

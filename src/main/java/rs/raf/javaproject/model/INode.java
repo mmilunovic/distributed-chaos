@@ -1,19 +1,25 @@
 package rs.raf.javaproject.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public interface INode {
 
     String DELIMITER = ":";
 
+    @JsonIgnore
     String getID();
 
     String getIP();
 
     long getPort();
 
+    @JsonIgnore
     boolean isIdle();
 
+    @JsonIgnore
     String getJobID();
 
+    @JsonIgnore
     String getRegionID();
 
     static INode parseNode(String id){

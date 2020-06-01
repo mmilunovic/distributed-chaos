@@ -27,6 +27,10 @@ public class MyConfig {
         }
     }
 
+    public static String bootstrap(){
+        return getInstance().properties.getProperty("bootstrap").trim();
+    }
+
     public static long port(){
         return Long.parseLong(getInstance().properties.getProperty("server.port"));
     }
