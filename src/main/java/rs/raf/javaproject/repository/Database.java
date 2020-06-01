@@ -54,5 +54,12 @@ public class Database {
         return allJobs;
     }
 
+    public Node getPredecessor(){
+        return null;
+    }
+
+    public Node getSuccessor(){
+        return null;
+    }
 
 }
