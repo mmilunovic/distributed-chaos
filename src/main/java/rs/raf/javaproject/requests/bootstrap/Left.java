@@ -5,14 +5,13 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import rs.raf.javaproject.config.MyConfig;
-import rs.raf.javaproject.model.INode;
 import rs.raf.javaproject.model.Node;
 import rs.raf.javaproject.requests.ARequest;
 
 public class Left extends ARequest<Void> {
 
-    public Left(Node node){
-        url = "http://"+ MyConfig.bootstrap()+"/api/bootstrap/left";
+    public Left(String url, Node node){
+        super(url);
 
        try {
            var body = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(node);

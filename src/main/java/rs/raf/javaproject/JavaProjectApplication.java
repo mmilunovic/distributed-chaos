@@ -1,36 +1,51 @@
 package rs.raf.javaproject;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import rs.raf.javaproject.config.MyConfig;
 import rs.raf.javaproject.model.Node;
-import rs.raf.javaproject.requests.ARequest;
-import rs.raf.javaproject.requests.bootstrap.Hail;
-import rs.raf.javaproject.requests.bootstrap.New;
-import rs.raf.javaproject.requests.node.AllNodes;
+import rs.raf.javaproject.repository.Database;
+import rs.raf.javaproject.service.MessageService;
 
+import javax.annotation.PostConstruct;
 import java.util.Collection;
 
 @SpringBootApplication
 public class JavaProjectApplication {
+	@Autowired
+	private MyConfig config;
+
+	@Autowired
+	private MessageService messageService;
+	@Autowired
+	private Database databse;
 
 	public static void main(String[] args) {
 		SpringApplication.run(JavaProjectApplication.class, args);
+	}
 
-		Hail request = new Hail();
-		Node node = request.execute();
+	@PostConstruct
+	public void init(){
+
+		Node me = new Node(config.getIp(), config.getPort());
+		config.setMe(me);
+
+		databse.addNode(config.getMe());
+
+		Node node = messageService.sendBootstrapHail();
 
 		if(node.getIP() == null){
-			New newRequest = new New();
-			newRequest.execute();
-
+			messageService.sendBootstrapNew();
 		}else{
-			AllNodes allNodesRequest = new AllNodes(node);
-			Collection<Node> allNodes = allNodesRequest.execute();
+			Collection<Node> allNodesInfo = messageService.sendGetAllNodes(node);
+			databse.addNodes(allNodesInfo);
 
-			System.out.println(allNodes);
+			messageService.sendBootstrapNew();
+			// TODO: notify rest of the system that you are here
 		}
 
+		System.out.println("Koristio sam " + node + " za ukljucenje u mrezu");
 
 	}
 

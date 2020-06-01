@@ -1,9 +1,9 @@
 package rs.raf.javaproject.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import rs.raf.javaproject.model.IJob;
-import rs.raf.javaproject.repository.IRepository;
-import rs.raf.javaproject.repository.InMemoryDatabase;
+import rs.raf.javaproject.model.Job;
+import rs.raf.javaproject.repository.Database;
 import rs.raf.javaproject.response.ResultResponse;
 import rs.raf.javaproject.response.StatusResponse;
 
@@ -13,11 +13,8 @@ import java.util.Collection;
 @Service
 public class JobService {
 
-    public IRepository repository;
-
-    public JobService(){
-        repository = InMemoryDatabase.getInstance();
-    }
+    @Autowired
+    public Database repository;
 
     public StatusResponse status(){
         return null;
@@ -31,7 +28,7 @@ public class JobService {
         return null;
     }
 
-    public void start(IJob job){
+    public void start(Job job){
         // TODO: Dodaj posao u svoju listu poslova
         // TODO: Broadcastuje poruku pomocu /api/jobs/start
         // TODO: Reorganizuje svoj posao

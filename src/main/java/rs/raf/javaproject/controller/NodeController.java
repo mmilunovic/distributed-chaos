@@ -2,7 +2,6 @@ package rs.raf.javaproject.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import rs.raf.javaproject.model.INode;
 import rs.raf.javaproject.model.Node;
 import rs.raf.javaproject.service.NodeService;
 
@@ -19,13 +18,13 @@ public class NodeController {
 
     @GetMapping("/info")
     @ResponseBody
-    public INode info(@RequestBody Node node){
+    public Node info(@RequestBody Node node){
         return service.info(node);
     }
 
     @GetMapping("/allNodes")
     @ResponseBody
-    public Collection<INode> allNodes(){
+    public Collection<Node> allNodes(){
         return service.allNodes();
     }
 

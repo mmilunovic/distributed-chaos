@@ -2,7 +2,7 @@ package rs.raf.javaproject.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import rs.raf.javaproject.model.IJob;
+import rs.raf.javaproject.model.Job;
 import rs.raf.javaproject.response.ResultResponse;
 import rs.raf.javaproject.response.StatusResponse;
 import rs.raf.javaproject.service.JobService;
@@ -37,7 +37,7 @@ public class JobController {
     }
 
     @PutMapping("/start")
-    public void start(@RequestBody IJob job){
+    public void start(@RequestBody Job job){
         service.start(job);
     }
 

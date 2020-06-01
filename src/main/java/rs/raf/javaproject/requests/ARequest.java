@@ -6,54 +6,45 @@ import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
+import org.springframework.beans.factory.annotation.Autowired;
+import rs.raf.javaproject.config.MyConfig;
 import rs.raf.javaproject.model.Node;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public abstract class ARequest<T>{
+
+    protected static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    protected static final long DEFAULT_READ_TIMEOUT = 10; // 10 sekundi
 
     protected ObjectMapper objectMapper = new ObjectMapper();
     protected Request request;
     protected String url;
     protected TypeReference<T> returnClass;
 
+    private final OkHttpClient client = new OkHttpClient();
+
+    public ARequest(String url){
+        this.url = url;
+    }
+
+    public void setTimeout(int seconds){
+        client.setReadTimeout(seconds, TimeUnit.SECONDS);
+    }
+
     public T execute(){
         try {
-            Response response = send(request);
+            Response response = client
+                    .newCall(request)
+                    .execute();
             return objectMapper.readValue(response.body().string(), returnClass);
         }catch (IOException e){
 
+        }finally {
+            client.setReadTimeout(DEFAULT_READ_TIMEOUT, TimeUnit.SECONDS);
         }
         return null;
     }
 
-    private static OkHttpClient defaultClient = new OkHttpClient();
-    private static OkHttpClient lowBounderyClient = new OkHttpClient();
-    private static OkHttpClient highBounderyClient = new OkHttpClient();
-
-    static{
-        // TODO: set timeouts for clients
-    }
-
-    protected static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-
-    protected static Response send(Request request) throws IOException {
-        return send(request, TimeoutType.DEFAULT);
-    }
-
-    protected static Response send(Request request, TimeoutType timeoutType) throws IOException {
-        OkHttpClient client = null;
-        switch (timeoutType){
-            case LOW:
-                client = lowBounderyClient;
-                break;
-            case HIGH:
-                client = highBounderyClient;
-                break;
-            default:
-                client = defaultClient;
-                break;
-        }
-        return client.newCall(request).execute();
-    }
 }

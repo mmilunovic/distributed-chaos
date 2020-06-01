@@ -6,31 +6,26 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class Job implements IJob{
+public class Job {
 
     private String id;
-    @Autowired
-    private ArrayList<Point> points;
+    private ArrayList<Point> points = new ArrayList<>();
     private long width;
     private long height;
 
 
-    @Override
     public String getID() {
         return id;
     }
 
-    @Override
     public Collection<Point> getPoints() {
         return points;
     }
 
-    @Override
     public long getWidth() {
         return width;
     }
 
-    @Override
     public long getHeight() {
         return height;
     }

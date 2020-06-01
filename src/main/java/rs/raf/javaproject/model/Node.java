@@ -2,60 +2,60 @@ package rs.raf.javaproject.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import rs.raf.javaproject.config.MyConfig;
 
 import java.util.Objects;
 
 @Data
-public class Node implements INode {
+public class Node {
+
+    public static final String DELIMITER = ":";
 
     private String ip;
     private long port;
+
     private String jobID;
     private String regionID;
 
-    public Node(){
-
-    }
+    public Node(){ }
 
     public Node(String ip, long port) {
         this.ip = ip;
         this.port = port;
     }
 
-    @Override
+    @JsonIgnore
     public String getID() {
         return ip + DELIMITER + port;
     }
 
-    @Override
     public String getIP() {
         return ip;
     }
 
-    @Override
     public long getPort() {
         return port;
     }
 
-    @Override
+    @JsonIgnore
     public boolean isIdle() {
         return jobID == null;
     }
 
-    @Override
+    @JsonIgnore
     public String getJobID() {
         return jobID;
     }
 
-    @Override
+    @JsonIgnore
     public String getRegionID() {
         return regionID;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if(obj instanceof INode){
-            INode other = (INode)obj;
+        if(obj instanceof Node){
+            Node other = (Node)obj;
             return this.getID().equals(other.getID());
         }
 

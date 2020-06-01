@@ -1,27 +1,24 @@
 package rs.raf.javaproject.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import rs.raf.javaproject.model.INode;
-import rs.raf.javaproject.repository.IRepository;
-import rs.raf.javaproject.repository.InMemoryDatabase;
+import rs.raf.javaproject.model.Node;
+import rs.raf.javaproject.repository.Database;
 
 import java.util.Collection;
 
 @Service
 public class NodeService {
 
+    @Autowired
+    private Database repository;
 
-    private IRepository repository;
 
-    public  NodeService(){
-        repository = InMemoryDatabase.getInstance();
-    }
-
-    public INode info(INode node){
+    public Node info(Node node){
         return repository.getInfo();
     }
 
-    public Collection<INode> allNodes(){
+    public Collection<Node> allNodes(){
         return repository.getAllNodes();
     }
 
@@ -41,4 +38,5 @@ public class NodeService {
         // TODO: Prosledjujemo ovu istu poruku sledbeniku pomocu /api/node/new/{nodeID}
         // TODO: Radimo rekonstrukciju svog posla
     }
+
 }

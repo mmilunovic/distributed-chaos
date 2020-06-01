@@ -1,48 +1,29 @@
 package rs.raf.javaproject.config;
 
-import rs.raf.javaproject.model.INode;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
+import jdk.jfr.DataAmount;
+import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import rs.raf.javaproject.model.Node;
 
+@Data
+@Component
 public class MyConfig {
-    private Properties properties = new Properties();
-    private String propertiesFile = "application.properties";
 
-    private static MyConfig instance = new MyConfig();
+    @Value("${bootstrap}")
+    private String bootstrap;
 
-    private MyConfig(){
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propertiesFile);
-        try {
-            properties.load(inputStream);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    @Value("${server.port}")
+    private Long port;
 
-        try {
-            inputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    @Value("${public.ip}")
+    private String ip;
+
+    private Node me;
+
+    public String getID(){
+        return this.getIp() + Node.DELIMITER + this.getPort();
     }
 
-    public static String bootstrap(){
-        return getInstance().properties.getProperty("bootstrap").trim();
-    }
-
-    public static long port(){
-        return Long.parseLong(getInstance().properties.getProperty("server.port"));
-    }
-
-    public static String ip(){
-        return getInstance().properties.getProperty("public.ip").trim();
-    }
-
-    public static String id(){
-        return  ip() + INode.DELIMITER + port();
-    }
-    private static MyConfig getInstance(){
-        return instance;
-    }
 }

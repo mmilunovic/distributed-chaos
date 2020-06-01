@@ -6,17 +6,17 @@ import rs.raf.javaproject.model.Node;
 import rs.raf.javaproject.requests.ARequest;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
-public class AllNodes extends ARequest<Collection<Node>> {
+public class AllNodes extends ARequest<ArrayList<Node>> {
 
-    public AllNodes(Node node){
-        url = "http://" + node.getID() + "/api/node/allNodes";
+    public AllNodes(String url){
+        super(url);
+        System.out.println(url);
         request = new Request.Builder()
                 .url(url)
                 .get()
                 .build();
-        returnClass = new TypeReference<Collection<Node>>() {};
+        returnClass = new TypeReference<ArrayList<Node>>() {};
     }
 
 

@@ -5,7 +5,7 @@ import java.io.*;
 public class MultipleAppStarter {
     public static void main(String[] args) {
         int n = 11;
-        boolean createProperties = true;
+        boolean createProperties = false;
         if(createProperties)
             createAppProperties(n);
         else

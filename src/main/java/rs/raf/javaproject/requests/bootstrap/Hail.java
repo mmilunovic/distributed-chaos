@@ -6,11 +6,13 @@ import rs.raf.javaproject.config.MyConfig;
 import rs.raf.javaproject.model.Node;
 import rs.raf.javaproject.requests.ARequest;
 
+import javax.annotation.PostConstruct;
+
 
 public class Hail extends ARequest<Node> {
 
-    public Hail(){
-        url = "http://"+ MyConfig.bootstrap()+"/api/bootstrap/hail";
+    public Hail(String url){
+        super(url);
         request = new Request.Builder()
                 .url(url)
                 .get()
