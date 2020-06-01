@@ -9,6 +9,7 @@ import com.squareup.okhttp.Response;
 import rs.raf.javaproject.model.Node;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public abstract class ARequest<T>{
 
@@ -16,10 +17,11 @@ public abstract class ARequest<T>{
     protected Request request;
     protected String url;
     protected TypeReference<T> returnClass;
+    protected TimeoutType timeoutType = TimeoutType.DEFAULT;
 
     public T execute(){
         try {
-            Response response = send(request);
+            Response response = send(request, timeoutType);
             return objectMapper.readValue(response.body().string(), returnClass);
         }catch (IOException e){
 
@@ -32,7 +34,8 @@ public abstract class ARequest<T>{
     private static OkHttpClient highBounderyClient = new OkHttpClient();
 
     static{
-        // TODO: set timeouts for clients
+        lowBounderyClient.setReadTimeout(1, TimeUnit.SECONDS);
+        highBounderyClient.setReadTimeout(10, TimeUnit.SECONDS);
     }
 
     protected static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");

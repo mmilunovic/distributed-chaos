@@ -26,6 +26,12 @@ public class NodeService {
     }
 
     public boolean ping(String nodeID){
+        if(repository.getInfo().getID().equals(nodeID)){
+            return true;
+        }else{
+            // TODO: Posaljem kome treba?
+            System.out.println("Nisam ja, saljem dalje");
+        }
         return true;
     }
 
