@@ -10,8 +10,8 @@ import java.util.Collection;
 
 public class AllNodes extends ARequest<Collection<Node>> {
 
-    public AllNodes(String nodeID){
-        url = "http://" + nodeID + "/api/node/allNodes";
+    public AllNodes(Node node){
+        url = "http://" + node.getID() + "/api/node/allNodes";
         request = new Request.Builder()
                 .url(url)
                 .get()

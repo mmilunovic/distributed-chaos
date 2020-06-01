@@ -54,6 +54,11 @@ public class InMemoryDatabase implements IRepository{
         return allJobs.add(job);
     }
 
+    @Override
+    public boolean addNodes(Collection<INode> nodes) {
+        return allNodes.addAll(nodes);
+    }
+
     public static InMemoryDatabase getInstance() {
         if(instance == null){
             instance = new InMemoryDatabase();

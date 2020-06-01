@@ -7,6 +7,9 @@ import rs.raf.javaproject.model.Node;
 import rs.raf.javaproject.requests.ARequest;
 import rs.raf.javaproject.requests.bootstrap.Hail;
 import rs.raf.javaproject.requests.bootstrap.New;
+import rs.raf.javaproject.requests.node.AllNodes;
+
+import java.util.Collection;
 
 @SpringBootApplication
 public class JavaProjectApplication {
@@ -22,7 +25,10 @@ public class JavaProjectApplication {
 			newRequest.execute();
 
 		}else{
-			System.out.println();
+			AllNodes allNodesRequest = new AllNodes(node);
+			Collection<Node> allNodes = allNodesRequest.execute();
+
+			System.out.println(allNodes);
 		}
 
 
