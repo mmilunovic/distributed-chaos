@@ -30,6 +30,7 @@ public class InMemoryRepository implements IRepository{
     @Override
     public synchronized boolean save(Node node) {
         activeNodes.add(node);
+        System.out.println(activeNodes);
         return true;
     }
 

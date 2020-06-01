@@ -12,7 +12,7 @@ public class BootstrapController {
     @Autowired
     private BootstrapService service;
 
-    @PostMapping("/hail")
+    @GetMapping("/hail")
     @ResponseBody
     public Node hail(){
         return service.getConnection();
