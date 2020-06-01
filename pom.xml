@@ -9,6 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>rs.raf</groupId>
+	<packaging>war</packaging>
 	<artifactId>java-project</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>java-project</name>
