@@ -15,18 +15,18 @@ public class InMemoryDatabase implements IRepository{
 
     private static InMemoryDatabase instance;
 
-    private INode me = INode.parseNode(MyConfig.id());
+    private INode myInfo = INode.parseNode(MyConfig.id());
 
     private InMemoryDatabase(){
         allNodes = new ArrayList<>();
-        allNodes.add(me);
+        allNodes.add(myInfo);
 
         allJobs = new ArrayList<>();
     }
 
     @Override
     public INode getInfo() {
-        return me;
+        return myInfo;
     }
 
     @Override

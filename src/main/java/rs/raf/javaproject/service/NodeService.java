@@ -1,5 +1,6 @@
 package rs.raf.javaproject.service;
 
+import rs.raf.javaproject.config.MyConfig;
 import rs.raf.javaproject.model.INode;
 import rs.raf.javaproject.repository.IRepository;
 import rs.raf.javaproject.repository.InMemoryDatabase;
@@ -9,18 +10,18 @@ import java.util.Collection;
 public class NodeService {
 
 
-    private InMemoryDatabase repository;
+    private IRepository repository;
 
     public  NodeService(){
         repository = InMemoryDatabase.getInstance();
     }
 
     public INode info(INode node){
-        return null;
+        return repository.getInfo();
     }
 
     public Collection<INode> allNodes(){
-        return null;
+        return repository.getAllNodes();
     }
 
     public boolean ping(String nodeID){
