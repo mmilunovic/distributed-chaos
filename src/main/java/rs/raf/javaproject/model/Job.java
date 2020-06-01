@@ -1,25 +1,24 @@
 package rs.raf.javaproject.model;
 
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
 public class Job {
 
     private String id;
-    private ArrayList<Point> points = new ArrayList<>();
+    private ArrayList<Point> startingPoints = new ArrayList<>();
     private long width;
     private long height;
+    private Double proportion;
 
 
     public String getID() {
         return id;
     }
 
-    public Collection<Point> getPoints() {
-        return points;
+    public Collection<Point> getStartingPoints() {
+        return startingPoints;
     }
 
     public long getWidth() {
@@ -29,4 +28,6 @@ public class Job {
     public long getHeight() {
         return height;
     }
+
+    public Double getProportion() { return proportion; }
 }

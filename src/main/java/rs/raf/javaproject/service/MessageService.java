@@ -65,8 +65,8 @@ public class MessageService {
         return allNodes.execute();
     }
 
-    public Boolean sendPing(Node posrednik, Node destinacija){
-        Ping ping = new Ping(getPingNodesUrl(posrednik, destinacija), 1);
+    public Boolean sendPing(Node posrednik, Node destinacija, Integer timeout){
+        Ping ping = new Ping(getPingNodesUrl(posrednik, destinacija), timeout);
         return ping.execute();
     }
 
