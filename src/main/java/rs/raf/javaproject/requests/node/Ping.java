@@ -7,13 +7,15 @@ import rs.raf.javaproject.requests.ARequest;
 
 public class Ping extends ARequest<Boolean> {
 
-    public Ping(String nodeID, TimeoutType timeoutType){
-        url = "http://" + MyConfig.bootstrap() + "/api/node/ping/" + nodeID;
+    public Ping(String url, int seconds){
+        super(url);
 
         request = new Request.Builder()
                 .url(url)
                 .get()
                 .build();
+
+        setTimeout(seconds);
 
         returnClass =  new TypeReference<Boolean>() {};
     }

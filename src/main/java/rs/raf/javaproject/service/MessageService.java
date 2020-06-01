@@ -11,6 +11,7 @@ import rs.raf.javaproject.requests.bootstrap.Hail;
 import rs.raf.javaproject.requests.bootstrap.Left;
 import rs.raf.javaproject.requests.bootstrap.New;
 import rs.raf.javaproject.requests.node.AllNodes;
+import rs.raf.javaproject.requests.node.Ping;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -38,6 +39,9 @@ public class MessageService {
         return "http://" + node.getID() + "/api/node/allNodes";
     }
 
+    private String getPingNodesUrl(Node node, Node ping){
+        return "http://" + node.getID() + "/api/node/ping/" + ping.getID();
+    }
 
 
 
@@ -61,6 +65,10 @@ public class MessageService {
         return allNodes.execute();
     }
 
+    public Boolean sendPing(Node posrednik, Node destinacija){
+        Ping ping = new Ping(getPingNodesUrl(posrednik, destinacija), 1);
+        return ping.execute();
+    }
 
 
 
