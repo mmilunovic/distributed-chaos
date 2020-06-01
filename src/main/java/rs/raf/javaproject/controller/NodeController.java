@@ -28,7 +28,7 @@ public class NodeController {
         return service.allNodes();
     }
 
-    @PostMapping("/ping/{nodeID}")
+    @GetMapping("/ping/{nodeID}")
     @ResponseBody
     public Boolean ping(@PathVariable String nodeID){
         return service.ping(nodeID);
