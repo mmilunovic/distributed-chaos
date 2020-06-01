@@ -11,6 +11,7 @@ import rs.raf.javaproject.requests.bootstrap.Hail;
 import rs.raf.javaproject.requests.bootstrap.Left;
 import rs.raf.javaproject.requests.bootstrap.New;
 import rs.raf.javaproject.requests.node.AllNodes;
+import rs.raf.javaproject.requests.node.NotifyNewNode;
 import rs.raf.javaproject.requests.node.Ping;
 
 import java.io.IOException;
@@ -43,31 +44,44 @@ public class MessageService {
         return "http://" + node.getID() + "/api/node/ping/" + ping.getID();
     }
 
+    private String getNewNodeUrl(Node receiver, Node newNode){
+        System.out.println(receiver + " - " +newNode);
+        return "http://" + receiver
+                .getID() + "/api/node/new/" +newNode
+                .getID();
+    }
 
+    // TODO: Slanje poruka mora biti asinhrono
 
-    public Node sendBootstrapHail(){
+    public synchronized Node sendBootstrapHail(){
         Hail hail = new Hail(getBootstrapHailUrl());
         return hail.execute();
     }
 
-    public void sendBootstrapLeft(){
+    public synchronized void sendBootstrapLeft(){
         Left left = new Left(getBootstrapLeftUrl(), config.getMe());
         left.execute();
     }
 
-    public void sendBootstrapNew(){
+    public synchronized void sendBootstrapNew(){
         New n = new New(getBootstrapNewUrl(), config.getMe());
         n.execute();
     }
 
-    public Collection<Node> sendGetAllNodes(Node node){
+    public synchronized Collection<Node> sendGetAllNodes(Node node){
         AllNodes allNodes = new AllNodes(getAllNodesUrl(node));
         return allNodes.execute();
     }
 
-    public Boolean sendPing(Node posrednik, Node destinacija, Integer timeout){
+    public synchronized Boolean sendPing(Node posrednik, Node destinacija, Integer timeout){
         Ping ping = new Ping(getPingNodesUrl(posrednik, destinacija), timeout);
         return ping.execute();
+    }
+
+    public synchronized void sendNewNode(Node receiver, Node newNode){
+        NotifyNewNode notifyNewNode = new NotifyNewNode(getNewNodeUrl(receiver, newNode));
+        System.out.println(config.getMe() + " is sending to " + notifyNewNode);
+        notifyNewNode.execute();
     }
 
 

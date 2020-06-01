@@ -2,14 +2,14 @@ package rs.raf.javaproject.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 import rs.raf.javaproject.config.MyConfig;
 import rs.raf.javaproject.model.Job;
 import rs.raf.javaproject.model.Node;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Set;
+import java.util.TreeSet;
 
 
 @Component
@@ -18,47 +18,47 @@ public class Database {
     @Autowired
     MyConfig config;
 
-    Collection<Node> allNodes = new ArrayList<>();
-    Collection<Job> allJobs = new ArrayList<>();
+    Set<Node> allNodes = new TreeSet<>();
+    ArrayList<Job> allJobs = new ArrayList<>();
 
-    public Node getInfo() {
+    public synchronized Node getInfo() {
         return config.getMe();
     }
 
-    public boolean remove(Node node) {
+    public synchronized boolean remove(Node node) {
         return allNodes.remove(node);
     }
 
-    public boolean addNode(Node node) {
+    public synchronized boolean addNode(Node node) {
         return allNodes.add(node);
     }
 
-    public Collection<Node> getAllNodes() {
+    public synchronized Collection<Node> getAllNodes() {
         return allNodes;
     }
 
-    public boolean addNodes(Collection<Node> nodes) {
+    public synchronized boolean addNodes(Collection<Node> nodes) {
         System.out.println(nodes);
         return allNodes.addAll(nodes);
     }
 
-    public boolean remove(Job job) {
+    public synchronized boolean remove(Job job) {
         return allJobs.remove(job);
     }
 
-    public boolean addJob(Job job) {
+    public synchronized boolean addJob(Job job) {
         return allJobs.add(job);
     }
 
-    public boolean addJobs(Collection<Job> jobs){
+    public synchronized boolean addJobs(Collection<Job> jobs){
         return allJobs.addAll(jobs);
     }
 
-    public Collection<Job> getAllJobs() {
+    public synchronized Collection<Job> getAllJobs() {
         return allJobs;
     }
 
-    public Job getJobByJobID(String jobID){
+    public synchronized Job getJobByJobID(String jobID){
         for(Job job: allJobs){
             if(job.getID().equals(jobID)){
                 return job;
@@ -67,12 +67,30 @@ public class Database {
         return null;
     }
 
-    public Node getPredecessor(){
-        return null;
+    public synchronized Node getPredecessor(){
+        if(allNodes.size() == 1){
+            return null;
+        }else{
+            ArrayList<Node> nodes = new ArrayList<>(allNodes);
+            int index = nodes.indexOf(getInfo()) - 1;
+            index += nodes.size();
+            index %= nodes.size();
+
+            return nodes.get(index);
+        }
     }
 
-    public Node getSuccessor(){
-        return null;
+    public synchronized Node getSuccessor(){
+        if(allNodes.size() == 1){
+            return null;
+        }else{
+            ArrayList<Node> nodes = new ArrayList<>(allNodes);
+            int index = nodes.indexOf(getInfo()) + 1;
+            index += nodes.size();
+            index %= nodes.size();
+
+            return nodes.get(index);
+        }
     }
 
 }

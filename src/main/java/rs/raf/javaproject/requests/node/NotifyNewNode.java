@@ -7,16 +7,16 @@ import rs.raf.javaproject.requests.ARequest;
 
 import java.util.ArrayList;
 
-public class AllNodes extends ARequest<ArrayList<Node>> {
+public class NotifyNewNode extends ARequest<Void> {
 
-    public AllNodes(String url){
+    public NotifyNewNode(String url) {
         super(url);
+
         request = new Request.Builder()
                 .url(url)
                 .get()
                 .build();
-        returnClass = new TypeReference<ArrayList<Node>>() {};
+
+        returnClass = new TypeReference<Void>() {};
     }
-
-
 }

@@ -44,7 +44,7 @@ public class NodeController {
         service.left(nodeID);
     }
 
-    @PostMapping("/new/{nodeID}")
+    @GetMapping("/new/{nodeID}")
     public void newNode(@PathVariable String nodeID){
         service.newNode(nodeID);
     }

@@ -13,6 +13,9 @@ public class NodeService {
     @Autowired
     private Database repository;
 
+    @Autowired
+    private MessageService messageService;
+
 
     public Node info(Node node){
         return repository.getInfo();
@@ -41,7 +44,20 @@ public class NodeService {
     }
 
     public void newNode(String nodeID){
-        // TODO: Prosledjujemo ovu istu poruku sledbeniku pomocu /api/node/new/{nodeID}
+
+        Node newNode = new Node(nodeID);
+
+        System.out.println(repository.getInfo() + " prima poruku o cvoru " + newNode);
+        repository.addNode(newNode);
+
+        // Ako ja dobijem poruku da sam se ja ukljucio u mrezu, to znaci da su svi obavesteni
+        if(repository.getInfo().equals(newNode)){
+            return;
+        }
+
+
+        messageService.sendNewNode(repository.getPredecessor(), newNode);
+
         // TODO: Radimo rekonstrukciju svog posla
     }
 

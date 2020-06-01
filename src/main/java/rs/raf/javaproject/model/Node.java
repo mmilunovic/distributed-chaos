@@ -7,7 +7,7 @@ import rs.raf.javaproject.config.MyConfig;
 import java.util.Objects;
 
 @Data
-public class Node {
+public class Node implements Comparable<Node>{
 
     public static final String DELIMITER = ":";
 
@@ -22,6 +22,12 @@ public class Node {
     public Node(String ip, long port) {
         this.ip = ip;
         this.port = port;
+    }
+
+    public Node(String id){
+        String[] parts = id.split(DELIMITER);
+        this.ip = parts[0];
+        this.port = Long.parseLong(parts[1]);
     }
 
     @JsonIgnore
@@ -60,6 +66,17 @@ public class Node {
         }
 
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return getID();
+    }
+
+
+    @Override
+    public int compareTo(Node o) {
+        return this.getID().compareTo(o.getID());
     }
 
     @Override

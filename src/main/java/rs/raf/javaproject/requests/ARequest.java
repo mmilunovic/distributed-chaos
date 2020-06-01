@@ -47,4 +47,8 @@ public abstract class ARequest<T>{
         return null;
     }
 
+    @Override
+    public String toString() {
+        return url;
+    }
 }

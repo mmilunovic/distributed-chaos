@@ -15,20 +15,20 @@ public class JobExecution {
     @Autowired
     Database database;
 
-    @Scheduled(fixedDelay = 500)
-    public void executeJob(){
-        String myJobID = database.getInfo().getJobID();
-        String myRegionID = database.getInfo().getRegionID();
-
-        Job myJob = database.getJobByJobID(myJobID);
-
-        Double proportion = myJob.getProportion();
-
-
-
-
-
-    }
+//    @Scheduled(fixedDelay = 500)
+//    public void executeJob(){
+//        String myJobID = database.getInfo().getJobID();
+//        String myRegionID = database.getInfo().getRegionID();
+//
+//        Job myJob = database.getJobByJobID(myJobID);
+//
+//        Double proportion = myJob.getProportion();
+//
+//
+//
+//
+//
+//    }
 
     private Point randomPoint(){
         Random r = new Random();

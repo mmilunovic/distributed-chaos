@@ -13,7 +13,7 @@ import javax.annotation.PostConstruct;
 import java.util.Collection;
 
 @SpringBootApplication
-@EnableScheduling
+//@EnableScheduling
 public class JavaProjectApplication {
 	@Autowired
 	private MyConfig config;
@@ -21,7 +21,7 @@ public class JavaProjectApplication {
 	@Autowired
 	private MessageService messageService;
 	@Autowired
-	private Database databse;
+	private Database databese;
 
 	public static void main(String[] args) {
 		SpringApplication.run(JavaProjectApplication.class, args);
@@ -33,7 +33,7 @@ public class JavaProjectApplication {
 		Node me = new Node(config.getIp(), config.getPort());
 		config.setMe(me);
 
-		databse.addNode(config.getMe());
+		databese.addNode(config.getMe());
 
 		Node node = messageService.sendBootstrapHail();
 
@@ -41,13 +41,23 @@ public class JavaProjectApplication {
 			messageService.sendBootstrapNew();
 		}else{
 			Collection<Node> allNodesInfo = messageService.sendGetAllNodes(node);
-			databse.addNodes(allNodesInfo);
+			databese.addNodes(allNodesInfo);
+
+			// TODO: Treba da uzme sve jobove
 
 			messageService.sendBootstrapNew();
-			// TODO: notify rest of the system that you are here
+
+			Node predecessor = databese.getPredecessor();
+			System.out.println("Pre mene:" + predecessor.getID());
+			// TODO: ako ima jedan cvor
+			if(predecessor != null){
+				messageService.sendNewNode(predecessor, me);
+			}
+
+
+
 		}
 
-		System.out.println("Koristio sam " + node + " za ukljucenje u mrezu");
 
 	}
 
