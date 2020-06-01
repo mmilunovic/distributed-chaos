@@ -17,6 +17,7 @@ public class Hail extends ARequest<Node> {
                 .url(url)
                 .get()
                 .build();
+        
         returnClass = new TypeReference<Node>() {};
     }
 

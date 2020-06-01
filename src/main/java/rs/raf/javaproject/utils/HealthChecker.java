@@ -1,6 +1,5 @@
 package rs.raf.javaproject.utils;
 
-import rs.raf.javaproject.requests.TimeoutType;
 import rs.raf.javaproject.requests.node.Ping;
 
 public class HealthChecker implements Runnable{

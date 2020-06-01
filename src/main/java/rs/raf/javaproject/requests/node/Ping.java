@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.squareup.okhttp.Request;
 import rs.raf.javaproject.config.MyConfig;
 import rs.raf.javaproject.requests.ARequest;
-import rs.raf.javaproject.requests.TimeoutType;
 
 public class Ping extends ARequest<Boolean> {
 
