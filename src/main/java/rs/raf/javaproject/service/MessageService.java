@@ -4,15 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import rs.raf.javaproject.config.MyConfig;
 import rs.raf.javaproject.model.BackupInfo;
+import rs.raf.javaproject.model.Job;
 import rs.raf.javaproject.model.Node;
 
 import rs.raf.javaproject.requests.bootstrap.Hail;
 import rs.raf.javaproject.requests.bootstrap.Left;
 import rs.raf.javaproject.requests.bootstrap.New;
-import rs.raf.javaproject.requests.node.AllNodes;
-import rs.raf.javaproject.requests.node.NotifyNewNode;
-import rs.raf.javaproject.requests.node.Ping;
-import rs.raf.javaproject.requests.node.SaveBackup;
+import rs.raf.javaproject.requests.node.*;
 
 import java.util.Collection;
 
@@ -41,18 +39,17 @@ public class MessageService {
     private String getPingNodesUrl(Node node, Node ping){
         return "http://" + node.getAddress() + "/api/node/ping/" + ping.getAddress();
     }
-
     private String getNewNodeUrl(Node receiver, Node newNode){
-        System.out.println(receiver + " - " +newNode);
-        return "http://" + receiver
-                .getId() + "/api/node/new/" +newNode
-                .getId();
+        return "http://" + receiver.getId() + "/api/node/new/" +newNode.getId();
     }
 
     private String getSaveBackupUrl(Node receiver){
         return "http://" + receiver.getId() + "/api/node/backup";
     }
 
+    private String getAllJobsUrl(Node receiver){
+        return "http://" + receiver.getId() + "/api/node/allJobs";
+    }
 
     // TODO: Slanje poruka mora biti asinhrono
 
@@ -93,5 +90,8 @@ public class MessageService {
     }
 
 
-
+    public Collection<Job> sendGetAllJobs(Node node) {
+        AllJobs allJobs = new AllJobs(getAllJobsUrl(node));
+        return allJobs.execute();
+    }
 }
