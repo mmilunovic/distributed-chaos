@@ -56,8 +56,8 @@ public class JobController {
 
     @GetMapping("/{jobID}")
     @ResponseBody
-    public Collection<Point> myWork(@PathVariable String nodeID, @PathVariable String jobID){
-        return service.myWork(nodeID, jobID);
+    public Collection<Point> myWork(@PathVariable String jobID){
+        return service.myWork(jobID);
     }
 
     @PostMapping("/stopAll/{jobID}")

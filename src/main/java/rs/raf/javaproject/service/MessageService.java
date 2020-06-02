@@ -69,7 +69,7 @@ public class MessageService {
     }
 
     private String getMyWorkUrl(String receiver, String jobID){
-        return "http://" + receiver + "/api/node/" + jobID;
+        return "http://" + receiver + "/api/jobs/" + jobID;
     }
 
     // TODO: Slanje poruka mora biti asinhrono
@@ -143,6 +143,7 @@ public class MessageService {
         ResultResponse resultResponse = new ResultResponse();
         resultResponse.setJobID(jobID);
 
+        resultResponse.setData(new ArrayList<>());
         for(String nodeID: recipients){
             MyResult myResult = new MyResult(getMyWorkUrl(nodeID, jobID));
             resultResponse.getData().addAll(myResult.execute());

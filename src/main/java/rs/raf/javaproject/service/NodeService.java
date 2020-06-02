@@ -82,7 +82,6 @@ public class NodeService {
 
         if (this.jobExecution == null) {
             this.jobExecution = new JobExecution(this.database, database.getRegion(), new AtomicBoolean(false));
-            this.jobExecution = new JobExecution(this.database, database.getRegion(), new AtomicBoolean(false));
             Thread t = new Thread(jobExecution);
             t.start();
         }
@@ -101,8 +100,6 @@ public class NodeService {
         this.generateRegions();
 
         data.clear();
-        if (this.database.getRegion() != null)
-            data.addAll(this.getBackupFromNode(this.database.getRegion().getFullID()).getData());
         //if (this.repository.getRegion() != null)
         //    data.addAll(this.getBackupFromNode(this.repository.getRegion().getFullID()).getData());
 
@@ -112,8 +109,6 @@ public class NodeService {
             else
                 database.setTracepoint(database.getData().get(database.getData().size() - 1));
 
-        this.jobExecution.setRegion(database.getRegion());
-        this.jobExecution.getPause().set(true);
             this.jobExecution.setRegion(database.getRegion());
             this.jobExecution.getPause().set(false);
         }
@@ -193,7 +188,7 @@ public class NodeService {
                     database.setRegion(region);
                 }
 
-                //System.out.println("Job: " + job + " Region: " + regionID + " ChordID: " + nodeIDs.get(nodeIDIndex));
+                System.out.println("Job: " + job + " Region: " + regionID + " ChordID: " + nodeIDs.get(nodeIDIndex));
                 nodeIDIndex++;
             }
 
@@ -213,6 +208,7 @@ public class NodeService {
         return job+":"+region;
     }
 
+    //job:regionID
     private BackupInfo getBackupFromNode(String fractalID) {
         List<BackupInfo> backupList = new ArrayList<>();
         String originalNodeChordID = database.getFractalMap().get(fractalID);
@@ -236,7 +232,7 @@ public class NodeService {
         return backupList.get(0);
     }
 
-    private BackupInfo getBackupDataFromNode(String id) {
+    private BackupInfo getBackupDataFromNode(String nodeID) {
         BackupInfo info = null;
         //TODO: ovo resiti zapravo
         return info;

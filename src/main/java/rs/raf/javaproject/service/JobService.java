@@ -61,12 +61,15 @@ public class JobService {
         return null;
     }
 
-    public Collection<Point> myWork(String nodeID, String jobID){
+    public Collection<Point> myWork(String jobID){
         Set<Point> myResult = new HashSet<>();
 
-        if(database.getInfo().getMyRegion().getJob().getId().equals(jobID)){
-            myResult.addAll(database.getData());                                            // Dodajemo svoj deo posla
-        }
+        if(database.getInfo().getMyRegion() == null)
+            return new ArrayList<>();
+                                                        // Dodajemo svoj deo posla
+        if(database.getInfo().getMyRegion().getJob().getId().equals(jobID))
+            myResult.addAll(database.getData());
+
         for(BackupInfo backupInfo : database.getBackups().values()){
             if(backupInfo.getJobID().equals(jobID)){
                 myResult.addAll(backupInfo.getData());                                  // Dodajemo bakcup za taj posao ako ga imamo
