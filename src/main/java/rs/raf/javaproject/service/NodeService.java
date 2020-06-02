@@ -132,7 +132,7 @@ public class NodeService {
             regionIDQueue.add("");
 
             //create Region tree
-            Region fullRegion = new Region("","",null,new HashMap<>(),job,new ArrayList<>());
+            Region fullRegion = new Region("","",null,new HashMap<>(),job,job.getStartingPoints());
             regions.put("", fullRegion);
             regionQueue.add(fullRegion);
             while (usedNodes + n - 1 <= nodeIDsSize) {
@@ -144,7 +144,7 @@ public class NodeService {
 
                 for (int i = 0; i < n; i++) {
                     regionIDQueue.add(regionID + i);
-                    Region newRegion = new Region(String.valueOf(i),regionID + i,null,new HashMap<>(),job,new ArrayList<>());
+                    Region newRegion = new Region(String.valueOf(i),regionID + i,null,new HashMap<>(),job,RegionUtil.getStartingPointsFromParent(String.valueOf(i), job.getProportion(), region.getStartingPoints()));
                     if (regionID.equals(""))
                         regions.put(regionID + i, newRegion);
                     else

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -20,6 +21,6 @@ public class Region {
     @JsonIgnore
     private Job job;
     @JsonIgnore
-    private ArrayList<Point> startingPoints = new ArrayList<>();
+    private List<Point> startingPoints;
 
 }
