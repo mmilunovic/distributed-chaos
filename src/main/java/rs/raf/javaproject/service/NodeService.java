@@ -90,7 +90,7 @@ public class NodeService {
             this.putBackup(backupInfo);
         }
 
-        this.generateFractalIDs();
+        this.generateRegions();
 
         data.clear();
         if (this.repository.getRegion() != null)
@@ -101,7 +101,7 @@ public class NodeService {
     }
 
 
-    private void generateFractalIDs() {
+    private void generateRegions() {
         String myRegion = "-";
 
         if (repository.getAllJobs().size() == 0)

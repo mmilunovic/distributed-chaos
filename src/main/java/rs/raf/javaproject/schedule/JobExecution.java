@@ -2,11 +2,6 @@ package rs.raf.javaproject.schedule;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-import rs.raf.javaproject.model.Job;
 import rs.raf.javaproject.model.Point;
 import rs.raf.javaproject.model.Region;
 import rs.raf.javaproject.repository.Database;
@@ -18,6 +13,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @AllArgsConstructor
 public class JobExecution implements Runnable {
 
+    private final long JOB_SLEEP = 1000;
+
     private Database database;
     private Region region;
     private AtomicBoolean pause;
@@ -25,18 +22,42 @@ public class JobExecution implements Runnable {
     @Override
     public void run() {
 
-        //database.getData().add((database.getTracepoint() - region.getStartingPoints().get(0))*region.getJob().getProportion());
-        /*region.getJob()
-        database.getData()
-        database.getTracepoint()*/
+        while(true){
+            if(pause.get()){
+                sleep(JOB_SLEEP);
+            }else{
+                executeJob();
+            }
+        }
+
+    }
+
+    private void executeJob(){
+        if(database.getData().isEmpty()){
+            Point newPoint = randomPoint();
+            database.getData().add(newPoint);
+        }
+
+        Point tracepoint = database.getTracepoint();
+        Double proportion = region.getJob().getProportion();
+        Point randomPoint = randomPoint();
+        Point newPoint = new Point(
+                tracepoint.getX() + proportion * (randomPoint.getX() - tracepoint.getX()),
+                tracepoint.getY() + proportion * (randomPoint.getY() - tracepoint.getY())
+        );
+
+        database.getData().add(newPoint);
     }
 
     private Point randomPoint(){
         Random r = new Random();
-        // TODO: Opseg random tacke, da li je width i height ili kako?
-        double x = r.nextDouble();
-        double y = r.nextDouble();
+        return region.getStartingPoints().get(r.nextInt(region.getStartingPoints().size()));
+    }
 
-        return new Point(x, y);
+    private void sleep(long duration) {
+        try {
+            Thread.sleep(duration);
+        } catch (InterruptedException e) {
+        }
     }
 }
