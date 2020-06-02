@@ -54,4 +54,10 @@ public class NodeController {
     public Boolean saveBackup(@RequestBody BackupInfo backupInfo){
         return service.saveBackup(backupInfo);
     }
+
+    @GetMapping("/backup/{jobID}/{regionID}")
+    @ResponseBody
+    public BackupInfo getBackup(@PathVariable String jobID, @PathVariable String regionID){
+        return service.getBackup(jobID, regionID);
+    }
 }

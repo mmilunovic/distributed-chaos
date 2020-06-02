@@ -252,4 +252,9 @@ public class NodeService {
         database.getBackups().put(backupInfo.getID(), backupInfo);
         return true;
     }
+
+    public BackupInfo getBackup(String jobID, String regionID) {
+        String backupID = jobID + ":" + regionID;
+        return database.getBackups().get(backupID);
+    }
 }
