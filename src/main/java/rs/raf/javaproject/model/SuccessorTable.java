@@ -49,4 +49,19 @@ public class SuccessorTable {
         return broadcastingNodes;
     }
 
+    public Collection<Node> getNodesForJobID(String jobID){
+        ArrayList<Node> nodesForJobID = new ArrayList<>();
+
+        try{
+            for(Node node: table){
+                if(node.getMyRegion().getJob().getId().equals(jobID)){
+                    nodesForJobID.add(node);
+                }
+            }
+        }catch (IndexOutOfBoundsException e){
+
+        }
+        return nodesForJobID;
+    }
+
 }

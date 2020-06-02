@@ -13,7 +13,7 @@ import java.util.*;
 public class JobService {
 
     @Autowired
-    public Database repository;
+    public Database database;
 
     @Autowired
     private NodeService nodeService;
@@ -34,18 +34,15 @@ public class JobService {
     }
 
     public void start(Job job){
-        if(!repository.getAllJobs().containsKey(job.getId())){
+        if(!database.getAllJobs().containsKey(job.getId())){
 
-            repository.getAllJobs().put(job.getId(), job);
+            database.getAllJobs().put(job.getId(), job);
 
             messageService.broadcastNewJob(job);
 
             // TODO: Broadcastuje poruku pomocu /api/jobs/start
             //nodeService.restructure();
         }
-
-
-
     }
 
     public ResultResponse result(String jobID){
@@ -67,7 +64,7 @@ public class JobService {
     }
 
     public void deleteJob(String jobID){
-        repository.getAllJobs().remove(jobID);
+        database.getAllJobs().remove(jobID);
         nodeService.restructure();
     }
 
