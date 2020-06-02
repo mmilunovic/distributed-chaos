@@ -19,6 +19,7 @@ import rs.raf.javaproject.response.ResultResponse;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Component
 public class MessageService {
@@ -67,8 +68,8 @@ public class MessageService {
         return  "http://" + receiver.getId() + "/api/jobs/start";
     }
 
-    private String getMyWorkUrl(Node receiver, String jobID){
-        return "http://" + receiver.getId() + "/api/node/" + jobID;
+    private String getMyWorkUrl(String receiver, String jobID){
+        return "http://" + receiver + "/api/node/" + jobID;
     }
 
     // TODO: Slanje poruka mora biti asinhrono
@@ -137,19 +138,15 @@ public class MessageService {
         }
     }
 
-    public ResultResponse sendGetResult(String jobID, ArrayList<Node> recipients) {
+    public ResultResponse sendGetResult(String jobID, List<String> recipients) {
 
         ResultResponse resultResponse = new ResultResponse();
         resultResponse.setJobID(jobID);
-        executorPool.submit(new Runnable() {
-            @Override
-            public void run() {
-                for(Node node: recipients){
-                    MyResult myResult = new MyResult(getMyWorkUrl(node, jobID));
-                    resultResponse.getData().addAll(myResult.execute());
-                }
-            }
-        });
+
+        for(String nodeID: recipients){
+            MyResult myResult = new MyResult(getMyWorkUrl(nodeID, jobID));
+            resultResponse.getData().addAll(myResult.execute());
+        }
 
         return resultResponse;
     }

@@ -46,9 +46,14 @@ public class JobService {
     }
 
     public ResultResponse result(String jobID){
-        // TODO: Dohvati listu kome treba da se posalje poruka
-        //return messageService.sendGetResult(jobID, lista nodova);
-        return null;
+        List<String> receiverIDs = RegionUtil.getAllJobNodeIDs(database.getAllJobs().get(jobID));
+
+        // TODO: Salji pomocu "Chorda"
+        // TODO: Nacrtaj jebeni png
+
+        ResultResponse resultResponse = messageService.sendGetResult(jobID, receiverIDs);
+
+        return resultResponse;
     }
 
     public ResultResponse result(String jobID, String regionID){
