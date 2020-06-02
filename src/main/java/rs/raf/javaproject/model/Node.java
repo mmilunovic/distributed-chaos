@@ -13,6 +13,7 @@ public class Node implements Comparable<Node>{
 
     private String ip;
     private long port;
+    @JsonIgnore
     private Region myRegion;
 
     public Node(){ }

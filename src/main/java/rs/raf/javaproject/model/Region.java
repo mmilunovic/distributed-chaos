@@ -17,6 +17,8 @@ public class Region {
 
     private String id;
     private String fullID;
+    @JsonIgnore
+    @ToString.Exclude
     private Node node;
     private Map<String, Region> children;
     @JsonIgnore

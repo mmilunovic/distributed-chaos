@@ -24,7 +24,7 @@ public class RegionUtil {
     public static Region getRegionFromID(Job job, String id) {
         if (id.length() == 0)
             return job.getRegions().get("");
-        return getRegionFromID(job.getRegions().get(id.charAt(0)),(id.substring(1)));
+        return getRegionFromID(job.getRegions().get(id.substring(0,1)),(id.substring(1)));
     }
 
     public static Region getRegionFromID(Region region, String id) {
@@ -36,7 +36,7 @@ public class RegionUtil {
             return region;
         }
 
-        return getRegionFromID(region.getChildren().get(id.charAt(0)),(id.substring(1)));
+        return getRegionFromID(region.getChildren().get(id.substring(0,1)),(id.substring(1)));
     }
 
     public static List<Point> getStartingPointsFromParent(String regionID, Double proportion, List<Point> parentPoints) {

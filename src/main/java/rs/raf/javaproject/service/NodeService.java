@@ -76,6 +76,8 @@ public class NodeService {
     public void restructure() {
         if (this.jobExecution == null) {
             this.jobExecution = new JobExecution(this.repository, repository.getRegion(), new AtomicBoolean(false));
+            Thread t = new Thread(jobExecution);
+            t.start();
         }
         this.jobExecution.getPause().set(true);
 
@@ -92,18 +94,27 @@ public class NodeService {
         this.generateRegions();
 
         data.clear();
-        if (this.repository.getRegion() != null)
-            data.addAll(this.getBackupFromNode(this.repository.getRegion().getFullID()).getData());
+        //if (this.repository.getRegion() != null)
+        //    data.addAll(this.getBackupFromNode(this.repository.getRegion().getFullID()).getData());
 
-        this.jobExecution.setRegion(repository.getRegion());
-        this.jobExecution.getPause().set(true);
+        if (repository.getRegion() != null) {
+            if (repository.getData().size() == 0)
+                repository.setTracepoint(new Point(repository.getRegion().getJob().getWidth()/2.0, repository.getRegion().getJob().getHeight()/2.0));
+            else
+                repository.setTracepoint(repository.getData().get(repository.getData().size() - 1));
+
+            this.jobExecution.setRegion(repository.getRegion());
+            this.jobExecution.getPause().set(false);
+        }
     }
 
     private void generateRegions() {
         String myRegion = "-";
+        repository.setRegion(null);
 
         if (repository.getAllJobs().size() == 0)
             return;
+
 
         List<String> nodeIDs = new ArrayList<>(repository.getAllNodes().keySet());
         Collections.sort(nodeIDs);
@@ -146,7 +157,8 @@ public class NodeService {
                     if (regionID.equals(""))
                         regions.put(regionID + i, newRegion);
                     else
-                        region.getChildren().put(regionID + i, newRegion);
+                        region.getChildren().put(String.valueOf(i), newRegion);
+                    regionQueue.add(newRegion);
                 }
                 usedNodes += n - 1;
             }
@@ -166,9 +178,10 @@ public class NodeService {
                 if (nodeIDs.get(nodeIDIndex).equals(repository.getInfo().getId())) {
                     myRegion = regionID;
                     repository.getInfo().setMyRegion(region);
+                    repository.setRegion(region);
                 }
 
-                System.out.println("Job: " + job + " Region: " + regionID + " ChordID: " + nodeIDs.get(nodeIDIndex));
+                //System.out.println("Job: " + job + " Region: " + regionID + " ChordID: " + nodeIDs.get(nodeIDIndex));
                 nodeIDIndex++;
             }
 
@@ -180,7 +193,7 @@ public class NodeService {
                 nodeIDsSize++;
 
         }
-        System.out.println("My Region: " + myRegion);
+        System.out.println("Node: " + repository.getInfo() + " My Region: " + myRegion);
 
     }
 
