@@ -4,12 +4,26 @@ import rs.raf.javaproject.model.Job;
 import rs.raf.javaproject.model.Point;
 import rs.raf.javaproject.model.Region;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class RegionUtil {
 
+    public static Region getRegionFromID(Map<String, Job> jobs, String jobID, String regionID) {
+        Job job = jobs.get(jobID);
+        Region region = job.getRegions().get(regionID.substring(0,1));
+        for (int i = 1; i < regionID.length(); i++) {
+            region = region.getChildren().get(regionID.substring(i, i+1));
+        }
+        return region;
+    }
+
+    public static java.util.List<String> getAllJobNodeIDs(Job job) {
+        List<String> result = new ArrayList<>();
+        for (Region child : job.getRegions().values())
+            result.addAll(getAllSubregionNodeIDs(child));
+
+        return result;
+    }
 
     public static java.util.List<String> getAllSubregionNodeIDs(Region region) {
         if (region.getNode() != null)
