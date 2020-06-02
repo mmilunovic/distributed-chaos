@@ -77,7 +77,7 @@ public class NodeService {
     public void restructure() {
         if (this.jobExecution == null) {
             this.jobExecution = new JobExecution(this.database, database.getRegion(), new AtomicBoolean(false));
-            this.jobExecution = new JobExecution(this.repository, repository.getRegion(), new AtomicBoolean(false));
+            this.jobExecution = new JobExecution(this.database, database.getRegion(), new AtomicBoolean(false));
             Thread t = new Thread(jobExecution);
             t.start();
         }
@@ -101,15 +101,15 @@ public class NodeService {
         //if (this.repository.getRegion() != null)
         //    data.addAll(this.getBackupFromNode(this.repository.getRegion().getFullID()).getData());
 
-        if (repository.getRegion() != null) {
-            if (repository.getData().size() == 0)
-                repository.setTracepoint(new Point(repository.getRegion().getJob().getWidth()/2.0, repository.getRegion().getJob().getHeight()/2.0));
+        if (database.getRegion() != null) {
+            if (database.getData().size() == 0)
+                database.setTracepoint(new Point(database.getRegion().getJob().getWidth()/2.0, database.getRegion().getJob().getHeight()/2.0));
             else
-                repository.setTracepoint(repository.getData().get(repository.getData().size() - 1));
+                database.setTracepoint(database.getData().get(database.getData().size() - 1));
 
         this.jobExecution.setRegion(database.getRegion());
         this.jobExecution.getPause().set(true);
-            this.jobExecution.setRegion(repository.getRegion());
+            this.jobExecution.setRegion(database.getRegion());
             this.jobExecution.getPause().set(false);
         }
     }
@@ -117,14 +117,12 @@ public class NodeService {
 
     private void generateRegions() {
         String myRegion = "-";
-        repository.setRegion(null);
+        database.setRegion(null);
 
         if (database.getAllJobs().size() == 0)
             return;
 
         List<String> nodeIDs = new ArrayList<>(database.getAllNodes().keySet());
-
-        List<String> nodeIDs = new ArrayList<>(repository.getAllNodes().keySet());
         Collections.sort(nodeIDs);
 
         //start index and number of nodes on one job
@@ -186,8 +184,8 @@ public class NodeService {
                 if (nodeIDs.get(nodeIDIndex).equals(database.getInfo().getId())) {
                     myRegion = regionID;
                     database.getInfo().setMyRegion(region);
-                    repository.getInfo().setMyRegion(region);
-                    repository.setRegion(region);
+                    database.getInfo().setMyRegion(region);
+                    database.setRegion(region);
                 }
 
                 //System.out.println("Job: " + job + " Region: " + regionID + " ChordID: " + nodeIDs.get(nodeIDIndex));
@@ -202,7 +200,7 @@ public class NodeService {
                 nodeIDsSize++;
 
         }
-        System.out.println("Node: " + repository.getInfo() + " My Region: " + myRegion);
+        System.out.println("Node: " + database.getInfo() + " My Region: " + myRegion);
 
     }
 
