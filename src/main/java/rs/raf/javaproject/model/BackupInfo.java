@@ -17,7 +17,7 @@ public class BackupInfo {
     private LocalTime timestamp;
     private List<Point> data;
 
-    public String getId() {
+    public String getID() {
         return jobID + ":" + regionID;
     }
 }

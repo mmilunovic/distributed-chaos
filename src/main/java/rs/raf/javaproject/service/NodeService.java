@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class NodeService {
 
     @Autowired
-    private Database repository;
+    private Database database;
 
     private JobExecution jobExecution;
 
@@ -23,15 +23,15 @@ public class NodeService {
 
 
     public Node info(Node node){
-        return repository.getInfo();
+        return database.getInfo();
     }
 
     public Collection<Node> allNodes(){
-        return repository.getAllNodes().values();
+        return database.getAllNodes().values();
     }
 
     public boolean ping(String nodeID){
-        if(repository.getInfo().getAddress().equals(nodeID)){
+        if(database.getInfo().getAddress().equals(nodeID)){
             return true;
         }else{
             // TODO: Posaljem kome treba?
@@ -47,7 +47,7 @@ public class NodeService {
         // TODO: Posalji sledbeniku poruku koristeci /api/node/left{nodeID}
         // TODO: Obavesti bootstrap da je cvor nesta sa /api/bootstrap/left
 
-        repository.getAllNodes().remove(nodeID);
+        database.getAllNodes().remove(nodeID);
 
         restructure();
     }
@@ -56,47 +56,47 @@ public class NodeService {
 
         Node newNode = new Node(nodeID);
 
-        System.out.println(repository.getInfo() + " prima poruku o cvoru " + newNode);
-        repository.getAllNodes().put(newNode.getId(), newNode);
+        System.out.println(database.getInfo() + " prima poruku o cvoru " + newNode);
+        database.getAllNodes().put(newNode.getId(), newNode);
 
         // Ako ja dobijem poruku da sam se ja ukljucio u mrezu, to znaci da su svi obavesteni
-        if(repository.getInfo().equals(newNode)){
+        if(database.getInfo().equals(newNode)){
             return;
         }
 
 
-        messageService.sendNewNode(repository.getPredecessor(), newNode);
+        messageService.sendNewNode(database.getPredecessor(), newNode);
 
         restructure();
     }
 
     public void putBackup(BackupInfo backupInfo) {
-        repository.getBackups().put(backupInfo.getId(), backupInfo);
+        database.getBackups().put(backupInfo.getID(), backupInfo);
     }
 
     public void restructure() {
         if (this.jobExecution == null) {
-            this.jobExecution = new JobExecution(this.repository, repository.getRegion(), new AtomicBoolean(false));
+            this.jobExecution = new JobExecution(this.database, database.getRegion(), new AtomicBoolean(false));
         }
         this.jobExecution.getPause().set(true);
 
-        List<Point> data = this.repository.getData();
-        if (repository.getInfo().getMyRegion() != null) {
+        List<Point> data = this.database.getData();
+        if (database.getInfo().getMyRegion() != null) {
             BackupInfo backupInfo = new BackupInfo();
             backupInfo.setData(data);
             backupInfo.setTimestamp(LocalTime.now());
-            backupInfo.setJobID(repository.getInfo().getMyRegion().getJob().getId());
-            backupInfo.setRegionID(repository.getInfo().getMyRegion().getFullID());
+            backupInfo.setJobID(database.getInfo().getMyRegion().getJob().getId());
+            backupInfo.setRegionID(database.getInfo().getMyRegion().getFullID());
             this.putBackup(backupInfo);
         }
 
         this.generateRegions();
 
         data.clear();
-        if (this.repository.getRegion() != null)
-            data.addAll(this.getBackupFromNode(this.repository.getRegion().getFullID()).getData());
+        if (this.database.getRegion() != null)
+            data.addAll(this.getBackupFromNode(this.database.getRegion().getFullID()).getData());
 
-        this.jobExecution.setRegion(repository.getRegion());
+        this.jobExecution.setRegion(database.getRegion());
         this.jobExecution.getPause().set(true);
     }
 
@@ -104,23 +104,23 @@ public class NodeService {
     private void generateRegions() {
         String myRegion = "-";
 
-        if (repository.getAllJobs().size() == 0)
+        if (database.getAllJobs().size() == 0)
             return;
 
-        List<String> nodeIDs = new ArrayList<>(repository.getAllJobs().keySet());
+        List<String> nodeIDs = new ArrayList<>(database.getAllJobs().keySet());
         Collections.sort(nodeIDs);
 
         //start index and number of nodes on one job
         int nodeIDIndexStart = 0;
-        int nodeIDsSize = nodeIDs.size()/repository.getAllJobs().size();
-        if (nodeIDs.size() % repository.getAllJobs().size() > 0) {
+        int nodeIDsSize = nodeIDs.size()/ database.getAllJobs().size();
+        if (nodeIDs.size() % database.getAllJobs().size() > 0) {
             nodeIDsSize++;
         }
 
         int jobIndex = 0;
-        for (String jobID : repository.getAllJobs().keySet()) {
+        for (String jobID : database.getAllJobs().keySet()) {
 
-            Job job = repository.getAllJobs().get(jobID);
+            Job job = database.getAllJobs().get(jobID);
             Map<String, Region> regions = job.getRegions();
             regions.clear();
 
@@ -161,13 +161,13 @@ public class NodeService {
             //assign IDs to Regions
             int nodeIDIndex = nodeIDIndexStart;
             for (String regionID : regionIDs) {
-                repository.getFractalMap().put(getKeyFromJobAndRegion(jobID,regionID), nodeIDs.get(nodeIDIndex));
+                database.getFractalMap().put(getKeyFromJobAndRegion(jobID,regionID), nodeIDs.get(nodeIDIndex));
 
                 Region region = RegionUtil.getRegionFromID(job, regionID);
-                region.setNode(repository.getAllNodes().get(nodeIDs.get(nodeIDIndex)));
-                if (nodeIDs.get(nodeIDIndex).equals(repository.getInfo().getId())) {
+                region.setNode(database.getAllNodes().get(nodeIDs.get(nodeIDIndex)));
+                if (nodeIDs.get(nodeIDIndex).equals(database.getInfo().getId())) {
                     myRegion = regionID;
-                    repository.getInfo().setMyRegion(region);
+                    database.getInfo().setMyRegion(region);
                 }
 
                 System.out.println("Job: " + job + " Region: " + regionID + " ChordID: " + nodeIDs.get(nodeIDIndex));
@@ -177,8 +177,8 @@ public class NodeService {
 
             //set new index and size
             nodeIDIndexStart = nodeIDIndexStart + nodeIDsSize;
-            nodeIDsSize = nodeIDs.size()/repository.getAllJobs().size();
-            if (nodeIDs.size() % repository.getAllJobs().size() > jobIndex)
+            nodeIDsSize = nodeIDs.size()/ database.getAllJobs().size();
+            if (nodeIDs.size() % database.getAllJobs().size() > jobIndex)
                 nodeIDsSize++;
 
         }
@@ -192,7 +192,7 @@ public class NodeService {
 
     private BackupInfo getBackupFromNode(String fractalID) {
         List<BackupInfo> backupList = new ArrayList<>();
-        String originalNodeChordID = repository.getFractalMap().get(fractalID);
+        String originalNodeChordID = database.getFractalMap().get(fractalID);
         BackupInfo info = getBackupDataFromNode(originalNodeChordID);
         if (info != null)
             backupList.add(info);
@@ -221,7 +221,7 @@ public class NodeService {
 
     private String getNextNode(String key) {
         String result = "ZZZZZZZZZZZZZZZZZZZZZ";
-        for (Node node : repository.getAllNodes().values())
+        for (Node node : database.getAllNodes().values())
             if (node.getId().compareTo(key) > 0 && node.getId().compareTo(result) < 0)
                 result = node.getId();
         return result;
@@ -229,7 +229,7 @@ public class NodeService {
 
     private String getPrevNode(String key) {
         String result = "";
-        for (Node node : repository.getAllNodes().values())
+        for (Node node : database.getAllNodes().values())
             if (node.getId().compareTo(key) < 0 && node.getId().compareTo(result) > 0)
                 result = node.getId();
         return result;
@@ -248,4 +248,8 @@ public class NodeService {
         };
     }
 
+    public Boolean saveBackup(BackupInfo backupInfo) {
+        database.getBackups().put(backupInfo.getID(), backupInfo);
+        return true;
+    }
 }
