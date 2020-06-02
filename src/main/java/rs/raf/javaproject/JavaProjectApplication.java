@@ -5,7 +5,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import rs.raf.javaproject.config.MyConfig;
+import rs.raf.javaproject.model.Job;
 import rs.raf.javaproject.model.Node;
+import rs.raf.javaproject.model.Point;
 import rs.raf.javaproject.repository.Database;
 import rs.raf.javaproject.service.MessageService;
 import rs.raf.javaproject.service.NodeService;
@@ -48,8 +50,6 @@ public class JavaProjectApplication {
             messageService.sendBootstrapNew();
         } else {
             Collection<Node> allNodesInfo = messageService.sendGetAllNodes(node);
-            for (Node otherNode : allNodesInfo)
-                databese.getAllNodes().put(otherNode.getId(), otherNode);
             for (Node nodeInfo : allNodesInfo)
                 databese.getAllNodes().put(nodeInfo.getId(), nodeInfo);
 
@@ -68,6 +68,18 @@ public class JavaProjectApplication {
             System.out.println("Koristio sam " + node + " za ukljucenje u mrezu");
 
         }
+
+        Job job = new Job();
+        job.setId("job1");
+        job.setHeight(100);
+        job.setWidth(100);
+        job.setProportion(0.3);
+        job.getStartingPoints().add(new Point(25.0,25.0));
+        job.getStartingPoints().add(new Point(75.0,25.0));
+        job.getStartingPoints().add(new Point(50.0,75.0));
+
+        databese.getAllJobs().put(job.getId(), job);
+
         nodeService.restructure();
     }
 }
