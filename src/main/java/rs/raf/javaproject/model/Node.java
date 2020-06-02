@@ -2,6 +2,7 @@ package rs.raf.javaproject.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.ToString;
 import rs.raf.javaproject.config.MyConfig;
 
 import java.util.Objects;
@@ -14,6 +15,7 @@ public class Node implements Comparable<Node>{
     private String ip;
     private long port;
     @JsonIgnore
+    @ToString.Exclude
     private Region myRegion;
 
     public Node(){ }

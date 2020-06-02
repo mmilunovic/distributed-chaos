@@ -16,6 +16,9 @@ public class NodeService {
     @Autowired
     private Database database;
 
+    @Autowired
+    private SuccessorTable successorTable;
+
     private JobExecution jobExecution;
 
     @Autowired
@@ -75,6 +78,8 @@ public class NodeService {
     }
 
     public void restructure() {
+        successorTable.reconstructTable();
+
         if (this.jobExecution == null) {
             this.jobExecution = new JobExecution(this.database, database.getRegion(), new AtomicBoolean(false));
             this.jobExecution = new JobExecution(this.database, database.getRegion(), new AtomicBoolean(false));

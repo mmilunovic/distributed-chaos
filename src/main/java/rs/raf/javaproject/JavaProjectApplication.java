@@ -8,6 +8,7 @@ import rs.raf.javaproject.config.MyConfig;
 import rs.raf.javaproject.model.Job;
 import rs.raf.javaproject.model.Node;
 import rs.raf.javaproject.model.Point;
+import rs.raf.javaproject.model.SuccessorTable;
 import rs.raf.javaproject.repository.Database;
 import rs.raf.javaproject.service.MessageService;
 import rs.raf.javaproject.service.NodeService;
@@ -27,6 +28,8 @@ public class JavaProjectApplication {
 	private MessageService messageService;
 	@Autowired
 	private Database databese;
+	@Autowired
+    private SuccessorTable successorTable;
 
 	@Autowired
 	private NodeService nodeService;
@@ -69,17 +72,19 @@ public class JavaProjectApplication {
 
         }
 
-        Job job = new Job();
-        job.setId("job1");
-        job.setHeight(100);
-        job.setWidth(100);
-        job.setProportion(0.3);
-        job.getStartingPoints().add(new Point(25.0,25.0));
-        job.getStartingPoints().add(new Point(75.0,25.0));
-        job.getStartingPoints().add(new Point(50.0,75.0));
+        successorTable.reconstructTable();
 
-        databese.getAllJobs().put(job.getId(), job);
-
-        nodeService.restructure();
+//        Job job = new Job();
+//        job.setId("job1");
+//        job.setHeight(100);
+//        job.setWidth(100);
+//        job.setProportion(0.3);
+//        job.getStartingPoints().add(new Point(25.0,25.0));
+//        job.getStartingPoints().add(new Point(75.0,25.0));
+//        job.getStartingPoints().add(new Point(50.0,75.0));
+//
+//        databese.getAllJobs().put(job.getId(), job);
+//
+//        nodeService.restructure();
     }
 }
