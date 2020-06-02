@@ -280,4 +280,8 @@ public class NodeService {
         String backupID = jobID + ":" + regionID;
         return database.getBackups().get(backupID);
     }
+
+    public Collection<Job> getAllJobs() {
+        return database.getAllJobs().values();
+    }
 }

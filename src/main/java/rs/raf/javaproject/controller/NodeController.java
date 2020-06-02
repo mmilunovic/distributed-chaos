@@ -3,6 +3,7 @@ package rs.raf.javaproject.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import rs.raf.javaproject.model.BackupInfo;
+import rs.raf.javaproject.model.Job;
 import rs.raf.javaproject.model.Node;
 import rs.raf.javaproject.service.NodeService;
 
@@ -59,5 +60,11 @@ public class NodeController {
     @ResponseBody
     public BackupInfo getBackup(@PathVariable String jobID, @PathVariable String regionID){
         return service.getBackup(jobID, regionID);
+    }
+
+    @GetMapping("/allJobs")
+    @ResponseBody
+    public Collection<Job> getAllJobs(){
+        return service.getAllJobs();
     }
 }
