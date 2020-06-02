@@ -1,9 +1,14 @@
 package rs.raf.javaproject.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
+
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
+@Data
 public class Job {
 
     private String id;
@@ -11,23 +16,7 @@ public class Job {
     private long width;
     private long height;
     private Double proportion;
+    @JsonIgnore
+    private Map<String, Region> regions;
 
-
-    public String getID() {
-        return id;
-    }
-
-    public Collection<Point> getStartingPoints() {
-        return startingPoints;
-    }
-
-    public long getWidth() {
-        return width;
-    }
-
-    public long getHeight() {
-        return height;
-    }
-
-    public Double getProportion() { return proportion; }
 }

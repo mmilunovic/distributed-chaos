@@ -13,9 +13,7 @@ public class Node implements Comparable<Node>{
 
     private String ip;
     private long port;
-
-    private String jobID;
-    private String regionID;
+    private Region myRegion;
 
     public Node(){ }
 
@@ -31,52 +29,34 @@ public class Node implements Comparable<Node>{
     }
 
     @JsonIgnore
-    public String getID() {
-        return ip + DELIMITER + port;
+    public String getId() {
+        return this.ip + DELIMITER + this.port;
     }
 
-    public String getIP() {
-        return ip;
-    }
-
-    public long getPort() {
-        return port;
+    @JsonIgnore
+    public String getAddress() {
+        return this.ip + DELIMITER + this.port;
     }
 
     @JsonIgnore
     public boolean isIdle() {
-        return jobID == null;
-    }
-
-    @JsonIgnore
-    public String getJobID() {
-        return jobID;
-    }
-
-    @JsonIgnore
-    public String getRegionID() {
-        return regionID;
+        return myRegion == null;
     }
 
     @Override
     public boolean equals(Object obj) {
         if(obj instanceof Node){
             Node other = (Node)obj;
-            return this.getID().equals(other.getID());
+            return this.getId().equals(other.getId());
         }
 
         return false;
     }
 
-    @Override
-    public String toString() {
-        return getID();
-    }
-
 
     @Override
     public int compareTo(Node o) {
-        return this.getID().compareTo(o.getID());
+        return this.getId().compareTo(o.getId());
     }
 
     @Override

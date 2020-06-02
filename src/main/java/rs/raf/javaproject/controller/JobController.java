@@ -3,11 +3,11 @@ package rs.raf.javaproject.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import rs.raf.javaproject.model.Job;
+import rs.raf.javaproject.model.Point;
 import rs.raf.javaproject.response.ResultResponse;
 import rs.raf.javaproject.response.StatusResponse;
 import rs.raf.javaproject.service.JobService;
 
-import java.awt.*;
 import java.util.Collection;
 
 @RestController

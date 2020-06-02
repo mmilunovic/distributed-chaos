@@ -1,34 +1,35 @@
 package rs.raf.javaproject.schedule;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import rs.raf.javaproject.model.Job;
 import rs.raf.javaproject.model.Point;
+import rs.raf.javaproject.model.Region;
 import rs.raf.javaproject.repository.Database;
 
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-@Component
-public class JobExecution {
+@Data
+@AllArgsConstructor
+public class JobExecution implements Runnable {
 
-    @Autowired
-    Database database;
+    private Database database;
+    private Region region;
+    private AtomicBoolean pause;
 
-//    @Scheduled(fixedDelay = 500)
-//    public void executeJob(){
-//        String myJobID = database.getInfo().getJobID();
-//        String myRegionID = database.getInfo().getRegionID();
-//
-//        Job myJob = database.getJobByJobID(myJobID);
-//
-//        Double proportion = myJob.getProportion();
-//
-//
-//
-//
-//
-//    }
+    @Override
+    public void run() {
+
+        //database.getData().add((database.getTracepoint() - region.getStartingPoints().get(0))*region.getJob().getProportion());
+        /*region.getJob()
+        database.getData()
+        database.getTracepoint()*/
+    }
 
     private Point randomPoint(){
         Random r = new Random();

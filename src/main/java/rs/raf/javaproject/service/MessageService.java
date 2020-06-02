@@ -37,18 +37,18 @@ public class MessageService {
     }
 
     private String getAllNodesUrl(Node node){
-        return "http://" + node.getID() + "/api/node/allNodes";
+        return "http://" + node.getAddress() + "/api/node/allNodes";
     }
 
     private String getPingNodesUrl(Node node, Node ping){
-        return "http://" + node.getID() + "/api/node/ping/" + ping.getID();
+        return "http://" + node.getAddress() + "/api/node/ping/" + ping.getAddress();
     }
 
     private String getNewNodeUrl(Node receiver, Node newNode){
         System.out.println(receiver + " - " +newNode);
         return "http://" + receiver
-                .getID() + "/api/node/new/" +newNode
-                .getID();
+                .getId() + "/api/node/new/" +newNode
+                .getId();
     }
 
     // TODO: Slanje poruka mora biti asinhrono

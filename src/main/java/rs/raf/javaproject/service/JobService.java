@@ -2,19 +2,21 @@ package rs.raf.javaproject.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import rs.raf.javaproject.model.Job;
+import rs.raf.javaproject.model.*;
 import rs.raf.javaproject.repository.Database;
 import rs.raf.javaproject.response.ResultResponse;
 import rs.raf.javaproject.response.StatusResponse;
 
-import java.awt.*;
-import java.util.Collection;
+import java.util.*;
 
 @Service
 public class JobService {
 
     @Autowired
     public Database repository;
+
+    @Autowired
+    private NodeService nodeService;
 
     public StatusResponse status(){
         return null;
@@ -29,9 +31,9 @@ public class JobService {
     }
 
     public void start(Job job){
-        // TODO: Dodaj posao u svoju listu poslova
+        repository.getAllJobs().put(job.getId(), job);
         // TODO: Broadcastuje poruku pomocu /api/jobs/start
-        // TODO: Reorganizuje svoj posao
+        nodeService.restructure();
     }
 
     public ResultResponse result(String jobID){
@@ -49,10 +51,12 @@ public class JobService {
 
     public void stopAll(String jobID){
         // TODO: Zaustavljamo izracunavanje naseg dela posla i saljemo poruku dalje pomocu DELETE /api/jobs/{jobID}
+        this.deleteJob(jobID);
     }
 
     public void deleteJob(String jobID){
-        // TODO: Samo zaustavimo taj posao na sebi
+        repository.getAllJobs().remove(jobID);
+        nodeService.restructure();
     }
 
 }
