@@ -1,22 +1,20 @@
 package rs.raf.bootstrap.repository;
 
+import org.springframework.stereotype.Component;
 import rs.raf.bootstrap.model.Node;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 
-public class InMemoryRepository implements IRepository{
+@Component
+public class Database{
 
     private ArrayList<Node> activeNodes;
 
-    private static InMemoryRepository instance;
-
-    private InMemoryRepository(){
+    private Database(){
         activeNodes = new ArrayList<>();
     }
-
-    @Override
     public synchronized Node getRandomNode() {
         if(activeNodes.size() == 0){
             return new Node(null, 0);
@@ -27,20 +25,14 @@ public class InMemoryRepository implements IRepository{
         }
     }
 
-    @Override
     public synchronized boolean save(Node node) {
-        activeNodes.add(node);
-        System.out.println(activeNodes);
-        return true;
+        System.out.println(node + " joined!");
+        return activeNodes.add(node);
     }
 
-    @Override
     public synchronized boolean remove(Node node) {
+        System.out.println(node + " left!");
         return activeNodes.remove(node);
     }
 
-    public static InMemoryRepository getInstance() {
-        if(instance == null) instance = new InMemoryRepository();
-        return instance;
-    }
 }
