@@ -12,9 +12,12 @@ import rs.raf.javaproject.model.SuccessorTable;
 import rs.raf.javaproject.requests.bootstrap.Hail;
 import rs.raf.javaproject.requests.bootstrap.Left;
 import rs.raf.javaproject.requests.bootstrap.New;
+import rs.raf.javaproject.requests.job.MyResult;
 import rs.raf.javaproject.requests.job.NewJob;
 import rs.raf.javaproject.requests.node.*;
+import rs.raf.javaproject.response.ResultResponse;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 @Component
@@ -62,6 +65,10 @@ public class MessageService {
 
     private String getNewJobUrl(Node receiver){
         return  "http://" + receiver.getId() + "/api/jobs/start";
+    }
+
+    private String getMyWorkUrl(Node receiver, String jobID){
+        return "http://" + receiver.getId() + "/api/node/" + jobID;
     }
 
     // TODO: Slanje poruka mora biti asinhrono
@@ -128,5 +135,22 @@ public class MessageService {
                 }
             });
         }
+    }
+
+    public ResultResponse sendGetResult(String jobID, ArrayList<Node> recipients) {
+
+        ResultResponse resultResponse = new ResultResponse();
+        resultResponse.setJobID(jobID);
+        executorPool.submit(new Runnable() {
+            @Override
+            public void run() {
+                for(Node node: recipients){
+                    MyResult myResult = new MyResult(getMyWorkUrl(node, jobID));
+                    resultResponse.getData().addAll(myResult.execute());
+                }
+            }
+        });
+
+        return resultResponse;
     }
 }

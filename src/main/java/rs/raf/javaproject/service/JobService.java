@@ -46,16 +46,28 @@ public class JobService {
     }
 
     public ResultResponse result(String jobID){
+        // TODO: Dohvati listu kome treba da se posalje poruka
+        //return messageService.sendGetResult(jobID, lista nodova);
         return null;
     }
 
     public ResultResponse result(String jobID, String regionID){
+
         return null;
     }
 
     public Collection<Point> myWork(String nodeID, String jobID){
-        // TODO: Uzmemo svoj deo posla za jobID ili backupe ako smo ih cuvali
-        return null;
+        Set<Point> myResult = new HashSet<>();
+
+        if(database.getInfo().getMyRegion().getJob().getId().equals(jobID)){
+            myResult.addAll(database.getData());                                            // Dodajemo svoj deo posla
+        }
+        for(BackupInfo backupInfo : database.getBackups().values()){
+            if(backupInfo.getJobID().equals(jobID)){
+                myResult.addAll(backupInfo.getData());                                  // Dodajemo bakcup za taj posao ako ga imamo
+            }
+        }
+        return myResult;
     }
 
     public void stopAll(String jobID){

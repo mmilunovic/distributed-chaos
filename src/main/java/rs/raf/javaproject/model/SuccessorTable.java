@@ -19,7 +19,6 @@ public class SuccessorTable {
     private final ArrayList<Node> table;
 
     public void reconstructTable(){
-
         table.clear();
         ArrayList<Node> list = new ArrayList<>(database.getAllNodes().values());
 
@@ -31,7 +30,6 @@ public class SuccessorTable {
             int succPos = (myPos + step) % size;
             table.add(list.get(succPos));
         }
-
         System.out.println(database.getInfo().getId() + ":" + table);
     }
 
@@ -43,25 +41,8 @@ public class SuccessorTable {
             broadcastingNodes.add(table.get(1));
             broadcastingNodes.add(table.get(2));
         }catch (IndexOutOfBoundsException e){
-
         }
 
         return broadcastingNodes;
     }
-
-    public Collection<Node> getNodesForJobID(String jobID){
-        ArrayList<Node> nodesForJobID = new ArrayList<>();
-
-        try{
-            for(Node node: table){
-                if(node.getMyRegion().getJob().getId().equals(jobID)){
-                    nodesForJobID.add(node);
-                }
-            }
-        }catch (IndexOutOfBoundsException e){
-
-        }
-        return nodesForJobID;
-    }
-
 }
