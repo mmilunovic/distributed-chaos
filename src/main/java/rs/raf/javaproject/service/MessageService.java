@@ -3,6 +3,7 @@ package rs.raf.javaproject.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import rs.raf.javaproject.config.MyConfig;
+import rs.raf.javaproject.handler.ExecutorPool;
 import rs.raf.javaproject.model.BackupInfo;
 import rs.raf.javaproject.model.Job;
 import rs.raf.javaproject.model.Node;
@@ -24,6 +25,9 @@ public class MessageService {
 
     @Autowired
     private SuccessorTable successorTable;
+
+    @Autowired
+    private ExecutorPool executorPool;
 
     private String getBootstrapHailUrl(){
         return "http://" + config.getBootstrap() + "/api/bootstrap/hail";
@@ -73,8 +77,13 @@ public class MessageService {
     }
 
     public synchronized void sendBootstrapNew(){
-        New n = new New(getBootstrapNewUrl(), config.getMe());
-        n.execute();
+        executorPool.submit(new Runnable() {
+            @Override
+            public void run() {
+                New n = new New(getBootstrapNewUrl(), config.getMe());
+                n.execute();
+            }
+        });
     }
 
     public synchronized Collection<Node> sendGetAllNodes(Node node){
@@ -88,9 +97,14 @@ public class MessageService {
     }
 
     public synchronized void sendNewNode(Node receiver, Node newNode){
-        NotifyNewNode notifyNewNode = new NotifyNewNode(getNewNodeUrl(receiver, newNode));
-        System.out.println(config.getMe() + " is sending to " + notifyNewNode);
-        notifyNewNode.execute();
+        executorPool.submit(new Runnable() {
+            @Override
+            public void run() {
+                NotifyNewNode notifyNewNode = new NotifyNewNode(getNewNodeUrl(receiver, newNode));
+                notifyNewNode.execute();
+            }
+        });
+
     }
 
     public synchronized Boolean sendSaveBackup(Node receiver, BackupInfo backupInfo){
@@ -106,8 +120,13 @@ public class MessageService {
 
     public void broadcastNewJob(Job job){
         for (Node node: successorTable.broadcastingNodes()){
-            NewJob newJob = new NewJob(getNewJobUrl(node), job);
-            newJob.execute();
+            executorPool.submit(new Runnable() {
+                @Override
+                public void run() {
+                    NewJob newJob = new NewJob(getNewJobUrl(node), job);
+                    newJob.execute();
+                }
+            });
         }
     }
 }
