@@ -1,13 +1,11 @@
 package rs.raf.javaproject.service;
 
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import rs.raf.javaproject.config.MyConfig;
 import rs.raf.javaproject.model.BackupInfo;
 import rs.raf.javaproject.model.Node;
-import rs.raf.javaproject.requests.ARequest;
+
 import rs.raf.javaproject.requests.bootstrap.Hail;
 import rs.raf.javaproject.requests.bootstrap.Left;
 import rs.raf.javaproject.requests.bootstrap.New;
@@ -16,9 +14,7 @@ import rs.raf.javaproject.requests.node.NotifyNewNode;
 import rs.raf.javaproject.requests.node.Ping;
 import rs.raf.javaproject.requests.node.SaveBackup;
 
-import java.io.IOException;
 import java.util.Collection;
-import java.util.concurrent.TimeUnit;
 
 @Component
 public class MessageService {

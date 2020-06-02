@@ -64,7 +64,6 @@ public class NodeService {
             return;
         }
 
-
         messageService.sendNewNode(repository.getPredecessor(), newNode);
 
         restructure();
@@ -99,7 +98,6 @@ public class NodeService {
         this.jobExecution.setRegion(repository.getRegion());
         this.jobExecution.getPause().set(true);
     }
-
 
     private void generateRegions() {
         String myRegion = "-";
