@@ -41,6 +41,9 @@ public class SendBackup implements Runnable{
 
         Boolean successorDone = messageService.sendSaveBackup(successor, newBackup);
         Boolean predecessorDone = messageService.sendSaveBackup(predecessor, newBackup);
+
+        System.out.println("Backup to successor: " + successorDone.toString() +
+                           "\nBackup to predecessor: " + predecessorDone.toString());
     }
 
     private void sleep(long duration) {

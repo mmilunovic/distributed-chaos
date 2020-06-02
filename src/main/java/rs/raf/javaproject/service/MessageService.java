@@ -49,9 +49,8 @@ public class MessageService {
                 .getId();
     }
 
-    private String getSaveBackupUrl(Node receiver, String jobID, String regionID){
-        return "http://" + receiver.getId() +
-                "/api/backup/" + jobID + "/" + regionID;
+    private String getSaveBackupUrl(Node receiver){
+        return "http://" + receiver.getId() + "/api/node/backup";
     }
 
 
@@ -89,11 +88,10 @@ public class MessageService {
     }
 
     public synchronized Boolean sendSaveBackup(Node receiver, BackupInfo backupInfo){
-        SaveBackup saveBackup = new SaveBackup(
-                getSaveBackupUrl(receiver, backupInfo.getJobID(), backupInfo.getRegionID()),
-                backupInfo);
+        SaveBackup saveBackup = new SaveBackup(getSaveBackupUrl(receiver), backupInfo);
         return saveBackup.execute();
     }
+
 
 
 }
