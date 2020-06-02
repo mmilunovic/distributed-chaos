@@ -5,6 +5,7 @@ import com.squareup.okhttp.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import rs.raf.javaproject.config.MyConfig;
+import rs.raf.javaproject.model.BackupInfo;
 import rs.raf.javaproject.model.Node;
 import rs.raf.javaproject.requests.ARequest;
 import rs.raf.javaproject.requests.bootstrap.Hail;
@@ -13,6 +14,7 @@ import rs.raf.javaproject.requests.bootstrap.New;
 import rs.raf.javaproject.requests.node.AllNodes;
 import rs.raf.javaproject.requests.node.NotifyNewNode;
 import rs.raf.javaproject.requests.node.Ping;
+import rs.raf.javaproject.requests.node.SaveBackup;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -51,6 +53,12 @@ public class MessageService {
                 .getId();
     }
 
+    private String getSaveBackupUrl(Node receiver, String jobID, String regionID){
+        return "http://" + receiver.getId() +
+                "/api/backup/" + jobID + "/" + regionID;
+    }
+
+
     // TODO: Slanje poruka mora biti asinhrono
 
     public synchronized Node sendBootstrapHail(){
@@ -84,7 +92,12 @@ public class MessageService {
         notifyNewNode.execute();
     }
 
-
+    public synchronized Boolean sendSaveBackup(Node receiver, BackupInfo backupInfo){
+        SaveBackup saveBackup = new SaveBackup(
+                getSaveBackupUrl(receiver, backupInfo.getJobID(), backupInfo.getRegionID()),
+                backupInfo);
+        return saveBackup.execute();
+    }
 
 
 }

@@ -1,24 +1,19 @@
-package rs.raf.javaproject.requests.bootstrap;
+package rs.raf.javaproject.requests.node;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import rs.raf.javaproject.config.MyConfig;
-import rs.raf.javaproject.model.Node;
+import rs.raf.javaproject.model.BackupInfo;
 import rs.raf.javaproject.requests.ARequest;
 
-public class New extends ARequest<Void> {
+public class SaveBackup extends ARequest<Boolean> {
 
-
-
-    public New(String url, Node me){
+    public SaveBackup(String url, BackupInfo backupInfo) {
         super(url);
 
         try {
-            var body = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(me);
+            var body = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(backupInfo);
 
             RequestBody requestBody = RequestBody.create(JSON, body);
 
@@ -27,7 +22,7 @@ public class New extends ARequest<Void> {
                     .put(requestBody)
                     .build();
 
-            returnClass =  new TypeReference<Void>() {};
+            returnClass =  new TypeReference<Boolean>() {};
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

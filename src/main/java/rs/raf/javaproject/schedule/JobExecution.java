@@ -29,7 +29,6 @@ public class JobExecution implements Runnable {
                 executeJob();
             }
         }
-
     }
 
     private void executeJob(){
