@@ -1,6 +1,7 @@
 package rs.raf.javaproject.service;
 
 import rs.raf.javaproject.model.Job;
+import rs.raf.javaproject.model.Point;
 import rs.raf.javaproject.model.Region;
 
 import java.util.ArrayList;
@@ -36,5 +37,26 @@ public class RegionUtil {
         }
 
         return getRegionFromID(region.getChildren().get(id.charAt(0)),(id.substring(1)));
+    }
+
+    public static List<Point> getStartingPointsFromParent(String regionID, Double proportion, List<Point> parentPoints) {
+        Integer startIndex = Integer.parseInt(regionID);
+        Point startPoint = parentPoints.get(startIndex);
+
+        List<Point> result = new ArrayList<>();
+        for (int i = 0; i < parentPoints.size(); i++) {
+            if (i == startIndex) {
+                result.add(startPoint);
+            }
+            else {
+                Point newPoint = new Point(
+                        startPoint.getX() + proportion * (parentPoints.get(i).getX() - startPoint.getX()),
+                        startPoint.getY() + proportion * (parentPoints.get(i).getY() - startPoint.getY())
+                );
+                result.add(newPoint);
+            }
+        }
+        return result;
+
     }
 }
