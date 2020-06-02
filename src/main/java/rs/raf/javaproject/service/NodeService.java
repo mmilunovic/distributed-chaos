@@ -107,7 +107,7 @@ public class NodeService {
         if (database.getAllJobs().size() == 0)
             return;
 
-        List<String> nodeIDs = new ArrayList<>(database.getAllJobs().keySet());
+        List<String> nodeIDs = new ArrayList<>(database.getAllNodes().keySet());
         Collections.sort(nodeIDs);
 
         //start index and number of nodes on one job
