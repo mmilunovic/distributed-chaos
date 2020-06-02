@@ -12,8 +12,9 @@ import java.util.Collection;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/{nodeID}/jobs")
+@RequestMapping("/api/jobs")
 public class JobController {
+    // TODO: Vidi gde treba nodeID da se prosledjuje i dodaj, promeni i u doc-u
 
     @Autowired
     private JobService service;

@@ -19,7 +19,7 @@ public class SaveBackup extends ARequest<Boolean> {
 
             request = new Request.Builder()
                     .url(url)
-                    .put(requestBody)
+                    .post(requestBody)
                     .build();
 
             returnClass =  new TypeReference<Boolean>() {};
