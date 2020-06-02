@@ -52,7 +52,7 @@ public class NodeService {
 
         database.getAllNodes().remove(nodeID);
 
-        restructure();
+        //restructure();
     }
 
     public void newNode(String nodeID){
@@ -67,10 +67,11 @@ public class NodeService {
             return;
         }
 
-
+        /// BITNO: NE MENJATI REDOSLED
+        successorTable.reconstructTable();
         messageService.sendNewNode(database.getPredecessor(), newNode);
 
-        restructure();
+        //restructure();
     }
 
     public void putBackup(BackupInfo backupInfo) {
@@ -78,7 +79,6 @@ public class NodeService {
     }
 
     public void restructure() {
-        successorTable.reconstructTable();
 
         if (this.jobExecution == null) {
             this.jobExecution = new JobExecution(this.database, database.getRegion(), new AtomicBoolean(false));

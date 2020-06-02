@@ -7,9 +7,11 @@ import rs.raf.javaproject.model.BackupInfo;
 import rs.raf.javaproject.model.Job;
 import rs.raf.javaproject.model.Node;
 
+import rs.raf.javaproject.model.SuccessorTable;
 import rs.raf.javaproject.requests.bootstrap.Hail;
 import rs.raf.javaproject.requests.bootstrap.Left;
 import rs.raf.javaproject.requests.bootstrap.New;
+import rs.raf.javaproject.requests.job.NewJob;
 import rs.raf.javaproject.requests.node.*;
 
 import java.util.Collection;
@@ -19,6 +21,9 @@ public class MessageService {
 
     @Autowired
     private MyConfig config;
+
+    @Autowired
+    private SuccessorTable successorTable;
 
     private String getBootstrapHailUrl(){
         return "http://" + config.getBootstrap() + "/api/bootstrap/hail";
@@ -49,6 +54,10 @@ public class MessageService {
 
     private String getAllJobsUrl(Node receiver){
         return "http://" + receiver.getId() + "/api/node/allJobs";
+    }
+
+    private String getNewJobUrl(Node receiver){
+        return  "http://" + receiver.getId() + "/api/jobs/start";
     }
 
     // TODO: Slanje poruka mora biti asinhrono
@@ -93,5 +102,12 @@ public class MessageService {
     public Collection<Job> sendGetAllJobs(Node node) {
         AllJobs allJobs = new AllJobs(getAllJobsUrl(node));
         return allJobs.execute();
+    }
+
+    public void broadcastNewJob(Job job){
+        for (Node node: successorTable.broadcastingNodes()){
+            NewJob newJob = new NewJob(getNewJobUrl(node), job);
+            newJob.execute();
+        }
     }
 }

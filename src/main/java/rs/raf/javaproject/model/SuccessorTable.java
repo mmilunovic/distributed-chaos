@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import rs.raf.javaproject.repository.Database;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 @Data
 @Component
@@ -34,5 +35,18 @@ public class SuccessorTable {
         System.out.println(database.getInfo().getId() + ":" + table);
     }
 
+    public Collection<Node> broadcastingNodes(){
+        ArrayList<Node> broadcastingNodes = new ArrayList<>();
+
+        try {
+            broadcastingNodes.add(table.get(0));
+            broadcastingNodes.add(table.get(1));
+            broadcastingNodes.add(table.get(2));
+        }catch (IndexOutOfBoundsException e){
+
+        }
+
+        return broadcastingNodes;
+    }
 
 }

@@ -58,6 +58,10 @@ public class JavaProjectApplication {
 
             Collection<Job> allJobsInfo = messageService.sendGetAllJobs(node);
             System.out.println(allJobsInfo);
+
+            for(Job job : allJobsInfo){
+                databese.getAllJobs().put(job.getId(), job);
+            }
             // TODO: Treba da uzme sve jobove
 
             messageService.sendBootstrapNew();

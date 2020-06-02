@@ -18,6 +18,9 @@ public class JobService {
     @Autowired
     private NodeService nodeService;
 
+    @Autowired
+    private MessageService messageService;
+
     public StatusResponse status(){
         return null;
     }
@@ -31,9 +34,18 @@ public class JobService {
     }
 
     public void start(Job job){
-        repository.getAllJobs().put(job.getId(), job);
-        // TODO: Broadcastuje poruku pomocu /api/jobs/start
-        nodeService.restructure();
+        if(!repository.getAllJobs().containsKey(job.getId())){
+
+            repository.getAllJobs().put(job.getId(), job);
+
+            messageService.broadcastNewJob(job);
+
+            // TODO: Broadcastuje poruku pomocu /api/jobs/start
+            //nodeService.restructure();
+        }
+
+
+
     }
 
     public ResultResponse result(String jobID){
