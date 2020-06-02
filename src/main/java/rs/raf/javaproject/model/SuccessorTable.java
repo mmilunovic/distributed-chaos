@@ -45,4 +45,20 @@ public class SuccessorTable {
 
         return broadcastingNodes;
     }
+
+    public Node getDelegator(Node node){
+
+        if(table.size() == 0) return null; // Cisto provere radi
+
+        Node ret = table.get(0);
+
+        for(Node tableNode : table){
+            if(node.compareTo(tableNode) == -1){
+                break;
+            }
+            ret = tableNode;
+        }
+
+        return ret;
+    }
 }

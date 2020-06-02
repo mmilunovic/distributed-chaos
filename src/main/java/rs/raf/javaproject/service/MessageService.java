@@ -4,9 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import rs.raf.javaproject.config.MyConfig;
 import rs.raf.javaproject.handler.ExecutorPool;
-import rs.raf.javaproject.model.BackupInfo;
-import rs.raf.javaproject.model.Job;
-import rs.raf.javaproject.model.Node;
+import rs.raf.javaproject.model.*;
 
 import rs.raf.javaproject.model.SuccessorTable;
 import rs.raf.javaproject.requests.bootstrap.Hail;
@@ -29,6 +27,9 @@ public class MessageService {
 
     @Autowired
     private SuccessorTable successorTable;
+
+    @Autowired
+    private PredecessorTable predecessorTable;
 
     @Autowired
     private ExecutorPool executorPool;
