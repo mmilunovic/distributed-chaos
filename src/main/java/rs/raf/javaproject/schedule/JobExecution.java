@@ -33,9 +33,14 @@ public class JobExecution implements Runnable {
 
     private void executeJob(){
         sleep(1000);
-        Point tracepoint = database.getTracepoint();
+        if(database.getData().isEmpty()){
+            Point newPoint = randomPoint();
+            database.getData().add(newPoint);
+        }
+
+        Point tracepoint = database.getData().get(database.getData().size() - 1);
         Double proportion = region.getJob().getProportion();
-        Point randomPoint = randomPoint();
+        Point randomPoint = randomStartingPoint();
         Point newPoint = new Point(
                 tracepoint.getX() + proportion * (randomPoint.getX() - tracepoint.getX()),
                 tracepoint.getY() + proportion * (randomPoint.getY() - tracepoint.getY())
@@ -47,6 +52,14 @@ public class JobExecution implements Runnable {
 
     private Point randomPoint(){
         Random r = new Random();
+        int x = r.nextInt(100);
+        int y = r.nextInt(100);
+        return new Point((double) x, (double) y);
+    }
+
+    private Point randomStartingPoint(){
+        Random r = new Random();
+
         return region.getStartingPoints().get(r.nextInt(region.getStartingPoints().size()));
     }
 
