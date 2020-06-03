@@ -73,8 +73,7 @@ public class JobService {
 
             messageService.broadcastNewJob(job);
 
-            // TODO: Broadcastuje poruku pomocu /api/jobs/start
-            //nodeService.restructure();
+            nodeService.restructure();
         }
     }
 
