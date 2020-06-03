@@ -1,0 +1,41 @@
+from flask import Flask
+from service import JobService
+
+app = Flask(__name__, template_folder="./templates")
+
+baseRoute = "/api/jobs"
+
+@app.route(baseRoute + "/status", methods = ["GET"])
+def status():
+    pass
+
+@app.route(baseRoute + "/status/<string:jobID>", methods = ["GET"])
+def status(jobID):
+    pass
+
+@app.route(baseRoute + "/status/<string:jobID>/<string:regionID>", methods = ["GET"])
+def status(jobID, regionID):
+    pass
+
+@app.route(baseRoute + "/start", methods = ["PUT"])
+def start():
+    pass
+
+@app.route(baseRoute + "/result/<string:jobID>", methods = ["GET"])
+def result(jobID):
+    pass
+
+@app.route(baseRoute + "/<string:jobID>", methods = ["GET"])
+def myWork(jobID):
+    pass
+
+@app.route(baseRoute + "/stopAll/<string:jobID>", methods = ["POST"])
+def stopAll(jobID):
+    pass
+
+@app.route(baseRoute + "/<string:jobID>", methods = ["DELETE"])
+def deleteJob(jobID):
+    pass
+
+
+
