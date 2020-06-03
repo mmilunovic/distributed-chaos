@@ -19,7 +19,6 @@ public class HealthChecker {
     @Autowired
     MessageService messageService;
 
-
     @Autowired
     NodeService nodeService;
 

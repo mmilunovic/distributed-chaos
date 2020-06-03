@@ -2,6 +2,7 @@ package rs.raf.javaproject.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.tags.EditorAwareTag;
 import rs.raf.javaproject.config.MyConfig;
 import rs.raf.javaproject.handler.ExecutorPool;
 import rs.raf.javaproject.model.*;
@@ -19,6 +20,7 @@ import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.TreeMap;
 
 @Component
 public class MessageService {
@@ -79,6 +81,7 @@ public class MessageService {
     }
     // TODO: Slanje poruka mora biti asinhrono
 
+
     public synchronized Node sendBootstrapHail(){
         Hail hail = new Hail(getBootstrapHailUrl());
         return hail.execute();
@@ -138,15 +141,12 @@ public class MessageService {
                 }
             });
         }
-
-
     }
 
     public synchronized Boolean sendSaveBackup(Node receiver, BackupInfo backupInfo){
         SaveBackup saveBackup = new SaveBackup(getSaveBackupUrl(receiver), backupInfo);
         return saveBackup.execute();
     }
-
 
     public Collection<Job> sendGetAllJobs(Node node) {
         AllJobs allJobs = new AllJobs(getAllJobsUrl(node));
@@ -166,13 +166,19 @@ public class MessageService {
     }
 
     public ResultResponse sendGetResult(String jobID, List<String> recipients) {
-
         ResultResponse resultResponse = new ResultResponse();
         resultResponse.setJobID(jobID);
 
         resultResponse.setData(new ArrayList<>());
+
         for(String nodeID: recipients){
-            MyResult myResult = new MyResult(getMyWorkUrl(nodeID, jobID));
+
+            // TODO: Ovako dohvatim cvor koji je najblizi onome sto mi treba tj nodeID-u
+            // TODO: Sta ako i dalje ne mogu da ga dohvatim?? Treba da ide neka nova poruka za prosledjivanje ovoga samo...
+            Node delegator = successorTable.getDelegator(successorTable.getDatabase().getAllNodes().get(nodeID));
+
+            MyResult myResult = new MyResult(getMyWorkUrl(delegator.getId(), jobID));                               // Ne saljemo direktno cvoru nego delegatoru
+                                                                                                                    // Ako nam je cvor u successor tabeli vratice njega
             resultResponse.getData().addAll(myResult.execute());
         }
 
@@ -195,4 +201,5 @@ public class MessageService {
     public void leave(){
         sendBootstrapLeft(config.getMe());
     }
+
 }

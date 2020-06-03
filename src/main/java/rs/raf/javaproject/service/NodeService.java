@@ -50,6 +50,7 @@ public class NodeService {
     }
 
     public void quit(){
+        // TODO
     }
 
     public void left(String nodeID){
@@ -83,9 +84,6 @@ public class NodeService {
 
             //restructure();
         }
-
-
-
     }
 
     public void putBackup(BackupInfo backupInfo) {

@@ -22,15 +22,18 @@ public class JobService {
     private MessageService messageService;
 
     public StatusResponse status(){
+        StatusResponse statusResponse = new StatusResponse();
 
-        return null;
+        return statusResponse;
     }
 
     public StatusResponse status(String jobID){
+        // TODO: https://docs.google.com/document/d/1R8uygEGYILpqh34eT_hjNgH-zQHGPYHe51d061e3e0I/edit#heading=h.cglqz2ny2b9g
         return null;
     }
 
     public StatusResponse status(String jobID, String regionID){
+        // TODO: https://docs.google.com/document/d/1R8uygEGYILpqh34eT_hjNgH-zQHGPYHe51d061e3e0I/edit#heading=h.w7srezuqw9i5
         return null;
     }
 
@@ -49,17 +52,23 @@ public class JobService {
     public ResultResponse result(String jobID){
         List<String> receiverIDs = RegionUtil.getAllJobNodeIDs(database.getAllJobs().get(jobID));
 
-        // TODO: Salji pomocu "Chorda"
         // TODO: Nacrtaj jebeni png
-
         ResultResponse resultResponse = messageService.sendGetResult(jobID, receiverIDs);
+
+
 
         return resultResponse;
     }
 
     public ResultResponse result(String jobID, String regionID){
+        List<String> receiverIDs = RegionUtil.getAllSubregionNodeIDs(
+                RegionUtil.getRegionFromID(database.getAllJobs(), jobID, regionID)
+        );
 
-        return null;
+        // TODO: Nacrtaj jebeni png
+        ResultResponse resultResponse = messageService.sendGetResult(jobID, receiverIDs);
+
+        return resultResponse;
     }
 
     public Collection<Point> myWork(String jobID){
@@ -67,16 +76,18 @@ public class JobService {
 
         if(database.getInfo().getMyRegion() == null)
             return new ArrayList<>();
-                                                        // Dodajemo svoj deo posla
+
         if(database.getInfo().getMyRegion().getJob().getId().equals(jobID))
             myResult.addAll(database.getData());
+        // TODO: Ovde treba da prosledim poruku dalje ukoliko ja nemam taj job?
 
         for(BackupInfo backupInfo : database.getBackups().values()){
             if(backupInfo.getJobID().equals(jobID)){
                 myResult.addAll(backupInfo.getData());                                  // Dodajemo bakcup za taj posao ako ga imamo
             }
         }
-        return myResult;
+
+            return myResult;
     }
 
     public void stopAll(String jobID){
