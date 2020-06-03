@@ -1,13 +1,14 @@
 from flask import Flask
+from controller.NodeController import app
 from service import JobService
 
-app = Flask(__name__, template_folder="./templates")
+#app = Flask(__name__, template_folder="./templates")
 
 baseRoute = "/api/jobs"
 
 @app.route(baseRoute + "/status", methods = ["GET"])
 def status():
-    pass
+    return "Jobs endpoint"
 
 @app.route(baseRoute + "/status/<string:jobID>", methods = ["GET"])
 def status(jobID):
@@ -15,7 +16,8 @@ def status(jobID):
 
 @app.route(baseRoute + "/status/<string:jobID>/<string:regionID>", methods = ["GET"])
 def status(jobID, regionID):
-    pass
+    return "Evo me sad na: " + jobID + " " + regionID
+
 
 @app.route(baseRoute + "/start", methods = ["PUT"])
 def start():
