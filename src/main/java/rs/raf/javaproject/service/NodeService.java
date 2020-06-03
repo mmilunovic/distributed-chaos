@@ -103,6 +103,7 @@ public class NodeService {
         this.jobExecution.getPause().set(true);
 
         List<Point> data = this.database.getData();
+        // AKo je radio neki region, onda rezultat sacuva kao backup
         if (database.getInfo().getMyRegion() != null) {
             BackupInfo backupInfo = new BackupInfo();
             backupInfo.setData(data);

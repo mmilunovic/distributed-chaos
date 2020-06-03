@@ -2,7 +2,6 @@ package rs.raf.javaproject.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.tags.EditorAwareTag;
 import rs.raf.javaproject.config.MyConfig;
 import rs.raf.javaproject.handler.ExecutorPool;
 import rs.raf.javaproject.model.*;
@@ -11,8 +10,9 @@ import rs.raf.javaproject.model.SuccessorTable;
 import rs.raf.javaproject.requests.bootstrap.Hail;
 import rs.raf.javaproject.requests.bootstrap.Left;
 import rs.raf.javaproject.requests.bootstrap.New;
-import rs.raf.javaproject.requests.job.MyResult;
+import rs.raf.javaproject.requests.job.JobResult;
 import rs.raf.javaproject.requests.job.NewJob;
+import rs.raf.javaproject.requests.job.RegionResult;
 import rs.raf.javaproject.requests.job.Status;
 import rs.raf.javaproject.requests.node.*;
 import rs.raf.javaproject.response.RegionStatusResponse;
@@ -23,7 +23,6 @@ import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.TreeMap;
 
 @Component
 public class MessageService {
@@ -75,8 +74,12 @@ public class MessageService {
         return  "http://" + receiver.getId() + "/api/jobs/start";
     }
 
-    private String getMyWorkUrl(String receiver, String forWho, String jobID){
+    private String getJobWorkUrl(String receiver, String forWho, String jobID){
         return "http://" + receiver + "/api/delegate/" + forWho + "/jobs/" + jobID;
+    }
+    
+    private String getRegionWorkUlr(String receiver, String forWho, String jobID, String regionID){
+        return "http://" + receiver + "/api/delegate/" + forWho + "/jobs/" + jobID + "/" + regionID;
     }
 
     private String getLeftUrl(Node receiver, Node nodeThatLeft){
@@ -90,12 +93,12 @@ public class MessageService {
     // TODO: Slanje poruka mora biti asinhrono
 
 
-    public synchronized Node sendBootstrapHail(){
+    public Node sendBootstrapHail(){
         Hail hail = new Hail(getBootstrapHailUrl());
         return hail.execute();
     }
 
-    public synchronized void sendBootstrapLeft(Node node){
+    public void sendBootstrapLeft(Node node){
 
         executorPool.submit(new Runnable() {
             @Override
@@ -106,7 +109,7 @@ public class MessageService {
         });
     }
 
-    public synchronized void sendBootstrapNew(){
+    public void sendBootstrapNew(){
         executorPool.submit(new Runnable() {
             @Override
             public void run() {
@@ -117,17 +120,17 @@ public class MessageService {
     }
 
 
-    public synchronized Collection<Node> sendGetAllNodes(Node node){
+    public Collection<Node> sendGetAllNodes(Node node){
         AllNodes allNodes = new AllNodes(getAllNodesUrl(node));
         return allNodes.execute();
     }
 
-    public synchronized Boolean sendPing(Node posrednik, Node destinacija, Integer timeout){
+    public Boolean sendPing(Node posrednik, Node destinacija, Integer timeout){
         Ping ping = new Ping(getPingNodesUrl(posrednik, destinacija), timeout);
         return ping.execute();
     }
 
-    public synchronized void sendNewNode(Node newNode){
+    public void sendNewNode(Node newNode){
 
         for(Node node: successorTable.broadcastingNodes()){
             executorPool.submit(new Runnable() {
@@ -150,7 +153,7 @@ public class MessageService {
         }
     }
 
-    public synchronized Boolean sendSaveBackup(Node receiver, BackupInfo backupInfo){
+    public Boolean sendSaveBackup(Node receiver, BackupInfo backupInfo){
         SaveBackup saveBackup = new SaveBackup(getSaveBackupUrl(receiver), backupInfo);
         return saveBackup.execute();
     }
@@ -181,25 +184,47 @@ public class MessageService {
         for(String nodeID: recipients){
 
             if(nodeID.equals(config.getMe().getId())){
-
                 // Salje sebi ukoliko je on na tom job-u
-                MyResult myResult = new MyResult(getMyWorkUrl(nodeID, nodeID, jobID));
-                resultResponse.getData().addAll(myResult.execute());
+                JobResult jobResult = new JobResult(getJobWorkUrl(nodeID, nodeID, jobID));
+                resultResponse.getData().addAll(jobResult.execute());
             }else{
-                // TODO: Ovako dohvatim cvor koji je najblizi onome sto mi treba tj nodeID-u
-                // TODO: Sta ako i dalje ne mogu da ga dohvatim?? Treba da ide neka nova poruka za prosledjivanje ovoga samo...
+                // Koristimo delegate za slanje poruke
                 Node delegator = successorTable.getDelegator(successorTable.getDatabase().getAllNodes().get(nodeID));
 
-                MyResult myResult = new MyResult(getMyWorkUrl(delegator.getId(), nodeID, jobID));                               // Ne saljemo direktno cvoru nego delegatoru
+                JobResult jobResult = new JobResult(getJobWorkUrl(delegator.getId(), nodeID, jobID));                               // Ne saljemo direktno cvoru nego delegatoru
                 // Ako nam je cvor u successor tabeli vratice njega
-                resultResponse.getData().addAll(myResult.execute());
+                resultResponse.getData().addAll(jobResult.execute());
             }
-
-
         }
 
         return resultResponse;
     }
+
+    public ResultResponse sendGetResult(String jobID, String regionID, List<String> recipients) {
+        ResultResponse resultResponse = new ResultResponse();
+        resultResponse.setJobID(jobID);
+
+        resultResponse.setData(new ArrayList<>());
+
+        for(String nodeID: recipients){
+
+            if(nodeID.equals(config.getMe().getId())){
+                // Salje sebi ukoliko je on na tom job-u
+                RegionResult regionResult = new RegionResult(getRegionWorkUlr(nodeID, nodeID, jobID, regionID));
+                resultResponse.getData().addAll(regionResult.execute());
+            }else{
+                // Koristimo delegate za slanje poruke
+                Node delegator = successorTable.getDelegator(successorTable.getDatabase().getAllNodes().get(nodeID));
+
+                RegionResult regionResult = new RegionResult(getRegionWorkUlr(delegator.getId(), nodeID, jobID, regionID));
+                System.out.println(getRegionWorkUlr(delegator.getId(), nodeID, jobID, regionID));
+                resultResponse.getData().addAll(regionResult.execute());
+            }
+        }
+
+        return resultResponse;
+    }
+
 
     public void broadcastLeaveMessage(Node nodeThatLeft){
         for (Node node: successorTable.broadcastingNodes()){

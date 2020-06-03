@@ -93,17 +93,50 @@ public class JobService {
         List<String> receiverIDs = RegionUtil.getAllSubregionNodeIDs(
                 RegionUtil.getRegionFromID(database.getAllJobs(), jobID, regionID));
 
-        ResultResponse resultResponse = messageService.sendGetResult(jobID, receiverIDs);
+        System.out.println(database.getInfo().getId() + " uzima podatke od " + receiverIDs);
+        ResultResponse resultResponse = messageService.sendGetResult(jobID, regionID, receiverIDs);
 
         drawResult(resultResponse, jobID);
 
         return resultResponse;
     }
 
-    public Collection<Point> myWork(String nodeID, String jobID){
+    public Collection<Point> getRegionResultFromNode(String nodeID, String jobID, String regionID){
         Set<Point> myResult = new HashSet<>();
+
+        System.out.println(database.getInfo().getId() + " prima poruku");
         if(nodeID.equals(database.getInfo().getId())){
-            // TODO: Zasto ovo
+            // TODO: Zasto ovo, region je jedan null-u samo u rekonstrukciji?
+            // Mozda ako stigne proziv za vreme rekonstrukcije
+            if(database.getInfo().getMyRegion() == null)
+                return new ArrayList<>();
+
+            if(database.getInfo().getMyRegion().getJob().getId().equals(jobID))
+                myResult.addAll(database.getData());
+
+        }else{
+            List<String> recepient = new ArrayList<>();
+            recepient.add(nodeID);
+
+            ResultResponse resultResponse = messageService.sendGetResult(jobID, regionID, recepient);
+            myResult.addAll(resultResponse.getData());
+        }
+
+        for(BackupInfo backupInfo : database.getBackups().values()){
+            if(backupInfo.getJobID().equals(jobID) && backupInfo.getRegionID().equals(regionID)){
+                myResult.addAll(backupInfo.getData());                                  // Dodajemo bakcup za taj posao ako ga imamo
+            }
+        }
+
+        System.out.println(database.getInfo().getId() + " vraca " + myResult);
+        return myResult;
+    }
+    public Collection<Point> getJobResultFromNode(String nodeID, String jobID){
+        Set<Point> myResult = new HashSet<>();
+
+        if(nodeID.equals(database.getInfo().getId())){
+            // TODO: Zasto ovo, region je jedan null-u samo u rekonstrukciji?
+            // Mozda ako stigne proziv za vreme rekonstrukcije
             if(database.getInfo().getMyRegion() == null)
                 return new ArrayList<>();
 
@@ -116,7 +149,6 @@ public class JobService {
             recepient.add(nodeID);
 
             ResultResponse resultResponse = messageService.sendGetResult(jobID, recepient);
-
             myResult.addAll(resultResponse.getData());
         }
 
@@ -129,6 +161,8 @@ public class JobService {
         System.out.println(database.getInfo().getId() + " vraca " + myResult);
         return myResult;
     }
+
+
 
     public void stopAll(String jobID){
         // TODO: Zaustavljamo izracunavanje naseg dela posla i saljemo poruku dalje pomocu DELETE /api/jobs/{jobID}

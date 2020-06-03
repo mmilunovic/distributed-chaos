@@ -17,7 +17,7 @@ public class RegionUtil {
         return region;
     }
 
-    public static java.util.List<String> getAllJobNodeIDs(Job job) {
+    public static List<String> getAllJobNodeIDs(Job job) {
         List<String> result = new ArrayList<>();
         for (Region child : job.getRegions().values())
             result.addAll(getAllSubregionNodeIDs(child));
@@ -25,7 +25,7 @@ public class RegionUtil {
         return result;
     }
 
-    public static java.util.List<String> getAllSubregionNodeIDs(Region region) {
+    public static List<String> getAllSubregionNodeIDs(Region region) {
         if (region.getNode() != null)
             return Collections.singletonList(region.getNode().getId());
 
