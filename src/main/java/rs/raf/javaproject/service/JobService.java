@@ -68,8 +68,7 @@ public class JobService {
 
     public ResultResponse result(String jobID, String regionID){
         List<String> receiverIDs = RegionUtil.getAllSubregionNodeIDs(
-                RegionUtil.getRegionFromID(database.getAllJobs(), jobID, regionID)
-        );
+                RegionUtil.getRegionFromID(database.getAllJobs(), jobID, regionID));
 
         ResultResponse resultResponse = messageService.sendGetResult(jobID, receiverIDs);
 
@@ -122,6 +121,12 @@ public class JobService {
 
         g2d.setColor(Color.red);
         for(Point point: resultPoints){
+            g2d.drawLine((int)Math.round(point.getX()), (int)Math.round(point.getY()),
+                    (int)Math.round(point.getX()), (int)Math.round(point.getY()));
+        }
+
+        g2d.setColor(Color.blue);
+        for(Point point: database.getRegion().getStartingPoints()){
             g2d.drawLine((int)Math.round(point.getX()), (int)Math.round(point.getY()),
                     (int)Math.round(point.getX()), (int)Math.round(point.getY()));
         }
