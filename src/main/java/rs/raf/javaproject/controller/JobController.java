@@ -21,7 +21,7 @@ public class JobController {
 
     @GetMapping("/status")
     @ResponseBody
-    public StatusResponse status(){
+    public Collection<StatusResponse> status(){
         return service.status();
     }
 

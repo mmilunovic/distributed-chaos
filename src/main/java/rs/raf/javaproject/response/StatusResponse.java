@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import rs.raf.javaproject.model.Job;
+import rs.raf.javaproject.model.Region;
 
+import java.util.Collection;
 import java.util.List;
 
 @Data
@@ -12,6 +14,6 @@ import java.util.List;
 @NoArgsConstructor
 public class StatusResponse {
 
-    private int numberOfJobs;
-    private List<Job> allJobs;
+    private String jobID;
+    private Collection<RegionStatusResponse> allJobs;
 }

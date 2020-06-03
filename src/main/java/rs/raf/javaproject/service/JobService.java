@@ -28,18 +28,24 @@ public class JobService {
     @Autowired
     private MessageService messageService;
 
-    public StatusResponse status(){
-        StatusResponse statusResponse = new StatusResponse();
+    public Collection<StatusResponse> status(){
+        Collection<StatusResponse> response = new ArrayList<>();
 
-        return statusResponse;
+        for (String jobID: database.getAllJobs().keySet()) {
+            response.add(status(jobID));
+        }
+
+        return response;
     }
 
     public StatusResponse status(String jobID){
-        // TODO: https://docs.google.com/document/d/1R8uygEGYILpqh34eT_hjNgH-zQHGPYHe51d061e3e0I/edit#heading=h.cglqz2ny2b9g
+        Job job = database.getAllJobs().get(jobID);
+
         return null;
     }
 
     public StatusResponse status(String jobID, String regionID){
+        // TODO: koristiti tabelu sledbenika
         // TODO: https://docs.google.com/document/d/1R8uygEGYILpqh34eT_hjNgH-zQHGPYHe51d061e3e0I/edit#heading=h.w7srezuqw9i5
         return null;
     }
