@@ -1,5 +1,6 @@
 package rs.raf.javaproject.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,9 +15,11 @@ public class BackupInfo {
 
     private String jobID;
     private String regionID;
-    private LocalTime timestamp;
     private List<Point> data;
+    @JsonIgnore
+    private LocalTime timestamp = LocalTime.now();
 
+    @JsonIgnore
     public String getID() {
         return jobID + ":" + regionID;
     }

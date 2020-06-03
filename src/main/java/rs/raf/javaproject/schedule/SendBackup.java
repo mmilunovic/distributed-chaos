@@ -37,7 +37,7 @@ public class SendBackup implements Runnable{
 
         List<Point> data = database.getData();
 
-        BackupInfo newBackup = new BackupInfo(jobID, regionID, LocalTime.now(), data);
+        BackupInfo newBackup = new BackupInfo(jobID, regionID, data, LocalTime.now());
 
         Boolean successorDone = messageService.sendSaveBackup(successor, newBackup);
         Boolean predecessorDone = messageService.sendSaveBackup(predecessor, newBackup);
