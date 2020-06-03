@@ -61,7 +61,7 @@ public class JobService {
 
         ResultResponse resultResponse = messageService.sendGetResult(jobID, receiverIDs);
 
-        drawResult(resultResponse);
+        drawResult(resultResponse, jobID);
 
         return resultResponse;
     }
@@ -72,7 +72,7 @@ public class JobService {
 
         ResultResponse resultResponse = messageService.sendGetResult(jobID, receiverIDs);
 
-        drawResult(resultResponse);
+        drawResult(resultResponse, jobID);
 
         return resultResponse;
     }
@@ -106,7 +106,7 @@ public class JobService {
         nodeService.restructure();
     }
 
-    private void drawResult(ResultResponse resultResponse){
+    private void drawResult(ResultResponse resultResponse, String jobID){
         ArrayList<Point> resultPoints = resultResponse.getData();
         // TODO: Promeni ovo
         int height = 100;
@@ -126,7 +126,7 @@ public class JobService {
         }
 
         g2d.setColor(Color.blue);
-        for(Point point: database.getRegion().getStartingPoints()){
+        for(Point point: database.getAllJobs().get(jobID).getStartingPoints()){
             g2d.drawLine((int)Math.round(point.getX()), (int)Math.round(point.getY()),
                     (int)Math.round(point.getX()), (int)Math.round(point.getY()));
         }
