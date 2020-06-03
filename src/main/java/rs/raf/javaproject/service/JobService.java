@@ -1,10 +1,12 @@
 package rs.raf.javaproject.service;
 
+import ch.qos.logback.core.pattern.util.RegularEscapeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import rs.raf.javaproject.model.*;
 import rs.raf.javaproject.model.Point;
 import rs.raf.javaproject.repository.Database;
+import rs.raf.javaproject.response.RegionStatusResponse;
 import rs.raf.javaproject.response.ResultResponse;
 import rs.raf.javaproject.response.StatusResponse;
 
@@ -39,15 +41,29 @@ public class JobService {
     }
 
     public StatusResponse status(String jobID){
-        Job job = database.getAllJobs().get(jobID);
+        List<String> receiverIDs = RegionUtil.getAllJobNodeIDs(database.getAllJobs().get(jobID));
 
-        return null;
+        StatusResponse statusResponse = messageService.sendGetStatus(jobID, receiverIDs);
+
+        return statusResponse;
     }
 
-    public StatusResponse status(String jobID, String regionID){
-        // TODO: koristiti tabelu sledbenika
-        // TODO: https://docs.google.com/document/d/1R8uygEGYILpqh34eT_hjNgH-zQHGPYHe51d061e3e0I/edit#heading=h.w7srezuqw9i5
-        return null;
+    public RegionStatusResponse myStatus(String nodeID, String jobID){
+        RegionStatusResponse regionStatusResponse = new RegionStatusResponse();
+
+        if(nodeID.equals(database.getInfo().getId())){
+            regionStatusResponse.setNodeID(nodeID);
+            regionStatusResponse.setRegionID(database.getRegion().getFullID());
+            regionStatusResponse.setNumberOfPoints(database.getData().size());
+        }else{
+            List<String> recipient = new ArrayList<>();
+            recipient.add(nodeID);
+
+            regionStatusResponse = messageService.sendGetMyStatus();
+        }
+
+        // TODO: Da li ovde treba dodati backupe?
+        return regionStatusResponse;
     }
 
     public void start(Job job){

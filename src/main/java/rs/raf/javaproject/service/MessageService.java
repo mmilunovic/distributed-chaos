@@ -13,8 +13,11 @@ import rs.raf.javaproject.requests.bootstrap.Left;
 import rs.raf.javaproject.requests.bootstrap.New;
 import rs.raf.javaproject.requests.job.MyResult;
 import rs.raf.javaproject.requests.job.NewJob;
+import rs.raf.javaproject.requests.job.Status;
 import rs.raf.javaproject.requests.node.*;
+import rs.raf.javaproject.response.RegionStatusResponse;
 import rs.raf.javaproject.response.ResultResponse;
+import rs.raf.javaproject.response.StatusResponse;
 
 import javax.annotation.PreDestroy;
 import java.util.ArrayList;
@@ -79,6 +82,11 @@ public class MessageService {
     private String getLeftUrl(Node receiver, Node nodeThatLeft){
         return "http://" + receiver.getId() + "/api/node/left/" + nodeThatLeft.getId();
     }
+
+    private String getStatusUrl(Node receiver, String forWho, String jobID){
+        return "http://" + receiver.getId() + "/api/delegate/" + forWho + "/status" + jobID;
+    }
+
     // TODO: Slanje poruka mora biti asinhrono
 
 
@@ -210,4 +218,40 @@ public class MessageService {
         sendBootstrapLeft(config.getMe());
     }
 
+    public StatusResponse sendGetStatus(String jobID, List<String> receiverIDs) {
+
+        StatusResponse statusResponse = new StatusResponse();
+        statusResponse.setJobID(jobID);
+
+        for(String nodeID: receiverIDs){
+            RegionStatusResponse regionStatusResponse = new RegionStatusResponse();
+
+            if(nodeID.equals(config.getMe().getId())){
+                regionStatusResponse.setRegionID(successorTable.getDatabase().getRegion().getFullID());
+                regionStatusResponse.setNumberOfPoints(successorTable.getDatabase().getData().size());
+            }else{
+                Node delegator = successorTable.getDelegator(successorTable.getDatabase().getAllNodes().get(nodeID));
+
+                Status status = new Status(getStatusUrl(delegator, nodeID, jobID));                               // Ne saljemo direktno cvoru nego delegatoru
+
+                regionStatusResponse = status.execute();
+            }
+            statusResponse.getAllJobs().add(regionStatusResponse);
+        }
+
+        return statusResponse;
+    }
+
+    public RegionStatusResponse sendGetMyStatus() {
+        return null;
+    }
 }
+
+
+
+
+
+
+
+
+

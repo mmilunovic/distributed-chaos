@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import rs.raf.javaproject.model.Job;
 import rs.raf.javaproject.model.Point;
+import rs.raf.javaproject.response.RegionStatusResponse;
 import rs.raf.javaproject.response.ResultResponse;
 import rs.raf.javaproject.response.StatusResponse;
 import rs.raf.javaproject.service.JobService;
@@ -31,11 +32,11 @@ public class JobController {
         return service.status(jobID);
     }
 
-    @GetMapping("/status/{jobID}/{regionID}")
+/*    @GetMapping("/status/{jobID}/{regionID}")
     @ResponseBody
-    public StatusResponse status(@PathVariable String jobID, @PathVariable String regionID){
-        return service.status(jobID, regionID);
-    }
+    public RegionStatusResponse status(@PathVariable String jobID, @PathVariable String regionID){
+        return service.myStatus(jobID, regionID);
+    }*/
 
     @PutMapping("/start")
     public void start(@RequestBody Job job){
