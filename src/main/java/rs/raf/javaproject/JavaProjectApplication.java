@@ -5,31 +5,34 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import rs.raf.javaproject.config.MyConfig;
-import rs.raf.javaproject.model.Job;
-import rs.raf.javaproject.model.Node;
-import rs.raf.javaproject.model.Point;
-import rs.raf.javaproject.model.SuccessorTable;
+import rs.raf.javaproject.model.*;
 import rs.raf.javaproject.repository.Database;
 import rs.raf.javaproject.service.MessageService;
 import rs.raf.javaproject.service.NodeService;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
 @SpringBootApplication
-//@EnableScheduling
+@EnableScheduling
 public class JavaProjectApplication {
 	@Autowired
 	private MyConfig config;
 
 	@Autowired
 	private MessageService messageService;
+
 	@Autowired
 	private Database databese;
+
 	@Autowired
     private SuccessorTable successorTable;
+
+	@Autowired
+    private PredecessorTable predecessorTable;
 
 	@Autowired
 	private NodeService nodeService;
@@ -42,6 +45,7 @@ public class JavaProjectApplication {
 	public void init() {
 
         Node me = new Node(config.getIp(), config.getPort());
+
         config.setMe(me);
         databese.getAllNodes().put(config.getMe().getId(), config.getMe());
         databese.setFractalMap(new HashMap<>());
@@ -64,21 +68,15 @@ public class JavaProjectApplication {
             }
             // TODO: Treba da uzme sve jobove
 
+            predecessorTable.reconstructTable();
+            successorTable.reconstructTable();
+
             messageService.sendBootstrapNew();
 
-            Node predecessor = databese.getPredecessor();
-            System.out.println("Pre mene:" + predecessor.getId());
-            // TODO: ako ima jedan cvor
-            if (predecessor != null) {
-                messageService.sendNewNode(predecessor, me);
-            }
-
-
-            System.out.println("Koristio sam " + node + " za ukljucenje u mrezu");
+            messageService.sendNewNode(me);
 
         }
 
-        successorTable.reconstructTable();
 
         Job job = new Job();
         job.setId("job1");
@@ -93,4 +91,6 @@ public class JavaProjectApplication {
 
         nodeService.restructure();
     }
+
+
 }

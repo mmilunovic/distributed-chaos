@@ -15,6 +15,7 @@ import rs.raf.javaproject.requests.job.NewJob;
 import rs.raf.javaproject.requests.node.*;
 import rs.raf.javaproject.response.ResultResponse;
 
+import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -73,6 +74,9 @@ public class MessageService {
         return "http://" + receiver + "/api/jobs/" + jobID;
     }
 
+    private String getLeftUrl(Node receiver, Node nodeThatLeft){
+        return "http://" + receiver.getId() + "/api/node/left/" + nodeThatLeft.getId();
+    }
     // TODO: Slanje poruka mora biti asinhrono
 
     public synchronized Node sendBootstrapHail(){
@@ -80,9 +84,15 @@ public class MessageService {
         return hail.execute();
     }
 
-    public synchronized void sendBootstrapLeft(){
-        Left left = new Left(getBootstrapLeftUrl(), config.getMe());
-        left.execute();
+    public synchronized void sendBootstrapLeft(Node node){
+
+        executorPool.submit(new Runnable() {
+            @Override
+            public void run() {
+                Left left = new Left(getBootstrapLeftUrl(), node);
+                left.execute();
+            }
+        });
     }
 
     public synchronized void sendBootstrapNew(){
@@ -95,24 +105,40 @@ public class MessageService {
         });
     }
 
+
     public synchronized Collection<Node> sendGetAllNodes(Node node){
         AllNodes allNodes = new AllNodes(getAllNodesUrl(node));
         return allNodes.execute();
     }
 
     public synchronized Boolean sendPing(Node posrednik, Node destinacija, Integer timeout){
+        System.out.println(config.getMe().getId() + " pinguje " + destinacija.getId() );
         Ping ping = new Ping(getPingNodesUrl(posrednik, destinacija), timeout);
         return ping.execute();
     }
 
-    public synchronized void sendNewNode(Node receiver, Node newNode){
-        executorPool.submit(new Runnable() {
-            @Override
-            public void run() {
-                NotifyNewNode notifyNewNode = new NotifyNewNode(getNewNodeUrl(receiver, newNode));
-                notifyNewNode.execute();
-            }
-        });
+    public synchronized void sendNewNode(Node newNode){
+
+        for(Node node: successorTable.broadcastingNodes()){
+            executorPool.submit(new Runnable() {
+                @Override
+                public void run() {
+                    NotifyNewNode notifyNewNode = new NotifyNewNode(getNewNodeUrl(node, newNode));
+                    notifyNewNode.execute();
+                }
+            });
+        }
+
+        for(Node node: predecessorTable.broadcastingNodes()){
+            executorPool.submit(new Runnable() {
+                @Override
+                public void run() {
+                    NotifyNewNode notifyNewNode = new NotifyNewNode(getNewNodeUrl(node, newNode));
+                    notifyNewNode.execute();
+                }
+            });
+        }
+
 
     }
 
@@ -151,5 +177,22 @@ public class MessageService {
         }
 
         return resultResponse;
+    }
+
+    public void broadcastLeaveMessage(Node nodeThatLeft){
+        for (Node node: successorTable.broadcastingNodes()){
+            executorPool.submit(new Runnable() {
+                @Override
+                public void run() {
+                    NodeLeft left = new NodeLeft(getLeftUrl(node, nodeThatLeft));
+                    left.execute();
+                }
+            });
+        }
+    }
+
+    @PreDestroy
+    public void leave(){
+        sendBootstrapLeft(config.getMe());
     }
 }

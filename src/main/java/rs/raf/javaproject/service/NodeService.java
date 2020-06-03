@@ -18,6 +18,8 @@ public class NodeService {
 
     @Autowired
     private SuccessorTable successorTable;
+    @Autowired
+    private PredecessorTable predecessorTable;
 
     private JobExecution jobExecution;
 
@@ -37,41 +39,53 @@ public class NodeService {
         if(database.getInfo().getAddress().equals(nodeID)){
             return true;
         }else{
-            // TODO: Posaljem kome treba?
-            System.out.println("Nisam ja, saljem dalje");
+            Boolean pingResult = messageService.sendPing(database.getAllNodes().get(nodeID), database.getAllNodes().get(nodeID), 1);
+
+            if(pingResult == null){
+                return false;
+            }
+            return pingResult;
+
         }
-        return true;
     }
 
     public void quit(){
     }
 
     public void left(String nodeID){
-        // TODO: Posalji sledbeniku poruku koristeci /api/node/left{nodeID}
-        // TODO: Obavesti bootstrap da je cvor nesta sa /api/bootstrap/left
+        // TODO: Obavesti bootstrap da je cvor nesta sa /api/bootstrap/left - fix, ovo mozda nije potrebno
+        // TODO: Treba preuzeti backup-e ukoliko je to potrebno
+        Node nodeThatLeft = database.getAllNodes().get(nodeID);
 
-        database.getAllNodes().remove(nodeID);
+        System.out.println(database.getInfo().getId() + " je dobio poruku da je " + nodeID + " crko " + nodeThatLeft);
+        if(nodeThatLeft != null) {
+            database.getAllNodes().remove(nodeID);
+            successorTable.reconstructTable();
+            predecessorTable.reconstructTable();
 
-        //restructure();
+            messageService.broadcastLeaveMessage(nodeThatLeft);
+
+            //restructure();
+        }
+
     }
 
     public void newNode(String nodeID){
 
-        Node newNode = new Node(nodeID);
+        if(!database.getAllNodes().containsKey(nodeID)){
+            Node newNode = new Node(nodeID);
 
-        System.out.println(database.getInfo() + " prima poruku o cvoru " + newNode);
-        database.getAllNodes().put(newNode.getId(), newNode);
+            database.getAllNodes().put(newNode.getId(), newNode);
 
-        // Ako ja dobijem poruku da sam se ja ukljucio u mrezu, to znaci da su svi obavesteni
-        if(database.getInfo().equals(newNode)){
-            return;
+            /// BITNO: NE MENJATI REDOSLED
+            successorTable.reconstructTable();
+            messageService.sendNewNode(newNode);
+
+            //restructure();
         }
 
-        /// BITNO: NE MENJATI REDOSLED
-        successorTable.reconstructTable();
-        messageService.sendNewNode(database.getPredecessor(), newNode);
 
-        //restructure();
+
     }
 
     public void putBackup(BackupInfo backupInfo) {

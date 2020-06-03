@@ -12,21 +12,21 @@ public class Left extends ARequest<Void> {
 
     public Left(String url, Node node){
         super(url);
-
-       try {
+        System.out.println(url);
+        try {
            var body = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(node);
 
            RequestBody requestBody = RequestBody.create(JSON, body);
 
            request = new Request.Builder()
                    .url(url)
-                   .get()
+                   .post(requestBody)
                    .build();
            returnClass = new TypeReference<Void>() {};
 
-       }catch (JsonProcessingException e) {
+        }catch (JsonProcessingException e) {
            e.printStackTrace();
-       }
+        }
 
     }
 }
