@@ -38,7 +38,7 @@ public class JavaProjectApplication {
 	private NodeService nodeService;
 
 	public static void main(String[] args) {
-		SpringApplication.run(JavaProjectApplication.class, args);
+	    SpringApplication.run(JavaProjectApplication.class, args);
 	}
 
 	@PostConstruct
