@@ -72,8 +72,8 @@ public class MessageService {
         return  "http://" + receiver.getId() + "/api/jobs/start";
     }
 
-    private String getMyWorkUrl(String receiver, String jobID){
-        return "http://" + receiver + "/api/jobs/" + jobID;
+    private String getMyWorkUrl(String receiver, String forWho, String jobID){
+        return "http://" + receiver + "/api/delegate/" + forWho + "/jobs/" + jobID;
     }
 
     private String getLeftUrl(Node receiver, Node nodeThatLeft){
@@ -115,7 +115,6 @@ public class MessageService {
     }
 
     public synchronized Boolean sendPing(Node posrednik, Node destinacija, Integer timeout){
-        System.out.println(config.getMe().getId() + " pinguje " + destinacija.getId() );
         Ping ping = new Ping(getPingNodesUrl(posrednik, destinacija), timeout);
         return ping.execute();
     }
@@ -176,14 +175,14 @@ public class MessageService {
             if(nodeID.equals(config.getMe().getId())){
 
                 // Salje sebi ukoliko je on na tom job-u
-                MyResult myResult = new MyResult(getMyWorkUrl(nodeID, jobID));
+                MyResult myResult = new MyResult(getMyWorkUrl(nodeID, nodeID, jobID));
                 resultResponse.getData().addAll(myResult.execute());
             }else{
                 // TODO: Ovako dohvatim cvor koji je najblizi onome sto mi treba tj nodeID-u
                 // TODO: Sta ako i dalje ne mogu da ga dohvatim?? Treba da ide neka nova poruka za prosledjivanje ovoga samo...
                 Node delegator = successorTable.getDelegator(successorTable.getDatabase().getAllNodes().get(nodeID));
 
-                MyResult myResult = new MyResult(getMyWorkUrl(delegator.getId(), jobID));                               // Ne saljemo direktno cvoru nego delegatoru
+                MyResult myResult = new MyResult(getMyWorkUrl(delegator.getId(), nodeID, jobID));                               // Ne saljemo direktno cvoru nego delegatoru
                 // Ako nam je cvor u successor tabeli vratice njega
                 resultResponse.getData().addAll(myResult.execute());
             }

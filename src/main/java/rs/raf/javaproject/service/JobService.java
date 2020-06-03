@@ -59,7 +59,7 @@ public class JobService {
     public ResultResponse result(String jobID){
         List<String> receiverIDs = RegionUtil.getAllJobNodeIDs(database.getAllJobs().get(jobID));
 
-        System.out.println(receiverIDs);
+        System.out.println(database.getInfo().getId() + " uzima podatke od " + receiverIDs);
         ResultResponse resultResponse = messageService.sendGetResult(jobID, receiverIDs);
 
         drawResult(resultResponse);
@@ -78,15 +78,25 @@ public class JobService {
         return resultResponse;
     }
 
-    public Collection<Point> myWork(String jobID){
+    public Collection<Point> myWork(String nodeID, String jobID){
         Set<Point> myResult = new HashSet<>();
+        if(nodeID.equals(database.getInfo().getId())){
+            // TODO: Zasto ovo
+            if(database.getInfo().getMyRegion() == null)
+                return new ArrayList<>();
 
-        if(database.getInfo().getMyRegion() == null)
-            return new ArrayList<>();
+            if(database.getInfo().getMyRegion().getJob().getId().equals(jobID))
+                myResult.addAll(database.getData());
 
-        if(database.getInfo().getMyRegion().getJob().getId().equals(jobID))
-            myResult.addAll(database.getData());
-        // TODO: Ovde treba da prosledim poruku dalje ukoliko ja nemam taj job?
+
+        }else{
+            List<String> recepient = new ArrayList<>();
+            recepient.add(nodeID);
+
+            ResultResponse resultResponse = messageService.sendGetResult(jobID, recepient);
+
+            myResult.addAll(resultResponse.getData());
+        }
 
         for(BackupInfo backupInfo : database.getBackups().values()){
             if(backupInfo.getJobID().equals(jobID)){
@@ -94,6 +104,7 @@ public class JobService {
             }
         }
 
+        System.out.println(database.getInfo().getId() + " vraca " + myResult);
         return myResult;
     }
 

@@ -54,11 +54,7 @@ public class JobController {
         return service.result(jobID, regionID);
     }
 
-    @GetMapping("/{jobID}")
-    @ResponseBody
-    public Collection<Point> myWork(@PathVariable String jobID){
-        return service.myWork(jobID);
-    }
+
 
     @PostMapping("/stopAll/{jobID}")
     public void stopAll(@PathVariable String jobID){
