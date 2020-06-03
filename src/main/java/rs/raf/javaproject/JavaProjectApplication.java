@@ -66,7 +66,6 @@ public class JavaProjectApplication {
             for(Job job : allJobsInfo){
                 databese.getAllJobs().put(job.getId(), job);
             }
-            // TODO: Treba da uzme sve jobove
 
             predecessorTable.reconstructTable();
             successorTable.reconstructTable();
@@ -82,7 +81,7 @@ public class JavaProjectApplication {
         job.setId("job1");
         job.setHeight(100);
         job.setWidth(100);
-        job.setProportion(0.3);
+        job.setProportion(0.5);
         job.getStartingPoints().add(new Point(25.0,25.0));
         job.getStartingPoints().add(new Point(75.0,25.0));
         job.getStartingPoints().add(new Point(50.0,75.0));

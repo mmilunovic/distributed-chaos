@@ -52,8 +52,8 @@ public class NodeController {
     }
 
     @PostMapping("/backup")
-    public Boolean saveBackup(@RequestBody BackupInfo backupInfo){
-        return service.saveBackup(backupInfo);
+    public void saveBackup(@RequestBody BackupInfo backupInfo){
+        service.saveBackup(backupInfo);
     }
 
     @GetMapping("/backup/{jobID}/{regionID}")

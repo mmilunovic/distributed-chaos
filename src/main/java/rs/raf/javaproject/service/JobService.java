@@ -59,6 +59,7 @@ public class JobService {
     public ResultResponse result(String jobID){
         List<String> receiverIDs = RegionUtil.getAllJobNodeIDs(database.getAllJobs().get(jobID));
 
+        System.out.println(receiverIDs);
         ResultResponse resultResponse = messageService.sendGetResult(jobID, receiverIDs);
 
         drawResult(resultResponse);
@@ -93,7 +94,7 @@ public class JobService {
             }
         }
 
-            return myResult;
+        return myResult;
     }
 
     public void stopAll(String jobID){

@@ -173,13 +173,22 @@ public class MessageService {
 
         for(String nodeID: recipients){
 
-            // TODO: Ovako dohvatim cvor koji je najblizi onome sto mi treba tj nodeID-u
-            // TODO: Sta ako i dalje ne mogu da ga dohvatim?? Treba da ide neka nova poruka za prosledjivanje ovoga samo...
-            Node delegator = successorTable.getDelegator(successorTable.getDatabase().getAllNodes().get(nodeID));
+            if(nodeID.equals(config.getMe().getId())){
 
-            MyResult myResult = new MyResult(getMyWorkUrl(delegator.getId(), jobID));                               // Ne saljemo direktno cvoru nego delegatoru
-                                                                                                                    // Ako nam je cvor u successor tabeli vratice njega
-            resultResponse.getData().addAll(myResult.execute());
+                // Salje sebi ukoliko je on na tom job-u
+                MyResult myResult = new MyResult(getMyWorkUrl(nodeID, jobID));
+                resultResponse.getData().addAll(myResult.execute());
+            }else{
+                // TODO: Ovako dohvatim cvor koji je najblizi onome sto mi treba tj nodeID-u
+                // TODO: Sta ako i dalje ne mogu da ga dohvatim?? Treba da ide neka nova poruka za prosledjivanje ovoga samo...
+                Node delegator = successorTable.getDelegator(successorTable.getDatabase().getAllNodes().get(nodeID));
+
+                MyResult myResult = new MyResult(getMyWorkUrl(delegator.getId(), jobID));                               // Ne saljemo direktno cvoru nego delegatoru
+                // Ako nam je cvor u successor tabeli vratice njega
+                resultResponse.getData().addAll(myResult.execute());
+            }
+
+
         }
 
         return resultResponse;

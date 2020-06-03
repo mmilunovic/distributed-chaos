@@ -51,6 +51,8 @@ public class NodeService {
 
     public void quit(){
         // TODO
+
+
     }
 
     public void left(String nodeID){
@@ -66,7 +68,7 @@ public class NodeService {
 
             messageService.broadcastLeaveMessage(nodeThatLeft);
 
-            //restructure();
+            restructure();
         }
 
     }
@@ -80,9 +82,10 @@ public class NodeService {
 
             /// BITNO: NE MENJATI REDOSLED
             successorTable.reconstructTable();
+            predecessorTable.reconstructTable();
             messageService.sendNewNode(newNode);
 
-            //restructure();
+            restructure();
         }
     }
 
@@ -279,9 +282,9 @@ public class NodeService {
         };
     }
 
-    public Boolean saveBackup(BackupInfo backupInfo) {
+    public void saveBackup(BackupInfo backupInfo) {
+        System.out.println(backupInfo);
         database.getBackups().put(backupInfo.getID(), backupInfo);
-        return true;
     }
 
     public BackupInfo getBackup(String jobID, String regionID) {
