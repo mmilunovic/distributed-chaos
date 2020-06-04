@@ -52,7 +52,6 @@ public class NodeService {
     public void quit(){
         // TODO
 
-
     }
 
     public void left(String nodeID){
@@ -60,9 +59,10 @@ public class NodeService {
         // TODO: Treba preuzeti backup-e ukoliko je to potrebno
         Node nodeThatLeft = database.getAllNodes().get(nodeID);
 
-        System.out.println(database.getInfo().getId() + " je dobio poruku da je " + nodeID + " crko " + nodeThatLeft);
         if(nodeThatLeft != null) {
-            database.getAllNodes().remove(nodeID);
+            synchronized (database.getInfo()) {
+                database.getAllNodes().remove(nodeID);
+            }
             successorTable.reconstructTable();
             predecessorTable.reconstructTable();
 
@@ -78,8 +78,9 @@ public class NodeService {
         if(!database.getAllNodes().containsKey(nodeID)){
             Node newNode = new Node(nodeID);
 
-            database.getAllNodes().put(newNode.getId(), newNode);
-
+            synchronized (database.getInfo()) {
+                database.getAllNodes().put(newNode.getId(), newNode);
+            }
             /// BITNO: NE MENJATI REDOSLED
             successorTable.reconstructTable();
             predecessorTable.reconstructTable();
@@ -89,48 +90,48 @@ public class NodeService {
         }
     }
 
-    public void putBackup(BackupInfo backupInfo) {
+    private void putBackup(BackupInfo backupInfo) {
         database.getBackups().put(backupInfo.getID(), backupInfo);
     }
 
     public void restructure() {
+        synchronized (database.getInfo()) {
+            if (this.jobExecution == null) {
+                this.jobExecution = new JobExecution(this.database, database.getRegion(), new AtomicBoolean(false));
+                Thread t = new Thread(jobExecution);
+                t.start();
+            }
+            this.jobExecution.getPause().set(true);
 
-        if (this.jobExecution == null) {
-            this.jobExecution = new JobExecution(this.database, database.getRegion(), new AtomicBoolean(false));
-            Thread t = new Thread(jobExecution);
-            t.start();
-        }
-        this.jobExecution.getPause().set(true);
+            List<Point> data = this.database.getData();
+            // AKo je radio neki region, onda rezultat sacuva kao backup
+            if (database.getInfo().getMyRegion() != null) {
+                BackupInfo backupInfo = new BackupInfo();
+                backupInfo.setData(data);
+                backupInfo.setTimestamp(LocalTime.now());
+                backupInfo.setJobID(database.getInfo().getMyRegion().getJob().getId());
+                backupInfo.setRegionID(database.getInfo().getMyRegion().getFullID());
+                this.putBackup(backupInfo);
+            }
 
-        List<Point> data = this.database.getData();
-        // AKo je radio neki region, onda rezultat sacuva kao backup
-        if (database.getInfo().getMyRegion() != null) {
-            BackupInfo backupInfo = new BackupInfo();
-            backupInfo.setData(data);
-            backupInfo.setTimestamp(LocalTime.now());
-            backupInfo.setJobID(database.getInfo().getMyRegion().getJob().getId());
-            backupInfo.setRegionID(database.getInfo().getMyRegion().getFullID());
-            this.putBackup(backupInfo);
-        }
+            this.generateRegions();
 
-        this.generateRegions();
+            data.clear();
+            //if (this.repository.getRegion() != null)
+            //    data.addAll(this.getBackupFromNode(this.repository.getRegion().getFullID()).getData());
 
-        data.clear();
-        //if (this.repository.getRegion() != null)
-        //    data.addAll(this.getBackupFromNode(this.repository.getRegion().getFullID()).getData());
+            if (database.getRegion() != null) {
+                if (database.getData().size() == 0)
+                    database.setTracepoint(new Point(database.getRegion().getJob().getWidth() / 2.0, database.getRegion().getJob().getHeight() / 2.0));
+                else
+                    database.setTracepoint(database.getData().get(database.getData().size() - 1));
 
-        if (database.getRegion() != null) {
-            if (database.getData().size() == 0)
-                database.setTracepoint(new Point(database.getRegion().getJob().getWidth()/2.0, database.getRegion().getJob().getHeight()/2.0));
-            else
-                database.setTracepoint(database.getData().get(database.getData().size() - 1));
-
-            this.jobExecution.setRegion(database.getRegion());
-            this.jobExecution.getPause().set(false);
-        }
+                this.jobExecution.setRegion(database.getRegion());
+                this.jobExecution.getPause().set(false);
+            }
 
 
-        // TODO: uzeti podatke od pred i succ
+            // TODO: uzeti podatke od pred i succ
 /*
         // Treba da se uzme backup od narednog i proslog cvora
         // Na oba cvora saljemo zahtev za te jobove i regione, da bi uzeli i backup-e koje jedni drugom cuvaju
@@ -156,6 +157,7 @@ public class NodeService {
         database.getBackups().put(predecessorInfo.getID(), predecessorInfo);
         */
 
+        }
     }
 
 
@@ -276,12 +278,15 @@ public class NodeService {
         return backupList.get(0);
     }
 
+    // TODO: mislim da ovo vise nije potrebno
     private BackupInfo getBackupDataFromNode(String nodeID) {
         BackupInfo info = null;
         //TODO: ovo resiti zapravo
         return info;
     }
 
+
+    // TODO: mislim da ovo vise nije potrebno
     private String getNextNode(String key) {
         String result = "ZZZZZZZZZZZZZZZZZZZZZ";
         for (Node node : database.getAllNodes().values())
@@ -290,6 +295,7 @@ public class NodeService {
         return result;
     }
 
+    // TODO: mislim da ovo vise nije potrebno
     private String getPrevNode(String key) {
         String result = "";
         for (Node node : database.getAllNodes().values())
@@ -312,13 +318,13 @@ public class NodeService {
     }
 
     public void saveBackup(BackupInfo backupInfo) {
-        System.out.println(backupInfo);
-        database.getBackups().put(backupInfo.getID(), backupInfo);
+        synchronized (database.getInfo()) {
+            database.getBackups().put(backupInfo.getID(), backupInfo);
+        }
     }
 
     public BackupInfo getBackup(String jobID, String regionID) {
-        String backupID = jobID + ":" + regionID;
-        return database.getBackups().get(backupID);
+        return database.getBackups().get(getKeyFromJobAndRegion(jobID, regionID));
     }
 
     public Collection<Job> getAllJobs() {

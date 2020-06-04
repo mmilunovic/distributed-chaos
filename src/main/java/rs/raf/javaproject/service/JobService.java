@@ -11,6 +11,7 @@ import rs.raf.javaproject.response.ResultResponse;
 import rs.raf.javaproject.response.StatusResponse;
 
 import javax.imageio.ImageIO;
+import javax.xml.crypto.Data;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -31,9 +32,14 @@ public class JobService {
     private MessageService messageService;
 
     public Collection<StatusResponse> status(){
+
         Collection<StatusResponse> response = new ArrayList<>();
 
-        for (String jobID: database.getAllJobs().keySet()) {
+        ArrayList<String> jobs = null;
+        synchronized (database.getInfo()) {
+            jobs = new ArrayList<>(database.getAllJobs().keySet());
+        }
+        for (String jobID: jobs) {
             response.add(status(jobID));
         }
 
@@ -41,9 +47,12 @@ public class JobService {
     }
 
     public StatusResponse status(String jobID){
-        List<String> receiverIDs = RegionUtil.getAllJobNodeIDs(database.getAllJobs().get(jobID));
+        List<String> receiverIDs = null;
+        synchronized (database.getInfo()){
+            receiverIDs = RegionUtil.getAllJobNodeIDs(database.getAllJobs().get(jobID));
+        }
 //
-        System.out.println(receiverIDs);
+//        System.out.println(receiverIDs);
 
         StatusResponse statusResponse = messageService.sendGetStatus(jobID, receiverIDs);
 
@@ -51,11 +60,13 @@ public class JobService {
     }
 
     // TODO: Fix
-    public StatusResponse status(String jobID, String regionID){
+    public RegionStatusResponse status(String jobID, String regionID){
         List<String> receiverIDs = RegionUtil.getAllSubregionNodeIDs(database.getAllJobs().get(jobID).getRegions().get(regionID));
 
-
-        System.out.println(database.getInfo().getId() + " uzima podatke od " + receiverIDs);
+        RegionStatusResponse response = new RegionStatusResponse();
+        for (String recever: receiverIDs){
+            RegionStatusResponse regionStatusResponse = myStatus(recever, jobID, regionID);
+        }
 
         return null;
     }
@@ -63,35 +74,59 @@ public class JobService {
 
     public RegionStatusResponse myStatus(String nodeID, String jobID){
         RegionStatusResponse regionStatusResponse = new RegionStatusResponse();
-        System.out.println(database.getInfo().getId() + " dobija status za " + nodeID + " i " + jobID);
 
-        if(nodeID.equals(database.getInfo().getId())){
-            regionStatusResponse.setNodeID(nodeID);
-            regionStatusResponse.setRegionID(database.getRegion().getFullID());
-            regionStatusResponse.setNumberOfPoints(database.getData().size());
-        }else{
-            List<String> recipient = new ArrayList<>();
-            recipient.add(nodeID);
-            regionStatusResponse = messageService.sendGetRegionStatus(jobID, nodeID);
+        synchronized (database.getInfo()) {
+            if (nodeID.equals(database.getInfo().getId())) {
+                regionStatusResponse.setNodeID(nodeID);
+                regionStatusResponse.setRegionID(database.getRegion().getFullID());
+                regionStatusResponse.setNumberOfPoints(database.getData().size());
+            } else {
+                List<String> recipient = new ArrayList<>();
+                recipient.add(nodeID);
+                regionStatusResponse = messageService.sendGetRegionStatus(jobID, nodeID);
+            }
         }
-
         // TODO: Da li ovde treba dodati backupe?
         return regionStatusResponse;
     }
 
+    // TODO ovo ne radi
+    public RegionStatusResponse myStatus(String nodeID, String jobID, String regionID){
+        RegionStatusResponse regionStatusResponse = new RegionStatusResponse();
+        System.out.println(database.getInfo().getId() + " dobija status za " + nodeID + " i " + jobID);
+
+        if(nodeID.equals(database.getInfo().getId())){
+            regionStatusResponse.setNodeID(nodeID);
+            BackupInfo backupInfo = database.getBackups().get(jobID+":"+regionID);
+            regionStatusResponse.setRegionID(database.getRegion().getFullID());
+            regionStatusResponse.setNumberOfPoints(backupInfo.getData().size());
+        }else{
+            List<String> recipient = new ArrayList<>();
+            recipient.add(nodeID);
+            regionStatusResponse = messageService.sendGetRegionStatus(jobID, nodeID, regionID);
+        }
+
+        return regionStatusResponse;
+    }
+
     public void start(Job job){
-        if(!database.getAllJobs().containsKey(job.getId())){
+        synchronized (database.getInfo()) {
+            if (!database.getAllJobs().containsKey(job.getId())) {
 
-            database.getAllJobs().put(job.getId(), job);
+                database.getAllJobs().put(job.getId(), job);
 
-            messageService.broadcastNewJob(job);
+                messageService.broadcastNewJob(job);
 
-            nodeService.restructure();
+                nodeService.restructure();
+            }
         }
     }
 
     public ResultResponse result(String jobID){
-        List<String> receiverIDs = RegionUtil.getAllJobNodeIDs(database.getAllJobs().get(jobID));
+        List<String> receiverIDs = null;
+        synchronized (database.getInfo()){
+            receiverIDs = RegionUtil.getAllJobNodeIDs(database.getAllJobs().get(jobID));
+        }
 
         System.out.println(receiverIDs);
         System.out.println(database.getSuccessor());
@@ -104,9 +139,11 @@ public class JobService {
     }
 
     public ResultResponse result(String jobID, String regionID){
-        List<String> receiverIDs = RegionUtil.getAllSubregionNodeIDs(
-                RegionUtil.getRegionFromID(database.getAllJobs(), jobID, regionID));
-
+        List<String> receiverIDs = null;
+        synchronized (database.getInfo()){
+            receiverIDs = RegionUtil.getAllSubregionNodeIDs(
+                    RegionUtil.getRegionFromID(database.getAllJobs(), jobID, regionID));
+        }
 
         ResultResponse resultResponse = messageService.sendGetResult(jobID, regionID, receiverIDs);
 
@@ -118,68 +155,62 @@ public class JobService {
     public Collection<Point> getRegionResultFromNode(String nodeID, String jobID, String regionID){
         Set<Point> myResult = new HashSet<>();
 
-        System.out.println(database.getInfo().getId() + " prima poruku");
-        if(nodeID.equals(database.getInfo().getId())){
-            // TODO: Zasto ovo, region je jedan null-u samo u rekonstrukciji?
-            // Mozda ako stigne proziv za vreme rekonstrukcije
-            if(database.getInfo().getMyRegion() == null)
-                return new ArrayList<>();
+        synchronized (database.getInfo()) {
+            if (nodeID.equals(database.getInfo().getId())) {
+                if (database.getInfo().getMyRegion() == null)
+                    return new ArrayList<>();
 
-            if(database.getInfo().getMyRegion().getJob().getId().equals(jobID)) {
+                if (database.getInfo().getMyRegion().getJob().getId().equals(jobID)) {
 
-                System.out.println(database.getInfo().getId() + " dodajem svoje podatke");
+                    myResult.addAll(database.getData());
+                }
 
-                myResult.addAll(database.getData());
+            } else {
+                List<String> recepient = new ArrayList<>();
+                recepient.add(nodeID);
+
+                ResultResponse resultResponse = messageService.sendGetResult(jobID, regionID, recepient);
+                myResult.addAll(resultResponse.getData());
             }
 
-        }else{
-            List<String> recepient = new ArrayList<>();
-            recepient.add(nodeID);
-
-            ResultResponse resultResponse = messageService.sendGetResult(jobID, regionID, recepient);
-            myResult.addAll(resultResponse.getData());
-        }
-
-        for(BackupInfo backupInfo : database.getBackups().values()){
-            if(backupInfo.getJobID().equals(jobID) && backupInfo.getRegionID().equals(regionID)){
-                myResult.addAll(backupInfo.getData());                                  // Dodajemo bakcup za taj posao ako ga imamo
+            for (BackupInfo backupInfo : database.getBackups().values()) {
+                if (backupInfo.getJobID().equals(jobID) && backupInfo.getRegionID().equals(regionID)) {
+                    myResult.addAll(backupInfo.getData());                                  // Dodajemo bakcup za taj posao ako ga imamo
+                }
             }
+
         }
 
-        System.out.println(database.getInfo().getId() + " vraca " + myResult);
         return myResult;
     }
     public Collection<Point> getJobResultFromNode(String nodeID, String jobID){
         Set<Point> myResult = new HashSet<>();
 
-        if(nodeID.equals(database.getInfo().getId())){
-            // TODO: Zasto ovo, region je jedan null-u samo u rekonstrukciji?
-            // Mozda ako stigne proziv za vreme rekonstrukcije
-            if(database.getInfo().getMyRegion() == null)
-                return new ArrayList<>();
+        synchronized (database.getInfo()) {
+            if (nodeID.equals(database.getInfo().getId())) {
+                if (database.getInfo().getMyRegion() == null)
+                    return new ArrayList<>();
 
-            if(database.getInfo().getMyRegion().getJob().getId().equals(jobID)) {
-                myResult.addAll(database.getData());
+                if (database.getInfo().getMyRegion().getJob().getId().equals(jobID)) {
+                    myResult.addAll(database.getData());
 
-                System.out.println(database.getInfo().getId() + " dodajem svoje podatke");
+                }
+
+            } else {
+                List<String> recepient = new ArrayList<>();
+                recepient.add(nodeID);
+
+                ResultResponse resultResponse = messageService.sendGetResult(jobID, recepient);
+                myResult.addAll(resultResponse.getData());
             }
 
-
-        }else{
-            List<String> recepient = new ArrayList<>();
-            recepient.add(nodeID);
-
-            ResultResponse resultResponse = messageService.sendGetResult(jobID, recepient);
-            myResult.addAll(resultResponse.getData());
-        }
-
-        for(BackupInfo backupInfo : database.getBackups().values() ){
-            if(backupInfo.getJobID().equals(jobID)){
-                myResult.addAll(backupInfo.getData());                                  // Dodajemo bakcup za taj posao ako ga imamo
+            for (BackupInfo backupInfo : database.getBackups().values()) {
+                if (backupInfo.getJobID().equals(jobID)) {
+                    myResult.addAll(backupInfo.getData());                                  // Dodajemo bakcup za taj posao ako ga imamo
+                }
             }
-        }
 
-        System.out.println(database.getInfo().getId() + " vraca " + myResult);
+        }
         return myResult;
     }
 
@@ -191,7 +222,9 @@ public class JobService {
     }
 
     public void deleteJob(String jobID){
-        database.getAllJobs().remove(jobID);
+        synchronized (database.getInfo()) {
+            database.getAllJobs().remove(jobID);
+        }
         nodeService.restructure();
     }
 

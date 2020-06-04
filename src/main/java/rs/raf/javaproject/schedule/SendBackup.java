@@ -24,20 +24,23 @@ public class SendBackup{
 
     @Scheduled(fixedDelay = 5000, initialDelay = 1000)
     private void sendBackup(){
-        Node predecessor = database.getPredecessor();
-        Node successor = database.getSuccessor();
 
-        String jobID = database.getRegion().getJob().getId();
-        String regionID = database.getRegion().getFullID();
+        if(database.getRegion() != null) {
+            Node predecessor = database.getPredecessor();
+            Node successor = database.getSuccessor();
 
-        List<Point> data = database.getData();
+            String jobID = database.getRegion().getJob().getId();
+            String regionID = database.getRegion().getFullID();
 
-        BackupInfo newBackup = new BackupInfo(jobID, regionID, data, LocalTime.now());
+            List<Point> data = database.getData();
 
-        database.getBackups().put(newBackup.getID(), newBackup);
+            BackupInfo newBackup = new BackupInfo(jobID, regionID, data, LocalTime.now());
 
-        messageService.sendSaveBackup(successor, newBackup);
-        messageService.sendSaveBackup(predecessor, newBackup);
+            database.getBackups().put(newBackup.getID(), newBackup);
+
+            messageService.sendSaveBackup(successor, newBackup);
+            messageService.sendSaveBackup(predecessor, newBackup);
+        }
     }
 
 }

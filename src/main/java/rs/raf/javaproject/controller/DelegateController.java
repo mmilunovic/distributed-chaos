@@ -34,4 +34,10 @@ public class DelegateController {
     public RegionStatusResponse myStatus(@PathVariable String nodeID, @PathVariable String jobID){
         return jobService.myStatus(nodeID, jobID);
     }
+
+    @GetMapping("/status/{jobID}/{regionID}")
+    @ResponseBody
+    public RegionStatusResponse status(@PathVariable String nodeID, @PathVariable String jobID, @PathVariable String regionID){
+        return jobService.myStatus(nodeID, jobID, regionID);
+    }
 }

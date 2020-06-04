@@ -90,10 +90,14 @@ public class MessageService {
         return "http://" + receiver.getId() + "/api/delegate/" + forWho + "/status/" + jobID;
     }
 
+
+    private String getStatusUrl(Node receiver, String forWho, String jobID, String regionID){
+        return "http://" + receiver.getId() + "/api/delegate/" + forWho + "/status/" + jobID + "/" + regionID;
+    }
+
     private String getGetBackupUrl(String nodeID, String jobID, String regionID) {
         return "http://" + nodeID + "/api/node/" + jobID + "/" + regionID;
     }
-    // TODO: Slanje poruka mora biti asinhrono
 
 
     public Node sendBootstrapHail(){
@@ -282,6 +286,14 @@ public class MessageService {
 
         Node delegator = successorTable.getDelegator(new Node(nodeID));
         Status status = new Status(getStatusUrl(delegator, nodeID, jobID));                               // Ne saljemo direktno cvoru nego delegatoru
+
+        return status.execute();
+    }
+
+    public RegionStatusResponse sendGetRegionStatus(String jobID, String nodeID, String regionID) {
+
+        Node delegator = successorTable.getDelegator(new Node(nodeID));
+        Status status = new Status(getStatusUrl(delegator, nodeID, jobID, regionID));                               // Ne saljemo direktno cvoru nego delegatoru
 
         return status.execute();
     }
