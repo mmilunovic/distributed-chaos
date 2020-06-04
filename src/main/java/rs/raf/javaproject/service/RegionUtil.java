@@ -10,11 +10,7 @@ public class RegionUtil {
 
     public static Region getRegionFromID(Map<String, Job> jobs, String jobID, String regionID) {
         Job job = jobs.get(jobID);
-        Region region = job.getRegions().get(regionID.substring(0,1));
-        for (int i = 1; i < regionID.length(); i++) {
-            region = region.getChildren().get(regionID.substring(i, i+1));
-        }
-        return region;
+        return getRegionFromID(job, regionID);
     }
 
     public static List<String> getAllJobNodeIDs(Job job) {

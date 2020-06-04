@@ -119,7 +119,7 @@ public class NodeService {
             // AKo je radio neki region, onda rezultat sacuva kao backup
             if (database.getInfo().getMyRegion() != null) {
                 BackupInfo backupInfo = new BackupInfo();
-                backupInfo.setData(data);
+                backupInfo.setData(new ArrayList<Point>(data));
                 backupInfo.setTimestamp(LocalTime.now());
                 backupInfo.setJobID(database.getInfo().getMyRegion().getJob().getId());
                 backupInfo.setRegionID(database.getInfo().getMyRegion().getFullID());
@@ -270,8 +270,26 @@ public class NodeService {
         }
 
 
-        if (region.getFullID() != database.getRegion().getFullID()) {
-            //TODO: ovde treba da se uzme database.getRegion().getStartingPoints(), npr. preko awt Polygon
+        if (!region.getFullID().equals(database.getRegion().getFullID())) {
+            int len = database.getRegion().getStartingPoints().size();
+            int[] xPoints = new int[len];
+            int[] yPoints = new int[len];
+            Point[] pointsArr = new Point[len];
+
+            for (int i = 0; i < len; i++) {
+                Point p = database.getRegion().getStartingPoints().get(i);
+                xPoints[i] = p.getX().intValue();
+                yPoints[i] = p.getY().intValue();
+            }
+            Polygon poly = new Polygon(xPoints, yPoints, len);
+
+            HashSet<Point> pomocniPoints = new HashSet<>(points);
+            for (Point p : pomocniPoints)
+                if (!poly.contains(p.getX(), p.getY()))
+                    points.remove(p);
+            if (points.size() == 0 && pomocniPoints.size() > 10) {
+                System.out.println("Something's wrong with backup");
+            }
         }
         return points;
     }
@@ -311,6 +329,9 @@ public class NodeService {
     }
 
     public BackupInfo getBackup(String nodeID, String jobID, String regionID) {
+        if (!database.getAllNodes().containsKey(nodeID))
+            return null;
+
         if(database.getInfo().getId().equals(nodeID)) {
             return database.getBackups().get(getKeyFromJobAndRegion(jobID, regionID));
         }else{

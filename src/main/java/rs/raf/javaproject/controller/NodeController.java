@@ -43,7 +43,7 @@ public class NodeController implements ApplicationContextAware {
         return service.ping(nodeID);
     }
 
-    @PostMapping("/quit")
+    @GetMapping("/quit")
     public void quit(){
         service.quit();
         return;

@@ -35,7 +35,7 @@ public class JobExecution implements Runnable {
     }
 
     private void executeJob(){
-        sleep(1000);
+        sleep(100);
         Point tracepoint = database.getTracepoint();
         Double proportion = region.getJob().getProportion();
         Point randomPoint = randomStartingPoint();

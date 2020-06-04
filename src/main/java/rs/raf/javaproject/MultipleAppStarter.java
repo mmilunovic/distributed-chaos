@@ -14,6 +14,12 @@ public class MultipleAppStarter {
                 String[] springArgs = new String[1];
                 springArgs[0] = "--spring.config.location=classpath:application"+i+".properties";
                 JavaProjectApplication.main(springArgs);
+                //keep this for testing
+                /*if (i == 9)
+                {
+                    Thread.sleep(20000);
+                    i = 9;
+                }*/
             }
     }
 
