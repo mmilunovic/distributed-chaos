@@ -35,6 +35,32 @@ public class RegionUtil {
 
         return result;
     }
+
+    /** key - nodeID
+     * value - regionID
+     */
+    public static Map<String, String> getAllJobNodeAndRegionIDs(Job job) {
+        Map<String, String> result = new HashMap<>();
+        for (Region child : job.getRegions().values())
+            result.putAll(getAllSubregionNodeAndJobIDs(child));
+
+        return result;
+    }
+
+    /** key - nodeID
+     * value - regionID
+     */
+    public static Map<String, String> getAllSubregionNodeAndJobIDs(Region region) {
+        if (region.getNode() != null)
+            return Collections.singletonMap(region.getNode().getId(), region.getFullID());
+
+        Map<String, String> result = new HashMap<>();
+        for (Region child : region.getChildren().values())
+            result.putAll(getAllSubregionNodeAndJobIDs(child));
+
+        return result;
+    }
+
     public static Region getRegionFromID(Job job, String id) {
         if (id.length() == 0)
             return job.getRegions().get("");
