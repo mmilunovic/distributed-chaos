@@ -36,6 +36,7 @@ class SuccessorTable:
             self.table.append(tmpList[succPos])
             step *= 2
 
+        print("Successor table: ", [e.getID() for e in self.table])
 
     def getBroadcastingNodes(self):
         broadcastingNodes = []

@@ -38,6 +38,8 @@ class PredecessorTable:
             self.table.append(tmpList[succPos])
             step *= 2
 
+        print("Predecessor table: ", [e.getID() for e in self.table])
+
 
     def getBroadcastingNodes(self):
         broadcastingNodes = []

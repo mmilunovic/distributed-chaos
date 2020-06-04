@@ -60,8 +60,6 @@ class MessageService:
 
     def sendNewNode(self, newNode):
 
-        print("Saljem da sam usao")
-
         for node in self.successorTable.getBroadcastingNodes():
             # TODO: Thread jebem ti lebac Milose
             notifyNewNodeResponse = requests.get("http://" + node.getID() +
