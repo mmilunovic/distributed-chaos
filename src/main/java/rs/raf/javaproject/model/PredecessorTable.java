@@ -7,6 +7,8 @@ import rs.raf.javaproject.repository.Database;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.TreeSet;
 
 @Data
 @Component
@@ -52,13 +54,38 @@ public class PredecessorTable {
 
         if(table.size() == 0) return null; // Cisto provere radi
 
-        Node ret = table.get(0);
-
-        for(Node tableNode : table){
-            if(node.compareTo(tableNode) == 1){
-                break;
+        Node ret = null;
+        TreeSet<Node> set = new TreeSet<>(new Comparator<Node>() {
+            @Override
+            public int compare(Node o1, Node o2) {
+                return -o1.compareTo(o2);
             }
-            ret = tableNode;
+        });
+
+        set.addAll(table);
+
+        if(set.contains(node)){
+            return node;
+        }
+
+        set.add(node);
+
+        Node prev = null;
+        int i = 0;
+        for(Node tableNode: set){
+            if(tableNode.equals(node) && i == 0){
+                return set.last();
+            }
+
+            if(tableNode.equals(node) && i == set.size()){
+                return  set.first();
+            }
+
+            if(tableNode.equals(node)){
+                return prev;
+            }
+            prev  = tableNode;
+            i++;
         }
 
         return ret;
