@@ -1,19 +1,22 @@
+import json
+from json import JSONEncoder
 
 class Node:
 
-    def __init__(self):
-        self.ip = None
-        self.port = None
-        self.region = None
+    ip = ""
+    port = 0
+    region = None
 
-    def __int__(self, ip, port):
+    def __init__(self, ip, port):
         self.ip = ip
         self.port = port
 
-    def __init__(self, id):
-        self.ip, self.port = id.split(":")
+    def __str__(self):
+        return self.ip + ":" + self.port
 
     def getID(self):
         return self.ip + ":" + self.port
 
-    
+class NodeEncoder(JSONEncoder):
+    def default(self, o):
+        return o.__dict__

@@ -2,8 +2,6 @@ from flask import Flask
 from controller.NodeController import app
 from service import JobService
 
-#app = Flask(__name__, template_folder="./templates")
-
 baseRoute = "/api/jobs"
 
 @app.route(baseRoute + "/status", methods = ["GET"])

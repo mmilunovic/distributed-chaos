@@ -1,17 +1,27 @@
-from flask import Flask
-from service import NodeService
+from flask import Flask, jsonify
+from service.NodeService import NodeService
+import json
 
-app = Flask(__name__, template_folder="./templates")
+app = Flask(__name__)
 
 baseRoute = "/api/node"
+nodeService = NodeService.getInstance()
 
 @app.route(baseRoute + "/info", methods = ["GET"])
 def getInfo():
-    pass
+    try:
+        ret = nodeService.getInfo()
+    except Exception as e:
+        return e
+    return jsonify(ip=ret.ip, port=ret.port)
 
 @app.route(baseRoute + "/allNodes", methods = ["GET"])
 def getAllNodes():
-    pass
+    try:
+        ret = nodeService.getAllNodes()
+        return jsonify({'allNodes': ret})
+    except Exception as e:
+        return e
 
 @app.route(baseRoute + "/ping/<string:nodeID>", methods = ["GET"])
 def ping(nodeID):
