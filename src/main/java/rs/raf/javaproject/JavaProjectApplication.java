@@ -57,7 +57,6 @@ public class JavaProjectApplication {
 
         config.setMe(me);
         databese.getAllNodes().put(config.getMe().getId(), config.getMe());
-        databese.setFractalMap(new HashMap<>());
         databese.setData(new ArrayList<>());
         databese.setBackups(new ConcurrentHashMap<>());
 

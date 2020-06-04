@@ -45,8 +45,8 @@ public class NodeController implements ApplicationContextAware {
 
     @PostMapping("/quit")
     public void quit(){
-
-        ((ConfigurableApplicationContext) context).close();
+        service.quit();
+        return;
     }
 
     @Override
