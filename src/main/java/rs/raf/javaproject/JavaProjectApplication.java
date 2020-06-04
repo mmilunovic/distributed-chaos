@@ -43,7 +43,7 @@ public class JavaProjectApplication {
 	private static ConfigurableApplicationContext context;
 
 	public static void main(String[] args) {
-	    SpringApplication.run(JavaProjectApplication.class, args);
+	    context = SpringApplication.run(JavaProjectApplication.class, args);
 	}
 
     public static void exitThread() {
