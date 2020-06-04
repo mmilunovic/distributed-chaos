@@ -80,10 +80,11 @@ public class NodeService {
 
             synchronized (database.getInfo()) {
                 database.getAllNodes().put(newNode.getId(), newNode);
+
+                /// BITNO: NE MENJATI REDOSLED
+                successorTable.reconstructTable();
+                predecessorTable.reconstructTable();
             }
-            /// BITNO: NE MENJATI REDOSLED
-            successorTable.reconstructTable();
-            predecessorTable.reconstructTable();
             messageService.sendNewNode(newNode);
 
             restructure();

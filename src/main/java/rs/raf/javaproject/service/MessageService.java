@@ -282,6 +282,33 @@ public class MessageService {
         return statusResponse;
     }
 
+    public StatusResponse sendGetStatus(String jobID, String regionID, List<String> receiverIDs) {
+
+        StatusResponse statusResponse = new StatusResponse();
+        statusResponse.setJobID(jobID);
+        statusResponse.setSubRegion(regionID);
+
+        for(String nodeID: receiverIDs){
+            RegionStatusResponse regionStatusResponse = new RegionStatusResponse();
+
+            if(nodeID.equals(config.getMe().getId())){
+
+                Status status = new Status(getStatusUrl(config.getMe(), nodeID, jobID, regionID));                               // Ne saljemo direktno cvoru nego delegatoru
+
+                regionStatusResponse = status.execute();
+            }else{
+                Node delegator = successorTable.getDelegator(successorTable.getDatabase().getAllNodes().get(nodeID));
+
+                Status status = new Status(getStatusUrl(delegator, nodeID, jobID, regionID));                               // Ne saljemo direktno cvoru nego delegatoru
+
+                regionStatusResponse = status.execute();
+            }
+            statusResponse.getAllJobs().add(regionStatusResponse);
+        }
+
+        return statusResponse;
+    }
+
     public RegionStatusResponse sendGetRegionStatus(String jobID, String nodeID) {
 
         Node delegator = successorTable.getDelegator(new Node(nodeID));

@@ -32,11 +32,11 @@ public class JobController {
         return service.status(jobID);
     }
 
-//    @GetMapping("/status/{jobID}/{regionID}")
-//    @ResponseBody
-//    public RegionStatusResponse status(@PathVariable String jobID, @PathVariable String regionID){
-//        return service.status(jobID, regionID);
-//    }
+    @GetMapping("/status/{jobID}/{regionID}")
+    @ResponseBody
+    public StatusResponse status(@PathVariable String jobID, @PathVariable String regionID){
+        return service.status(jobID, regionID);
+    }
 
     @PutMapping("/start")
     public void start(@RequestBody Job job){

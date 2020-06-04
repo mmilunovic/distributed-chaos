@@ -60,15 +60,14 @@ public class JobService {
     }
 
     // TODO: Fix
-    public RegionStatusResponse status(String jobID, String regionID){
-        List<String> receiverIDs = RegionUtil.getAllSubregionNodeIDs(database.getAllJobs().get(jobID).getRegions().get(regionID));
-
-        RegionStatusResponse response = new RegionStatusResponse();
-        for (String recever: receiverIDs){
-            RegionStatusResponse regionStatusResponse = myStatus(recever, jobID, regionID);
+    public StatusResponse status(String jobID, String regionID){
+        List<String> receiverIDs = null;
+        synchronized (database.getInfo()) {
+            receiverIDs = RegionUtil.getAllSubregionNodeIDs(RegionUtil.getRegionFromID(database.getAllJobs().get(jobID), regionID));
         }
+        StatusResponse statusResponse = messageService.sendGetStatus(jobID, regionID, receiverIDs);
 
-        return null;
+        return statusResponse;
     }
 
 
@@ -95,15 +94,17 @@ public class JobService {
         RegionStatusResponse regionStatusResponse = new RegionStatusResponse();
         System.out.println(database.getInfo().getId() + " dobija status za " + nodeID + " i " + jobID);
 
-        if(nodeID.equals(database.getInfo().getId())){
-            regionStatusResponse.setNodeID(nodeID);
-            BackupInfo backupInfo = database.getBackups().get(jobID+":"+regionID);
-            regionStatusResponse.setRegionID(database.getRegion().getFullID());
-            regionStatusResponse.setNumberOfPoints(backupInfo.getData().size());
-        }else{
-            List<String> recipient = new ArrayList<>();
-            recipient.add(nodeID);
-            regionStatusResponse = messageService.sendGetRegionStatus(jobID, nodeID, regionID);
+        synchronized (database.getInfo()) {
+            if (nodeID.equals(database.getInfo().getId())) {
+                regionStatusResponse.setNodeID(nodeID);
+                //BackupInfo backupInfo = database.getBackups().get(jobID + ":" + regionID);
+                regionStatusResponse.setRegionID(database.getRegion().getFullID());
+                regionStatusResponse.setNumberOfPoints(database.getData().size());
+            } else {
+                List<String> recipient = new ArrayList<>();
+                recipient.add(nodeID);
+                regionStatusResponse = messageService.sendGetRegionStatus(jobID, nodeID, regionID);
+            }
         }
 
         return regionStatusResponse;
