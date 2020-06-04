@@ -12,7 +12,7 @@ class Config:
     @staticmethod
     def getInstance():
         if Config.__instance == None:
-            Config("localhost:8080", "localhost", 9090)
+            Config("localhost:8080", "localhost", 9091)
         return Config.__instance
 
     def __init__(self, bootstrap, ip, port):

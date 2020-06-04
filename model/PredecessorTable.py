@@ -29,8 +29,6 @@ class PredecessorTable:
 
         tmpList = list(self.database.allNodes.values())
 
-        print("Svi cvorovi: ", [node.getID() for node in tmpList])
-
         myPos = tmpList.index(self.database.getInfo())
 
         size = len(tmpList)

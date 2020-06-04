@@ -42,7 +42,7 @@ class NodeService:
 
             # TODO: take lock
 
-            self.database.getAllNodes[newNode.getID()] = newNode
+            self.database.allNodes[newNode.getID()] = newNode
 
             self.succesorTable.reconstructTable()
             self.predecessorTable.reconstructTable()

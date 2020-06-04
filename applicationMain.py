@@ -53,15 +53,15 @@ if __name__ == "__main__":
         messageService.sendNewNode(myConfig.me)
 
 
-    job = Job()
-    job.id = "job2"
-    job.proportion = 0.5
-    job.height = 100
-    job.width  = 100
-
-    database.allNodes[job.id] = job
-
-    nodeService.restructure()
+    # job = Job()
+    # job.id = "job2"
+    # job.proportion = 0.5
+    # job.height = 100
+    # job.width = 100
+    #
+    # database.allNodes[job.id] = job
+    #
+    # nodeService.restructure()
 
 
 

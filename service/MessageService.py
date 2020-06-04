@@ -57,11 +57,10 @@ class MessageService:
             print("sendGetAllNodes error: ", e)
             return e
 
+
     def sendNewNode(self, newNode):
 
         print("Saljem da sam usao")
-        print("Succ: ", [node.getID for node in self.successorTable.table])
-        print("Predd:", [node.getID for node in self.predecessorTable.table])
 
         for node in self.successorTable.getBroadcastingNodes():
             # TODO: Thread jebem ti lebac Milose
