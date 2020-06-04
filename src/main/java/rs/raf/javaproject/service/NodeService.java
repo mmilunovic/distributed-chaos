@@ -1,7 +1,6 @@
 package rs.raf.javaproject.service;
 
 import lombok.Getter;
-import math.geom2d.polygon.Polygons2D;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import rs.raf.javaproject.JavaProjectApplication;
@@ -110,7 +109,7 @@ public class NodeService {
     public void restructure() {
         synchronized (database.getInfo()) {
             if (this.jobExecution == null) {
-                this.jobExecution = new JobExecution(this.database, database.getRegion(), new AtomicBoolean((false)));
+                this.jobExecution = new JobExecution(this.database, database.getRegion(), new AtomicBoolean((false)), new AtomicBoolean(false));
                 Thread t = new Thread(jobExecution);
                 t.start();
             }
