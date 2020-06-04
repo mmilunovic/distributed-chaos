@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.*;
 import rs.raf.javaproject.model.BackupInfo;
 import rs.raf.javaproject.model.Job;
 import rs.raf.javaproject.model.Node;
+import rs.raf.javaproject.model.Point;
+import rs.raf.javaproject.service.MessageService;
 import rs.raf.javaproject.service.NodeService;
 
 import java.util.Collection;
@@ -59,7 +61,7 @@ public class NodeController {
     @GetMapping("/backup/{jobID}/{regionID}")
     @ResponseBody
     public BackupInfo getBackup(@PathVariable String jobID, @PathVariable String regionID){
-        return service.getBackup(jobID, regionID);
+        return service.getBackup(service.getDatabase().getInfo().getId(), jobID, regionID);
     }
 
     @GetMapping("/allJobs")
@@ -67,4 +69,14 @@ public class NodeController {
     public Collection<Job> getAllJobs(){
         return service.getAllJobs();
     }
+
+//    @Autowired
+//    MessageService messageService;
+//
+//    @GetMapping("/test/{nodeID}/{jobID}/{regionID}")
+//    @ResponseBody
+//    public BackupInfo getTest(@PathVariable String nodeID, @PathVariable String jobID, @PathVariable String regionID){
+//        System.out.println("aa");
+//        return messageService.sendGetData(nodeID, jobID, regionID);
+//    }
 }

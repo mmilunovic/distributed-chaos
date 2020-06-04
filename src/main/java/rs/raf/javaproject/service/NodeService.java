@@ -1,5 +1,6 @@
 package rs.raf.javaproject.service;
 
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import rs.raf.javaproject.model.*;
@@ -14,6 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class NodeService {
 
     @Autowired
+    @Getter
     private Database database;
 
     @Autowired
@@ -324,8 +326,13 @@ public class NodeService {
         }
     }
 
-    public BackupInfo getBackup(String jobID, String regionID) {
-        return database.getBackups().get(getKeyFromJobAndRegion(jobID, regionID));
+    public BackupInfo getBackup(String nodeID, String jobID, String regionID) {
+        if(database.getInfo().getId().equals(nodeID)) {
+            return database.getBackups().get(getKeyFromJobAndRegion(jobID, regionID));
+        }else{
+            return messageService.sendGetData(nodeID,jobID,regionID);
+        }
+
     }
 
     public Collection<Job> getAllJobs() {

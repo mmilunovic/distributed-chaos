@@ -3,10 +3,12 @@ package rs.raf.javaproject.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import rs.raf.javaproject.model.BackupInfo;
 import rs.raf.javaproject.model.Point;
 import rs.raf.javaproject.response.RegionStatusResponse;
 import rs.raf.javaproject.response.ResultResponse;
 import rs.raf.javaproject.service.JobService;
+import rs.raf.javaproject.service.NodeService;
 
 import java.util.Collection;
 
@@ -16,6 +18,9 @@ public class DelegateController {
 
     @Autowired
     JobService jobService;
+
+    @Autowired
+    NodeService nodeService;
 
     @GetMapping("jobs/{jobID}")
     @ResponseBody
@@ -39,5 +44,11 @@ public class DelegateController {
     @ResponseBody
     public RegionStatusResponse status(@PathVariable String nodeID, @PathVariable String jobID, @PathVariable String regionID){
         return jobService.myStatus(nodeID, jobID, regionID);
+    }
+
+    @GetMapping("/backup/{jobID}/{regionID}")
+    @ResponseBody
+    public BackupInfo getBackup(@PathVariable String nodeID, @PathVariable String jobID, @PathVariable String regionID){
+        return nodeService.getBackup(nodeID, jobID, regionID);
     }
 }
