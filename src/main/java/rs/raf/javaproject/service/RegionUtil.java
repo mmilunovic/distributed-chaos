@@ -68,13 +68,18 @@ public class RegionUtil {
     }
 
     public static Region getRegionFromID(Region region, String id) {
+        if (region == null)
+            return null;
+
         if (id.length() == 0)
             return region;
 
         if (region.getChildren().size() == 0) {
-            //TODO: ovde treba biti pazljiv oko fullID, ovde ce vratiti parent podregiona koji se trenutno ne obradjuje
             return region;
         }
+
+        if(!region.getChildren().containsKey(id.substring(0,1)))
+            return region;
 
         return getRegionFromID(region.getChildren().get(id.substring(0,1)),(id.substring(1)));
     }

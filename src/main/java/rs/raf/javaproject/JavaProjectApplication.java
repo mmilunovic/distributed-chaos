@@ -1,8 +1,10 @@
 package rs.raf.javaproject;
 
+import org.apache.catalina.core.ApplicationContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import rs.raf.javaproject.config.MyConfig;
 import rs.raf.javaproject.model.*;
@@ -15,6 +17,7 @@ import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 @SpringBootApplication
 @EnableScheduling
@@ -37,19 +40,25 @@ public class JavaProjectApplication {
 	@Autowired
 	private NodeService nodeService;
 
+	private static ConfigurableApplicationContext context;
+
 	public static void main(String[] args) {
-	    SpringApplication.run(JavaProjectApplication.class, args);
+	    context = SpringApplication.run(JavaProjectApplication.class, args);
 	}
 
-	@PostConstruct
+    public static void exitThread() {
+        SpringApplication.exit(context,() -> 0);
+    }
+
+    @PostConstruct
 	public void init() {
 
         Node me = new Node(config.getIp(), config.getPort());
 
-        config.setMe(me);
+       config.setMe(me);
         databese.getAllNodes().put(config.getMe().getId(), config.getMe());
-        databese.setFractalMap(new HashMap<>());
         databese.setData(new ArrayList<>());
+        databese.setBackups(new ConcurrentHashMap<>());
 
         Node node = messageService.sendBootstrapHail();
 
@@ -89,7 +98,6 @@ public class JavaProjectApplication {
         databese.getAllJobs().put(job.getId(), job);
 
         nodeService.restructure();
-
 
     }
 

@@ -3,13 +3,14 @@ package rs.raf.javaproject;
 import java.io.*;
 
 public class MultipleAppStarter {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         int n = 11;
         boolean createProperties = false;
         if(createProperties)
             createAppProperties(n);
         else
             for (int i = 0; i < n; i++) {
+                Thread.sleep(2000);
                 String[] springArgs = new String[1];
                 springArgs[0] = "--spring.config.location=classpath:application"+i+".properties";
                 JavaProjectApplication.main(springArgs);

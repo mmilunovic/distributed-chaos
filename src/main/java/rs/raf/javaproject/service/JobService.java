@@ -230,7 +230,7 @@ public class JobService {
     }
 
     private void drawResult(ResultResponse resultResponse, String jobID){
-        ArrayList<Point> resultPoints = resultResponse.getData();
+        HashSet<Point> resultPoints = resultResponse.getData();
         // TODO: Promeni ovo
         int height = 100;
         int width = 100;

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import rs.raf.javaproject.model.Point;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @Data
@@ -15,5 +16,5 @@ public class ResultResponse {
 
     private String jobID;
     private List<Point> startingPoints;
-    private ArrayList<Point> data;
+    private HashSet<Point> data;
 }

@@ -1,14 +1,19 @@
 package rs.raf.javaproject.service;
 
 import lombok.Getter;
+import math.geom2d.polygon.Polygons2D;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import rs.raf.javaproject.JavaProjectApplication;
 import rs.raf.javaproject.model.*;
+import rs.raf.javaproject.model.Point;
 import rs.raf.javaproject.repository.Database;
 import rs.raf.javaproject.schedule.JobExecution;
 
+import java.awt.*;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
@@ -52,7 +57,11 @@ public class NodeService {
     }
 
     public void quit(){
-        // TODO
+        synchronized (database.getInfo()) {
+            messageService.broadcastLeaveMessage(this.database.getInfo());
+            this.jobExecution.getExit().set(true);
+            JavaProjectApplication.exitThread();
+        }
 
     }
 
@@ -100,7 +109,7 @@ public class NodeService {
     public void restructure() {
         synchronized (database.getInfo()) {
             if (this.jobExecution == null) {
-                this.jobExecution = new JobExecution(this.database, database.getRegion(), new AtomicBoolean(false));
+                this.jobExecution = new JobExecution(this.database, database.getRegion(), new AtomicBoolean(false), new AtomicBoolean((false)));
                 Thread t = new Thread(jobExecution);
                 t.start();
             }
@@ -116,14 +125,13 @@ public class NodeService {
                 backupInfo.setRegionID(database.getInfo().getMyRegion().getFullID());
                 this.putBackup(backupInfo);
             }
-
-            this.generateRegions();
+            Region oldRegion = this.generateRegions();
 
             data.clear();
-            //if (this.repository.getRegion() != null)
-            //    data.addAll(this.getBackupFromNode(this.repository.getRegion().getFullID()).getData());
 
             if (database.getRegion() != null) {
+                if (oldRegion != null)
+                    data.addAll(this.getBackupFromNode(oldRegion));
                 if (database.getData().size() == 0)
                     database.setTracepoint(new Point(database.getRegion().getJob().getWidth() / 2.0, database.getRegion().getJob().getHeight() / 2.0));
                 else
@@ -132,52 +140,23 @@ public class NodeService {
                 this.jobExecution.setRegion(database.getRegion());
                 this.jobExecution.getPause().set(false);
             }
-
-
-            // TODO: uzeti podatke od pred i succ
-/*
-        // Treba da se uzme backup od narednog i proslog cvora
-        // Na oba cvora saljemo zahtev za te jobove i regione, da bi uzeli i backup-e koje jedni drugom cuvaju
-        // Ovi trenutni pozivi nad nekim cvorom vracaju originalne podatke ili backup-e
-        Node successor = database.getSuccessor();
-        Node predecessor = database.getPredecessor();
-
-
-        BackupInfo successorInfo = new BackupInfo();
-        Set<Point> hashSet = new HashSet<>();
-                                                                        // Ovde treba da se dodaju njigovi regioni i jobovi, ali puca null pointer
-        hashSet.addAll(messageService.sendGetData(successor.getId(), successor.getMyRegion().getJob().getId(), successor.getMyRegion().getFullID()));
-        hashSet.addAll(messageService.sendGetData(predecessor.getId(), successor.getMyRegion().getJob().getId(), successor.getMyRegion().getFullID()));
-        successorInfo.getData().addAll(hashSet);
-
-        BackupInfo predecessorInfo = new BackupInfo();
-        hashSet.clear();
-        hashSet.addAll(messageService.sendGetData(successor.getId(), predecessor.getMyRegion().getJob().getId(), predecessor.getMyRegion().getFullID()));
-        hashSet.addAll(messageService.sendGetData(predecessor.getId(), predecessor.getMyRegion().getJob().getId(), predecessor.getMyRegion().getFullID()));
-        predecessorInfo.getData().addAll(hashSet);
-
-        database.getBackups().put(successorInfo.getID(), successorInfo);
-        database.getBackups().put(predecessorInfo.getID(), predecessorInfo);
-        */
-
         }
     }
 
 
-    private void generateRegions() {
+    private Region generateRegions() {
+        Region oldRegion = null;
+
         String myRegion = "-";
         database.setRegion(null);
 
         if (database.getAllJobs().size() == 0)
-            return;
-
-        List<String> nodeIDs = new ArrayList<>(database.getAllNodes().keySet());
-        Collections.sort(nodeIDs);
+            return null;
 
         //start index and number of nodes on one job
         int nodeIDIndexStart = 0;
-        int nodeIDsSize = nodeIDs.size()/ database.getAllJobs().size();
-        if (nodeIDs.size() % database.getAllJobs().size() > 0) {
+        int nodeIDsSize = database.getAllNodes().size()/ database.getAllJobs().size();
+        if (database.getAllNodes().size() % database.getAllJobs().size() > 0) {
             nodeIDsSize++;
         }
 
@@ -186,6 +165,7 @@ public class NodeService {
 
             Job job = database.getAllJobs().get(jobID);
             Map<String, Region> regions = job.getRegions();
+            Map<String, Region> oldRegions = new HashMap<>(regions);
             regions.clear();
 
             jobIndex++;
@@ -224,33 +204,42 @@ public class NodeService {
 
 
             //assign IDs to Regions
-            int nodeIDIndex = nodeIDIndexStart;
+            Iterator<String> nodeIterator = database.getAllNodes().keySet().iterator();
             for (String regionID : regionIDs) {
-                database.getFractalMap().put(getKeyFromJobAndRegion(jobID,regionID), nodeIDs.get(nodeIDIndex));
-
+                String nodeID = nodeIterator.next();
                 Region region = RegionUtil.getRegionFromID(job, regionID);
-                region.setNode(database.getAllNodes().get(nodeIDs.get(nodeIDIndex)));
-                if (nodeIDs.get(nodeIDIndex).equals(database.getInfo().getId())) {
+                region.setNode(database.getAllNodes().get(nodeID));
+                if (nodeID.equals(database.getInfo().getId())) {
                     myRegion = regionID;
+
+                    if (myRegion.length() == 0)
+                        oldRegion = oldRegions.get("");
+                    else if(!oldRegions.containsKey(myRegion.substring(0,1)))
+                        oldRegion = oldRegions.get("");
+                    else
+                        oldRegion = RegionUtil.getRegionFromID(oldRegions.get(myRegion.substring(0,1)),(myRegion.substring(1)));
+
                     database.getInfo().setMyRegion(region);
                     database.getInfo().setMyRegion(region);
                     database.setRegion(region);
                 }
 
-                System.out.println("Job: " + job + " Region: " + regionID + " ChordID: " + nodeIDs.get(nodeIDIndex));
-                nodeIDIndex++;
+                if (this.database.getInfo().getPort() == 1000)
+                    System.out.println("Job: " + job + " Region: " + regionID + " ChordID: " + nodeID);
             }
 
 
             //set new index and size
             nodeIDIndexStart = nodeIDIndexStart + nodeIDsSize;
-            nodeIDsSize = nodeIDs.size()/ database.getAllJobs().size();
-            if (nodeIDs.size() % database.getAllJobs().size() > jobIndex)
+            nodeIDsSize = database.getAllNodes().size()/ database.getAllJobs().size();
+            if (database.getAllNodes().size() % database.getAllJobs().size() > jobIndex)
                 nodeIDsSize++;
 
         }
         System.out.println("Node: " + database.getInfo() + " My Region: " + myRegion);
-
+        if (oldRegion != null)
+            System.out.println(oldRegion);
+        return oldRegion;
     }
 
     private String getKeyFromJobAndRegion(String job, String region) {
@@ -258,52 +247,47 @@ public class NodeService {
     }
 
     //job:regionID
-    private BackupInfo getBackupFromNode(String fractalID) {
-        List<BackupInfo> backupList = new ArrayList<>();
-        String originalNodeChordID = database.getFractalMap().get(fractalID);
-        BackupInfo info = getBackupDataFromNode(originalNodeChordID);
-        if (info != null)
-            backupList.add(info);
+    private Set<Point> getBackupFromNode(Region region) {
+        Map<String, String> originalNodeIDs = RegionUtil.getAllSubregionNodeAndJobIDs(region);
+        HashSet<Point> points = new HashSet<>();
+        for (Map.Entry<String, String> originalNodeID : originalNodeIDs.entrySet()) {
+            BackupInfo info = getBackup(originalNodeID.getKey(), region.getJob().getId(), originalNodeID.getValue());
+            if (info != null)
+                points.addAll(info.getData());
 
-        String nextNodeChordID = getNextNode(originalNodeChordID);
-        BackupInfo nextInfo = getBackupDataFromNode(nextNodeChordID);
+            String nextNodeID = getNextNode(originalNodeID.getKey());
+            info = getBackup(nextNodeID, region.getJob().getId(), originalNodeID.getValue());
 
-        if(nextInfo != null)
-            backupList.add(nextInfo);
+            if (info != null)
+                points.addAll(info.getData());
 
-        String prevNodeChordID = getPrevNode(originalNodeChordID);
-        BackupInfo prevInfo = getBackupDataFromNode(prevNodeChordID);
+            String prevNodeID = getPrevNode(originalNodeID.getKey());
+            info = getBackup(prevNodeID, region.getJob().getId(), originalNodeID.getValue());
 
-        if(prevInfo != null)
-            backupList.add(prevInfo);
+            if (info != null)
+                points.addAll(info.getData());
 
-        backupList.sort(Comparator.comparing(BackupInfo::getTimestamp));
-        return backupList.get(0);
+        }
+
+
+        if (region.getFullID() != database.getRegion().getFullID()) {
+            //TODO: ovde treba da se uzme database.getRegion().getStartingPoints(), npr. preko awt Polygon
+        }
+        return points;
     }
 
-    // TODO: mislim da ovo vise nije potrebno
-    private BackupInfo getBackupDataFromNode(String nodeID) {
-        BackupInfo info = null;
-        //TODO: ovo resiti zapravo
-        return info;
-    }
 
-
-    // TODO: mislim da ovo vise nije potrebno
     private String getNextNode(String key) {
-        String result = "ZZZZZZZZZZZZZZZZZZZZZ";
-        for (Node node : database.getAllNodes().values())
-            if (node.getId().compareTo(key) > 0 && node.getId().compareTo(result) < 0)
-                result = node.getId();
+        String result = database.getAllNodes().ceilingKey(key);
+        if (result == null)
+            result = database.getAllNodes().firstKey();
         return result;
     }
 
-    // TODO: mislim da ovo vise nije potrebno
     private String getPrevNode(String key) {
-        String result = "";
-        for (Node node : database.getAllNodes().values())
-            if (node.getId().compareTo(key) < 0 && node.getId().compareTo(result) > 0)
-                result = node.getId();
+        String result = database.getAllNodes().floorKey(key);
+        if (result == null)
+            result = database.getAllNodes().lastKey();
         return result;
     }
     /**

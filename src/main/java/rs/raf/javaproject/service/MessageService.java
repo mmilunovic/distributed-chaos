@@ -22,6 +22,7 @@ import rs.raf.javaproject.response.StatusResponse;
 import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 @Component
@@ -201,7 +202,7 @@ public class MessageService {
         ResultResponse resultResponse = new ResultResponse();
         resultResponse.setJobID(jobID);
 
-        resultResponse.setData(new ArrayList<>());
+        resultResponse.setData(new HashSet<>());
 
         for(String nodeID: recipients){
 
@@ -235,7 +236,7 @@ public class MessageService {
         ResultResponse resultResponse = new ResultResponse();
         resultResponse.setJobID(jobID);
 
-        resultResponse.setData(new ArrayList<>());
+        resultResponse.setData(new HashSet<>());
 
         for(String nodeID: recipients){
 

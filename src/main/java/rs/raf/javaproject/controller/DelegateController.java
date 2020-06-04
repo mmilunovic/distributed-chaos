@@ -13,6 +13,7 @@ import rs.raf.javaproject.service.NodeService;
 import java.util.Collection;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("api/delegate/{nodeID}")
 public class DelegateController {
 

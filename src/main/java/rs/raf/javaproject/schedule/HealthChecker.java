@@ -28,7 +28,7 @@ public class HealthChecker {
     @Autowired
     SuccessorTable successorTable;
 
-    @Scheduled(fixedDelay = 1000, initialDelay = 100)
+    //@Scheduled(fixedDelay = 1000, initialDelay = 100)
     public void check(){
         Node successor = database.getSuccessor();
 

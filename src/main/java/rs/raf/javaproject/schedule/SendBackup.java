@@ -22,7 +22,7 @@ public class SendBackup{
     @Autowired
     private MessageService messageService;
 
-    @Scheduled(fixedDelay = 5000, initialDelay = 1000)
+    //@Scheduled(fixedDelay = 5000, initialDelay = 1000)
     private void sendBackup(){
 
         if(database.getRegion() != null) {

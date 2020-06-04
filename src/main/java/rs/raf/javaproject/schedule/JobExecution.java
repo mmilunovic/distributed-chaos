@@ -18,11 +18,14 @@ public class JobExecution implements Runnable {
     private Database database;
     private Region region;
     private AtomicBoolean pause;
+    private AtomicBoolean exit;
 
     @Override
     public void run() {
 
         while(true){
+            if(exit.get())
+                return;
             if(pause.get()){
                 sleep(JOB_SLEEP);
             }else{

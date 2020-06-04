@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 
 @Component
@@ -23,10 +25,9 @@ public class Database {
 
     private final TreeMap<String, Node> allNodes;
     private final Map<String, Job> allJobs;
-    private final Map<String, BackupInfo> backups;
+    private ConcurrentHashMap<String, BackupInfo> backups;
     private List<Point> data;
     private Point tracepoint;
-    private Map<String, String> fractalMap;
     private Region region;
 
     public Node getInfo() {
