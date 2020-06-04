@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import rs.raf.javaproject.model.Job;
 import rs.raf.javaproject.model.Region;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -15,5 +16,5 @@ import java.util.List;
 public class StatusResponse {
 
     private String jobID;
-    private Collection<RegionStatusResponse> allJobs;
+    private Collection<RegionStatusResponse> allJobs = new ArrayList<>();
 }

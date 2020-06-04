@@ -128,6 +128,34 @@ public class NodeService {
             this.jobExecution.setRegion(database.getRegion());
             this.jobExecution.getPause().set(false);
         }
+
+
+        // TODO: uzeti podatke od pred i succ
+/*
+        // Treba da se uzme backup od narednog i proslog cvora
+        // Na oba cvora saljemo zahtev za te jobove i regione, da bi uzeli i backup-e koje jedni drugom cuvaju
+        // Ovi trenutni pozivi nad nekim cvorom vracaju originalne podatke ili backup-e
+        Node successor = database.getSuccessor();
+        Node predecessor = database.getPredecessor();
+
+
+        BackupInfo successorInfo = new BackupInfo();
+        Set<Point> hashSet = new HashSet<>();
+                                                                        // Ovde treba da se dodaju njigovi regioni i jobovi, ali puca null pointer
+        hashSet.addAll(messageService.sendGetData(successor.getId(), successor.getMyRegion().getJob().getId(), successor.getMyRegion().getFullID()));
+        hashSet.addAll(messageService.sendGetData(predecessor.getId(), successor.getMyRegion().getJob().getId(), successor.getMyRegion().getFullID()));
+        successorInfo.getData().addAll(hashSet);
+
+        BackupInfo predecessorInfo = new BackupInfo();
+        hashSet.clear();
+        hashSet.addAll(messageService.sendGetData(successor.getId(), predecessor.getMyRegion().getJob().getId(), predecessor.getMyRegion().getFullID()));
+        hashSet.addAll(messageService.sendGetData(predecessor.getId(), predecessor.getMyRegion().getJob().getId(), predecessor.getMyRegion().getFullID()));
+        predecessorInfo.getData().addAll(hashSet);
+
+        database.getBackups().put(successorInfo.getID(), successorInfo);
+        database.getBackups().put(predecessorInfo.getID(), predecessorInfo);
+        */
+
     }
 
 

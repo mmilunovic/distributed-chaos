@@ -87,9 +87,12 @@ public class MessageService {
     }
 
     private String getStatusUrl(Node receiver, String forWho, String jobID){
-        return "http://" + receiver.getId() + "/api/delegate/" + forWho + "/status" + jobID;
+        return "http://" + receiver.getId() + "/api/delegate/" + forWho + "/status/" + jobID;
     }
 
+    private String getGetBackupUrl(String nodeID, String jobID, String regionID) {
+        return "http://" + nodeID + "/api/node/" + jobID + "/" + regionID;
+    }
     // TODO: Slanje poruka mora biti asinhrono
 
 
@@ -153,9 +156,14 @@ public class MessageService {
         }
     }
 
-    public Boolean sendSaveBackup(Node receiver, BackupInfo backupInfo){
-        SaveBackup saveBackup = new SaveBackup(getSaveBackupUrl(receiver), backupInfo);
-        return saveBackup.execute();
+    public void sendSaveBackup(Node receiver, BackupInfo backupInfo){
+        executorPool.submit(new Runnable() {
+            @Override
+            public void run() {
+                SaveBackup saveBackup = new SaveBackup(getSaveBackupUrl(receiver), backupInfo);
+                saveBackup.execute();
+            }
+        });
     }
 
     public Collection<Job> sendGetAllJobs(Node node) {
@@ -190,7 +198,8 @@ public class MessageService {
             }else{
                 // Koristimo delegate za slanje poruke
                 Node delegator = successorTable.getDelegator(successorTable.getDatabase().getAllNodes().get(nodeID));
-
+                System.out.println(successorTable.getTable());
+                System.out.println(delegator.getId() + " za " + nodeID);
                 JobResult jobResult = new JobResult(getJobWorkUrl(delegator.getId(), nodeID, jobID));                               // Ne saljemo direktno cvoru nego delegatoru
                 // Ako nam je cvor u successor tabeli vratice njega
                 resultResponse.getData().addAll(jobResult.execute());
@@ -252,8 +261,10 @@ public class MessageService {
             RegionStatusResponse regionStatusResponse = new RegionStatusResponse();
 
             if(nodeID.equals(config.getMe().getId())){
-                regionStatusResponse.setRegionID(successorTable.getDatabase().getRegion().getFullID());
-                regionStatusResponse.setNumberOfPoints(successorTable.getDatabase().getData().size());
+
+                Status status = new Status(getStatusUrl(config.getMe(), nodeID, jobID));                               // Ne saljemo direktno cvoru nego delegatoru
+
+                regionStatusResponse = status.execute();
             }else{
                 Node delegator = successorTable.getDelegator(successorTable.getDatabase().getAllNodes().get(nodeID));
 
@@ -267,9 +278,20 @@ public class MessageService {
         return statusResponse;
     }
 
-    public RegionStatusResponse sendGetMyStatus() {
-        return null;
+    public RegionStatusResponse sendGetRegionStatus(String jobID, String nodeID) {
+
+        Node delegator = successorTable.getDelegator(new Node(nodeID));
+        Status status = new Status(getStatusUrl(delegator, nodeID, jobID));                               // Ne saljemo direktno cvoru nego delegatoru
+
+        return status.execute();
     }
+
+    public Collection<Point> sendGetData(String nodeID, String jobID, String regionID) {
+        GetBackup getBackup = new GetBackup(getGetBackupUrl(nodeID, jobID, regionID));
+        return getBackup.execute();
+    }
+
+
 }
 
 

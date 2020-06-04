@@ -12,10 +12,10 @@ import java.util.Collection;
 
 @RestController
 @RequestMapping("api/delegate/{nodeID}")
-    public class DelegateController {
+public class DelegateController {
 
-        @Autowired
-        JobService jobService;
+    @Autowired
+    JobService jobService;
 
     @GetMapping("jobs/{jobID}")
     @ResponseBody

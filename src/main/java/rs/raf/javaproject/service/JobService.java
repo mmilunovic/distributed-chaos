@@ -42,14 +42,28 @@ public class JobService {
 
     public StatusResponse status(String jobID){
         List<String> receiverIDs = RegionUtil.getAllJobNodeIDs(database.getAllJobs().get(jobID));
+//
+        System.out.println(receiverIDs);
 
         StatusResponse statusResponse = messageService.sendGetStatus(jobID, receiverIDs);
 
         return statusResponse;
     }
 
+    // TODO: Fix
+    public StatusResponse status(String jobID, String regionID){
+        List<String> receiverIDs = RegionUtil.getAllSubregionNodeIDs(database.getAllJobs().get(jobID).getRegions().get(regionID));
+
+
+        System.out.println(database.getInfo().getId() + " uzima podatke od " + receiverIDs);
+
+        return null;
+    }
+
+
     public RegionStatusResponse myStatus(String nodeID, String jobID){
         RegionStatusResponse regionStatusResponse = new RegionStatusResponse();
+        System.out.println(database.getInfo().getId() + " dobija status za " + nodeID + " i " + jobID);
 
         if(nodeID.equals(database.getInfo().getId())){
             regionStatusResponse.setNodeID(nodeID);
@@ -58,8 +72,7 @@ public class JobService {
         }else{
             List<String> recipient = new ArrayList<>();
             recipient.add(nodeID);
-
-            regionStatusResponse = messageService.sendGetMyStatus();
+            regionStatusResponse = messageService.sendGetRegionStatus(jobID, nodeID);
         }
 
         // TODO: Da li ovde treba dodati backupe?
@@ -80,8 +93,10 @@ public class JobService {
     public ResultResponse result(String jobID){
         List<String> receiverIDs = RegionUtil.getAllJobNodeIDs(database.getAllJobs().get(jobID));
 
-        System.out.println(database.getInfo().getId() + " uzima podatke od " + receiverIDs);
+        System.out.println(receiverIDs);
+        System.out.println(database.getSuccessor());
         ResultResponse resultResponse = messageService.sendGetResult(jobID, receiverIDs);
+
 
         drawResult(resultResponse, jobID);
 
@@ -92,7 +107,7 @@ public class JobService {
         List<String> receiverIDs = RegionUtil.getAllSubregionNodeIDs(
                 RegionUtil.getRegionFromID(database.getAllJobs(), jobID, regionID));
 
-        System.out.println(database.getInfo().getId() + " uzima podatke od " + receiverIDs);
+
         ResultResponse resultResponse = messageService.sendGetResult(jobID, regionID, receiverIDs);
 
         drawResult(resultResponse, jobID);
@@ -110,8 +125,12 @@ public class JobService {
             if(database.getInfo().getMyRegion() == null)
                 return new ArrayList<>();
 
-            if(database.getInfo().getMyRegion().getJob().getId().equals(jobID))
+            if(database.getInfo().getMyRegion().getJob().getId().equals(jobID)) {
+
+                System.out.println(database.getInfo().getId() + " dodajem svoje podatke");
+
                 myResult.addAll(database.getData());
+            }
 
         }else{
             List<String> recepient = new ArrayList<>();
@@ -139,8 +158,11 @@ public class JobService {
             if(database.getInfo().getMyRegion() == null)
                 return new ArrayList<>();
 
-            if(database.getInfo().getMyRegion().getJob().getId().equals(jobID))
+            if(database.getInfo().getMyRegion().getJob().getId().equals(jobID)) {
                 myResult.addAll(database.getData());
+
+                System.out.println(database.getInfo().getId() + " dodajem svoje podatke");
+            }
 
 
         }else{
@@ -151,7 +173,7 @@ public class JobService {
             myResult.addAll(resultResponse.getData());
         }
 
-        for(BackupInfo backupInfo : database.getBackups().values()){
+        for(BackupInfo backupInfo : database.getBackups().values() ){
             if(backupInfo.getJobID().equals(jobID)){
                 myResult.addAll(backupInfo.getData());                                  // Dodajemo bakcup za taj posao ako ga imamo
             }
@@ -200,7 +222,7 @@ public class JobService {
 
         g2d.dispose();
 
-        File file = new File("result.png");
+        File file = new File("result"+ jobID + ".png");
         try {
             ImageIO.write(bufferedImage, "png", file);
         } catch (IOException e) {

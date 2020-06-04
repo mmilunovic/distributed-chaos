@@ -89,6 +89,8 @@ public class JavaProjectApplication {
         databese.getAllJobs().put(job.getId(), job);
 
         nodeService.restructure();
+
+
     }
 
 

@@ -49,5 +49,4 @@ public class Database {
         return nodes.get(predecessor);
     }
 
-
 }
