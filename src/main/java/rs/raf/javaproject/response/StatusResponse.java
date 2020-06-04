@@ -16,6 +16,5 @@ import java.util.List;
 public class StatusResponse {
 
     private String jobID;
-    private String subRegion;
     private Collection<RegionStatusResponse> allJobs = new ArrayList<>();
 }

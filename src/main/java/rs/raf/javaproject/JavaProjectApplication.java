@@ -43,20 +43,21 @@ public class JavaProjectApplication {
 	private static ConfigurableApplicationContext context;
 
 	public static void main(String[] args) {
-	    context = SpringApplication.run(JavaProjectApplication.class, args);
+	    SpringApplication.run(JavaProjectApplication.class, args);
 	}
 
     public static void exitThread() {
         SpringApplication.exit(context,() -> 0);
     }
 
-    @PostConstruct
+	@PostConstruct
 	public void init() {
 
         Node me = new Node(config.getIp(), config.getPort());
 
-       config.setMe(me);
+        config.setMe(me);
         databese.getAllNodes().put(config.getMe().getId(), config.getMe());
+        databese.setFractalMap(new HashMap<>());
         databese.setData(new ArrayList<>());
         databese.setBackups(new ConcurrentHashMap<>());
 
@@ -98,6 +99,7 @@ public class JavaProjectApplication {
         databese.getAllJobs().put(job.getId(), job);
 
         nodeService.restructure();
+
 
     }
 

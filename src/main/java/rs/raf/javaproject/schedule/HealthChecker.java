@@ -38,7 +38,7 @@ public class HealthChecker {
             Node predecessor = database.getPredecessor();
             Boolean longPingResult = messageService.sendPing(predecessor, successor, 10);
 
-            //System.out.println("Long ping:" + longPingResult);
+            System.out.println("Long ping:" + longPingResult);
             if(longPingResult == null || longPingResult == false){
 
                 // TODO: mozda je najlakse da sam sebi posalje poruku da je crko - dupliran kod, tamo i ovde

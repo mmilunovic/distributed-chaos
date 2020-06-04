@@ -7,6 +7,7 @@ import rs.raf.javaproject.handler.ExecutorPool;
 import rs.raf.javaproject.model.*;
 
 import rs.raf.javaproject.model.SuccessorTable;
+import rs.raf.javaproject.repository.Database;
 import rs.raf.javaproject.requests.bootstrap.Hail;
 import rs.raf.javaproject.requests.bootstrap.Left;
 import rs.raf.javaproject.requests.bootstrap.New;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class MessageService {
@@ -39,6 +41,10 @@ public class MessageService {
 
     @Autowired
     private ExecutorPool executorPool;
+
+    @Autowired
+    private Database database;
+
 
     private String getBootstrapHailUrl(){
         return "http://" + config.getBootstrap() + "/api/bootstrap/hail";
@@ -206,6 +212,7 @@ public class MessageService {
 
         for(String nodeID: recipients){
 
+            Collection<String> backups = new ArrayList<>();
             if(nodeID.equals(config.getMe().getId())){
                 // Salje sebi ukoliko je on na tom job-u
                 JobResult jobResult = new JobResult(getJobWorkUrl(nodeID, nodeID, jobID));
@@ -217,8 +224,7 @@ public class MessageService {
             }else{
                 // Koristimo delegate za slanje poruke
                 Node delegator = successorTable.getDelegator(successorTable.getDatabase().getAllNodes().get(nodeID));
-                System.out.println(successorTable.getTable());
-                System.out.println(delegator.getId() + " za " + nodeID);
+
                 JobResult jobResult = new JobResult(getJobWorkUrl(delegator.getId(), nodeID, jobID));                               // Ne saljemo direktno cvoru nego delegatoru
                 // Ako nam je cvor u successor tabeli vratice njega
                 Collection<Point> jobs = jobResult.execute();
@@ -230,6 +236,32 @@ public class MessageService {
         }
 
         return resultResponse;
+    }
+
+    public Collection<String> getBackupNodeIDForNode(String nodeID){
+
+        ArrayList<String> neighbours = new ArrayList<>();
+        ArrayList<String> keySet = new ArrayList<>(database.getAllNodes().keySet());
+
+        for(int i = 0; i < keySet.size(); i++){
+            String key = keySet.get(i);
+
+            if(key.equals(nodeID)){
+                if(i == 0){
+                    neighbours.add(keySet.get(keySet.size()-1));
+                    neighbours.add(keySet.get(i+1));
+                }else if (i == keySet.size()-1){
+                    neighbours.add(keySet.get(0));
+                    neighbours.add(keySet.get(i-1));
+                }else{
+                    neighbours.add(keySet.get(i-1));
+                    neighbours.add(keySet.get(i+1));
+                }
+
+            }
+
+        }
+        return  neighbours;
     }
 
     public ResultResponse sendGetResult(String jobID, String regionID, List<String> recipients) {
@@ -254,8 +286,20 @@ public class MessageService {
 
                 RegionResult regionResult = new RegionResult(getRegionWorkUlr(delegator.getId(), nodeID, jobID, regionID));
                 Collection<Point> points = regionResult.execute();
+
                 if(points == null){
-                    points = new ArrayList<>();
+                    Collection<String> lista = getBackupNodeIDForNode(nodeID);
+
+                    for(String backupNodeId: lista){
+                        Node delegatoro = successorTable.getDelegator(successorTable.getDatabase().getAllNodes().get(backupNodeId));
+
+                        RegionResult regionResultO = new RegionResult(getRegionWorkUlr(delegator.getId(), backupNodeId, jobID, regionID));                           // Ne saljemo direktno cvoru nego delegatoru
+
+                        points = regionResultO.execute();
+                        if(points != null){
+                            break;
+                        }
+                    }
                 }
                 resultResponse.getData().addAll(points);
             }
@@ -305,8 +349,19 @@ public class MessageService {
             }
 
             if(regionStatusResponse == null){
-//                String region =
-                regionStatusResponse = new RegionStatusResponse("nema region id", nodeID, 0);
+
+                Collection<String> lista = getBackupNodeIDForNode(nodeID);
+
+                for(String backupNodeId: lista){
+                    Node delegator = successorTable.getDelegator(successorTable.getDatabase().getAllNodes().get(backupNodeId));
+
+                    Status status = new Status(getStatusUrl(delegator, backupNodeId, jobID));                               // Ne saljemo direktno cvoru nego delegatoru
+
+                    regionStatusResponse = status.execute();
+                    if(regionStatusResponse != null){
+                        break;
+                    }
+                }
             }
             statusResponse.getAllJobs().add(regionStatusResponse);
         }
@@ -318,7 +373,6 @@ public class MessageService {
 
         StatusResponse statusResponse = new StatusResponse();
         statusResponse.setJobID(jobID);
-        statusResponse.setSubRegion(regionID);
 
         for(String nodeID: receiverIDs){
             RegionStatusResponse regionStatusResponse = new RegionStatusResponse();

@@ -56,7 +56,7 @@ public class JobController {
     }
 
 
-    @PostMapping("/stopAll/{jobID}")
+    @GetMapping("/stopAll/{jobID}")
     public void stopAll(@PathVariable String jobID){
         service.stopAll(jobID);
     }

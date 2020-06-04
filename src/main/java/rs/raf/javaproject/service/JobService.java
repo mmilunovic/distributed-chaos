@@ -51,8 +51,6 @@ public class JobService {
         synchronized (database.getInfo()){
             receiverIDs = RegionUtil.getAllJobNodeIDs(database.getAllJobs().get(jobID));
         }
-//
-//        System.out.println(receiverIDs);
 
         StatusResponse statusResponse = messageService.sendGetStatus(jobID, receiverIDs);
 
@@ -130,9 +128,7 @@ public class JobService {
         }
 
         System.out.println(receiverIDs);
-        System.out.println(database.getSuccessor());
         ResultResponse resultResponse = messageService.sendGetResult(jobID, receiverIDs);
-
 
         drawResult(resultResponse, jobID);
 
@@ -194,7 +190,6 @@ public class JobService {
 
                 if (database.getInfo().getMyRegion().getJob().getId().equals(jobID)) {
                     myResult.addAll(database.getData());
-
                 }
 
             } else {

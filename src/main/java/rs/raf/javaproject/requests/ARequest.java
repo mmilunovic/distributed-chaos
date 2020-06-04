@@ -11,6 +11,7 @@ import rs.raf.javaproject.config.MyConfig;
 import rs.raf.javaproject.model.Node;
 
 import java.io.IOException;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public abstract class ARequest<T>{
@@ -27,6 +28,11 @@ public abstract class ARequest<T>{
 
     public ARequest(String url){
         this.url = url;
+        try {
+            Thread.sleep((new Random()).nextInt(500));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setTimeout(int seconds){

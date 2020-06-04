@@ -1,6 +1,10 @@
 package rs.raf.javaproject.controller;
 
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.bind.annotation.*;
 import rs.raf.javaproject.model.BackupInfo;
 import rs.raf.javaproject.model.Job;
@@ -14,11 +18,12 @@ import java.util.Collection;
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/node")
-public class NodeController {
+public class NodeController implements ApplicationContextAware {
 
     @Autowired
     private NodeService service;
 
+    private ApplicationContext context;
 
     @GetMapping("/info")
     @ResponseBody
@@ -40,7 +45,14 @@ public class NodeController {
 
     @PostMapping("/quit")
     public void quit(){
-        service.quit();
+
+        ((ConfigurableApplicationContext) context).close();
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext ctx) throws BeansException {
+        this.context = ctx;
+
     }
 
     @GetMapping("/left/{nodeID}")
@@ -70,13 +82,13 @@ public class NodeController {
         return service.getAllJobs();
     }
 
-//    @Autowired
-//    MessageService messageService;
-//
-//    @GetMapping("/test/{nodeID}/{jobID}/{regionID}")
-//    @ResponseBody
-//    public BackupInfo getTest(@PathVariable String nodeID, @PathVariable String jobID, @PathVariable String regionID){
-//        System.out.println("aa");
-//        return messageService.sendGetData(nodeID, jobID, regionID);
-//    }
+    @Autowired
+    MessageService messageService;
+
+    @GetMapping("/test/{nodeID}")
+    @ResponseBody
+    public Collection<String> getTest(@PathVariable String nodeID){
+        System.out.println("aa");
+        return messageService.getBackupNodeIDForNode(nodeID);
+    }
 }

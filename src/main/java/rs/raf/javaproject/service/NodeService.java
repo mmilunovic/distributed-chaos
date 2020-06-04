@@ -73,9 +73,10 @@ public class NodeService {
         if(nodeThatLeft != null) {
             synchronized (database.getInfo()) {
                 database.getAllNodes().remove(nodeID);
+
+                successorTable.reconstructTable();
+                predecessorTable.reconstructTable();
             }
-            successorTable.reconstructTable();
-            predecessorTable.reconstructTable();
 
             messageService.broadcastLeaveMessage(nodeThatLeft);
 
@@ -109,7 +110,7 @@ public class NodeService {
     public void restructure() {
         synchronized (database.getInfo()) {
             if (this.jobExecution == null) {
-                this.jobExecution = new JobExecution(this.database, database.getRegion(), new AtomicBoolean(false), new AtomicBoolean((false)));
+                this.jobExecution = new JobExecution(this.database, database.getRegion(), new AtomicBoolean((false)));
                 Thread t = new Thread(jobExecution);
                 t.start();
             }
