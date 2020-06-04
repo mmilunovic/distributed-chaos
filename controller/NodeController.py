@@ -1,3 +1,5 @@
+from json import JSONEncoder
+
 from flask import Flask, jsonify
 from service.NodeService import NodeService
 import json
@@ -18,8 +20,10 @@ def getInfo():
 @app.route(baseRoute + "/allNodes", methods = ["GET"])
 def getAllNodes():
     try:
-        ret = nodeService.getAllNodes()
-        return jsonify({'allNodes': ret})
+        ret = list(nodeService.getAllNodes())
+
+        return jsonify([e.serialize() for e in ret])
+
     except Exception as e:
         return e
 
@@ -37,7 +41,8 @@ def left(nodeID):
 
 @app.route(baseRoute + "/new/<string:nodeID>", methods = ["GET"])
 def newNode(nodeID):
-    pass
+    nodeService.newNode(nodeID)
+    return "Valjda je dobro"
 
 @app.route(baseRoute + "/backup", methods = ["POST"])
 def saveBackup():
@@ -49,4 +54,8 @@ def getBackup(jobID, regionID):
 
 @app.route(baseRoute + "/allJobs", methods = ["GET"])
 def getAllJobs():
-    pass
+    try:
+        ret =  list(nodeService.getAlljobs())
+        return jsonify([e.serialize() for e in ret])
+    except Exception as e:
+        return str(e)

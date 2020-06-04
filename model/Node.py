@@ -11,11 +11,21 @@ class Node:
         self.ip = ip
         self.port = port
 
+    def __init__(self, nodeID):
+        self.ip, self.port = nodeID.split(":")
+
+
     def __str__(self):
         return self.ip + ":" + self.port
 
     def getID(self):
         return self.ip + ":" + self.port
+
+    def serialize(self):
+        return {
+            "ip": self.ip,
+            "port": self.port
+        }
 
 class NodeEncoder(JSONEncoder):
     def default(self, o):

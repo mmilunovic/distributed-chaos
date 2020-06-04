@@ -1,3 +1,4 @@
+import json
 
 from config.Config import Config
 import requests
@@ -51,14 +52,22 @@ class MessageService:
             response = requests.get("http://" + str(node.get("ip")) + ":" +
                                     str(node.get("port")) + "/api/node/allNodes")
             return response.json()
+
         except Exception as e:
+            print("sendGetAllNodes error: ", e)
             return e
 
-    def sendNewNode(self, node):
+    def sendNewNode(self, newNode):
+
+        print("Saljem da sam usao")
+        print("Succ: ", [node.getID for node in self.successorTable.table])
+        print("Predd:", [node.getID for node in self.predecessorTable.table])
 
         for node in self.successorTable.getBroadcastingNodes():
             # TODO: Thread jebem ti lebac Milose
-            pass
+            notifyNewNodeResponse = requests.get("http://" + node.getID() +
+                                                 "/api/node/new/" + newNode.getID())
 
         for node in self.predecessorTable.getBroadcastingNodes():
-            pass
+            notifyNewNodeResponse = requests.get("http://" + node.getID() +
+                                                 "/api/node/new/" + newNode.getID())

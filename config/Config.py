@@ -23,7 +23,7 @@ class Config:
             self.bootstrap = bootstrap
             self.ip = ip
             self.port = port
-            self.me = Node(ip, port)
+            self.me = Node(ip + ":" + str(port))
 
     def __str__(self):
         return self.ip + ":" + self.port

@@ -6,7 +6,7 @@ class Database:
     __instance = None
 
     allNodes = {}
-    allJobs = []
+    allJobs = {}
     data = []
 
     myConfig = Config.getInstance()
@@ -27,5 +27,8 @@ class Database:
         return self.myConfig.me
 
     def getAllNodes(self):
-        return self.allNodes
+        return self.allNodes.values()
+
+    def getAllJobs(self):
+        return self.allJobs.values()
 

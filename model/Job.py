@@ -5,4 +5,7 @@ class Job:
         self.id = None
         self.startingPoints = None
         self.proportion = None
-        self.regions = None # TODO
+        self.height = None
+        self.width = None
+        self.regions = None
+
