@@ -28,4 +28,14 @@ public class StatusService {
 
         return messageService.sendGetStatus(requestedJob, requestedRegion, receivers);
     }
+
+    public Collection<StatusResponse> getStatus(String jobID) {
+        // TODO
+        return null;
+    }
+
+    public Collection<StatusResponse> getStatus() {
+        // TODO
+        return null;
+    }
 }
