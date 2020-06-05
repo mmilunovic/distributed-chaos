@@ -237,7 +237,7 @@ public class DatabaseService {
     public synchronized Region getRegionInfoByRegionIdAndJob(String regionID, Job job){
 
         for(Map.Entry<Job, Region> pair : database.getRegions().entrySet()){
-            if (pair.getKey().equals(job) && pair.getValue().equals(regionID)){
+            if (pair.getKey().equals(job) && pair.getValue().getId().equals(regionID)){
                 return  pair.getValue();
             }
         }
@@ -245,9 +245,27 @@ public class DatabaseService {
         return null;
     }
 
+    public synchronized Collection<Node> getNodesWorkingOnJobAndSubregions(Job job, String superRegionID){
+        Set<Node> nodes = new HashSet<>();
+
+        for(Map.Entry<Node, String> work: database.getCurrentWork().entrySet()){
+            String[] workInfo = work.getValue().split(":");
+
+            if(workInfo.length == 1){
+                return null;
+            }
+
+
+
+        }
+
+        return nodes;
+    }
+
 
     public synchronized Region getRegionFromNode(Node node) {
         String[] work = database.getCurrentWork().get(node).split(":");
+
         if(work.length == 1){
             return null;
         }
