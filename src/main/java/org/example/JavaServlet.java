@@ -37,7 +37,7 @@ public class JavaServlet {
         Node enteringNode = messageService.sendBootstrapHail();
 
         if(enteringNode.getAddress() == null){
-            messageService.sendBootstrapNew();
+            messageService.sendBootstrapNew(config.getServent());
         }else{
 
         }

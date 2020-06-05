@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/api/node")
 public class NodeController {
 
@@ -17,9 +18,7 @@ public class NodeController {
 
     @GetMapping("/info")
     @ResponseBody
-    public Node getInfo(){
-        return nodeService.getInfo();
-    }
+    public Node getInfo(){ return nodeService.getInfo(); }
 
     @GetMapping("/allNodes")
     @ResponseBody
@@ -32,4 +31,6 @@ public class NodeController {
     public Collection<Job> getAllJobs(){
         return nodeService.getAllJobs();
     }
+
+
 }
