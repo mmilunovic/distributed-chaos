@@ -28,8 +28,8 @@ public class MessageService {
         newNodeRequest.execute();
     }
 
-    public Boolean sendPing(String nodeID, int timeout) {
-        PingRequest pingRequest = new PingRequest(urlFactory.getPingUrl(nodeID), timeout);
+    public Boolean sendPing(Node receiver, int timeout) {
+        PingRequest pingRequest = new PingRequest(urlFactory.getPingUrl(receiver), timeout);
         return pingRequest.execute();
     }
 
@@ -40,7 +40,6 @@ public class MessageService {
 
     public Collection<Job> sendGetAllJobs(Node receiver) {
         GetAllJobsRequest getAllJobsRequest = new GetAllJobsRequest(urlFactory.getGetAllJobsUrl(receiver));
-
         return getAllJobsRequest.execute();
     }
 }

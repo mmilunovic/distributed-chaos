@@ -27,7 +27,7 @@ public class NodeService {
 
     public Boolean ping(String nodeID) {
         if (!databaseService.getInfo().equals(nodeID)) {
-            Boolean pingNodeResult = messageService.sendPing(nodeID, 1);
+            Boolean pingNodeResult = messageService.sendPing(databaseService.getNodeFromID(nodeID), 1);
 
             if (pingNodeResult == null || pingNodeResult == Boolean.FALSE) {
                 return Boolean.FALSE;
