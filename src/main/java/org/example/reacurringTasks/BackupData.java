@@ -30,10 +30,7 @@ public class BackupData {
             backup.setRegionID(databaseService.getMyRegion().getId());
             backup.setData(databaseService.getCurrentData());
 
-//            System.out.println(backup);
-
             databaseService.saveBackup(backup);
-//            System.out.println(databaseService.getInfo().getID() + " is sending backup to " + databaseService.getSuccessor() + " and " + databaseService.getPredecessor());
             messageService.sendSaveBackup(backup, databaseService.getSuccessor());
             messageService.sendSaveBackup(backup, databaseService.getPredecessor());
 

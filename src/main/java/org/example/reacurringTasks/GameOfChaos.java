@@ -36,7 +36,6 @@ public class GameOfChaos implements Runnable{
             Point tracepoint = databaseService.getMyRegion().getTracepoint();
             double proportion = databaseService.getMyRegion().getProportion();
             Point randomPoint = randomStartingPoint();
-//            System.out.println(tracepoint);
             Point newPoint = new Point(
                     tracepoint.getX() + proportion * (randomPoint.getX() - tracepoint.getX()),
                     tracepoint.getY() + proportion * (randomPoint.getY() - tracepoint.getY()));
@@ -47,7 +46,6 @@ public class GameOfChaos implements Runnable{
 
     private Point randomStartingPoint(){
         Random r = new Random();
-        System.out.println(databaseService.getInfo()  + " " +databaseService.getMyRegion());
         return databaseService.getMyRegion().getStartingPoints().get(r.nextInt(databaseService.getMyRegion().getStartingPoints().size()));
     }
 

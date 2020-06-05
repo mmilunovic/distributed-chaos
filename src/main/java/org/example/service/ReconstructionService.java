@@ -46,16 +46,13 @@ public class ReconstructionService {
             if(nodes.size() % jobs.size() > i){
                 niz[i]++;
             }
-//            System.out.print(niz[i] + " ");
         }
-//        System.out.println();
 
         int sum = 0;
         for(int i = 0; i < niz.length; i++){
 
             Job job = jobs.get(i);
 
-            //System.out.print(job.getId() + ": ");
             int n = job.getStartingPoints().size();
 
             int freeNodes = niz[i];

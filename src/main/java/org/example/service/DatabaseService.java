@@ -131,7 +131,6 @@ public class DatabaseService {
     }
 
     public synchronized void saveData(Point point){
-        // TODO: Dodajemo tacku ako pripada regionu, ali uvek setujemo tracepoint
         database.getMyData().add(point);
         database.getMyRegion().setTracepoint(point);
     }

@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StatusResponse {
 
+    private String jobID;
     private String regionID;
     private String nodeID;
     private int numberofPoints;
