@@ -17,11 +17,11 @@ public class DatabaseService {
     Database database;
 
     public synchronized Collection<Node> getAllNodes(){
-        return null; // TODO
+        return database.getAllNodes();
     }
 
     public synchronized Collection<Job> getAllJobs(){
-        return null; // TODO
+        return database.getAllJobs();
     }
 
     public synchronized Node getNodeFromID(String nodeID){
@@ -65,7 +65,7 @@ public class DatabaseService {
     }
 
     public synchronized Node getInfo(){
-        return database.getServent(); // TODO
+        return database.getServent();
     }
 
     public synchronized void saveData(Point point){
