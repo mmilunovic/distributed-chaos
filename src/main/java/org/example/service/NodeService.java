@@ -78,15 +78,22 @@ public class NodeService {
     }
 
     public void saveBackup(Backup backup) {
+        System.out.println("Node " + databaseService.getInfo().getID() + " is saving backup " + backup);
         databaseService.saveBackup(backup);
     }
 
     public Backup getBackup(Node finalDestination, String jobID, String regionID) {
+        System.out.println("Node " + databaseService.getInfo().getID() + " is getting backup for " + jobID +":" + regionID + " from " + finalDestination.getID());
         if(databaseService.getInfo().equals(finalDestination)){
-            return databaseService.getBackupForBackupID(jobID + ":" + regionID);
+
+            Backup backup = databaseService.getBackupForBackupID(jobID + ":" + regionID);
+            System.out.println("Node " + databaseService.getInfo().getID() + " is returning " + backup);
+            return backup;
         }else{
             Node delegator = reconstructionService.getDelegatorFromTable(finalDestination);
-            return messageService.sendGetBackup(delegator, finalDestination, jobID, regionID);
+            Backup backup = messageService.sendGetBackup(delegator, finalDestination, jobID, regionID);
+            System.out.println("Node " + databaseService.getInfo().getID() + " is receiving " + backup);
+            return backup;
         }
     }
 }

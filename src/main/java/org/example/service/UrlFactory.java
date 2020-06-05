@@ -11,6 +11,7 @@ public class UrlFactory {
     @Autowired
     ServentConfig config;
 
+
     public String getBootstrapHailUrl(){
         return "http://" + config.getBootstrap() + "/api/bootstrap/hail";
     }
@@ -38,4 +39,8 @@ public class UrlFactory {
     public String getSingleResultUrl(Node receiver) { return "http://" + receiver.getID() + "/api/jobs/singleResult"; }
 
     public String getGetBackupUrl(Node delegator, String jobID, String regionID) { return "http://" + delegator.getID() + "/api/node/getBackup/" + jobID + "/" + regionID;}
+
+    public String getSaveBackupUrl(Node destination) {
+        return "http://" + destination.getID() + "/api/node/backup";
+    }
 }

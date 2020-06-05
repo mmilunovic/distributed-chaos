@@ -63,7 +63,6 @@ public class Region implements Comparable<Region>{
             Point newPoint = new Point(
                     regionCourner.getX() + res.proportion * (point.getX() - regionCourner.getX()),
                     regionCourner.getY() + res.proportion * (point.getY() - regionCourner.getY()));
-            System.out.println( regionCourner + " - " +point + " - " + newPoint);
             res.addPoint(newPoint);
         }
 

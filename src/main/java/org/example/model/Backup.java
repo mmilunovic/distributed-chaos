@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalTime;
 import java.util.*;
@@ -15,6 +16,7 @@ public class Backup {
 
     private String jobID;
     private String regionID;
+    @ToString.Exclude
     private List<Point> data;
 
     @JsonIgnore

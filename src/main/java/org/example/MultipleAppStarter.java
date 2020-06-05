@@ -5,7 +5,7 @@ import java.io.*;
 public class MultipleAppStarter {
 
     public static void main(String[] args) throws InterruptedException {
-        int n = 11;
+        int n = 5;
         boolean createProperties = false;
         if(createProperties)
             createAppProperties(n);

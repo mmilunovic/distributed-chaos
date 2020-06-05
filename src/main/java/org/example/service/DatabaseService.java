@@ -131,7 +131,6 @@ public class DatabaseService {
     }
 
     public synchronized void saveData(Point point){
-        System.out.println(point + " is saved ");
         // TODO: Dodajemo tacku ako pripada regionu, ali uvek setujemo tracepoint
         database.getMyData().add(point);
         database.getMyRegion().setTracepoint(point);
@@ -164,7 +163,6 @@ public class DatabaseService {
     }
 
     public synchronized void saveJobs(Collection<Job> jobs){
-        System.out.println(jobs);
         database.getAllJobs().addAll(jobs);
     }
 
@@ -212,7 +210,13 @@ public class DatabaseService {
     }
 
     public synchronized Job getMyJob() {
-        String[] work = database.getCurrentWork().get(getInfo()).split(":");
+        System.out.println(database.getCurrentWork());
+        String workID = database.getCurrentWork().get(getInfo());
+        if(workID == null){
+            return null;
+        }
+
+        String[] work = workID.split(":");
 
         if(work.length == 1){
             return null;

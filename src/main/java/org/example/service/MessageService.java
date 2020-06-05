@@ -2,7 +2,6 @@ package org.example.service;
 
 import org.example.model.*;
 import org.example.request.bootstrap.NodeLeftRequest;
-import org.example.request.job.SingleResult;
 import org.example.request.job.StartJobRequest;
 import org.example.request.node.*;
 import org.example.request.bootstrap.HailRequest;
@@ -139,11 +138,20 @@ public class MessageService {
     }
 
     public Backup sendGetBackup(Node delegator, Node finalDestination, String jobID, String regionID) {
-        GetBackup getBackup = new GetBackup(urlFactory.getGetBackupUrl(delegator, jobID, regionID), finalDestination);
+        System.out.print(databaseService.getInfo() );
+
+        GetBackupRequest getBackup = new GetBackupRequest(urlFactory.getGetBackupUrl(delegator, jobID, regionID), finalDestination);
         return getBackup.execute();
     }
 
     public void sendSaveBackup(Backup backup, Node destination) {
         // TODO: treba proslediti backup destination
+        submit(new Runnable() {
+            @Override
+            public void run() {
+                SaveBackupRequest saveBackupRequest = new SaveBackupRequest(urlFactory.getSaveBackupUrl(destination),backup);
+                saveBackupRequest.execute();
+            }
+        });
     }
 }
