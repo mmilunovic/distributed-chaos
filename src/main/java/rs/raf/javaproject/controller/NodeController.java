@@ -23,6 +23,8 @@ public class NodeController {
     @Autowired
     private NodeService service;
 
+    private ApplicationContext context;
+
     @GetMapping("/info")
     @ResponseBody
     public Node info(){

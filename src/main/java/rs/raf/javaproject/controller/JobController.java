@@ -56,10 +56,10 @@ public class JobController {
     }
 
 
-    @GetMapping("/stopAll/{jobID}")
-    public void stopAll(@PathVariable String jobID){
-        service.stopAll(jobID);
-    }
+//    @GetMapping("/stopAll/{jobID}")
+//    public void stopAll(@PathVariable String jobID){
+//        service.stopAll(jobID);
+//    }
 
     @DeleteMapping("/{jobID}")
     public void deleteJob(@PathVariable String jobID){

@@ -109,16 +109,16 @@ public class JobService {
     }
 
     public void start(Job job){
-        synchronized (database.getInfo()) {
             if (!database.getAllJobs().containsKey(job.getId())) {
 
-                database.getAllJobs().put(job.getId(), job);
+                synchronized (database.getInfo()) {
+                    database.getAllJobs().put(job.getId(), job);
 
+                }
                 messageService.broadcastNewJob(job);
 
                 nodeService.restructure();
             }
-        }
     }
 
     public ResultResponse result(String jobID){
@@ -213,9 +213,14 @@ public class JobService {
 
     public void deleteJob(String jobID){
         synchronized (database.getInfo()) {
-            database.getAllJobs().remove(jobID);
+            if(database.getAllJobs().containsKey(jobID)){
+                database.getAllJobs().remove(jobID);
+                messageService.broadcastDeleteJob(jobID);
+                nodeService.restructure();
+            }
         }
-        nodeService.restructure();
+
+
     }
 
     private void drawResult(ResultResponse resultResponse, String jobID){

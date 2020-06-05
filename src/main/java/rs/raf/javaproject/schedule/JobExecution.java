@@ -45,8 +45,10 @@ public class JobExecution implements Runnable {
         );
 
 //        System.out.println(database.getInfo().getId() + " je nacrtao tacku " + newPoint);
-        database.getData().add(newPoint);
-        database.setTracepoint(newPoint);
+        synchronized (database.getInfo()) {
+            database.getData().add(newPoint);
+            database.setTracepoint(newPoint);
+        }
     }
 
     private Point randomPoint(){

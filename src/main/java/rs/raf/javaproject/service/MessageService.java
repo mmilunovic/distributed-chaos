@@ -11,10 +11,7 @@ import rs.raf.javaproject.repository.Database;
 import rs.raf.javaproject.requests.bootstrap.Hail;
 import rs.raf.javaproject.requests.bootstrap.Left;
 import rs.raf.javaproject.requests.bootstrap.New;
-import rs.raf.javaproject.requests.job.JobResult;
-import rs.raf.javaproject.requests.job.NewJob;
-import rs.raf.javaproject.requests.job.RegionResult;
-import rs.raf.javaproject.requests.job.Status;
+import rs.raf.javaproject.requests.job.*;
 import rs.raf.javaproject.requests.node.*;
 import rs.raf.javaproject.response.RegionStatusResponse;
 import rs.raf.javaproject.response.ResultResponse;
@@ -106,6 +103,9 @@ public class MessageService {
         return "http://" + delegateID + "/api/delegate/" + nodeID +"/backup/" + jobID + "/" + regionID;
     }
 
+    private String getDeleteJobUrl(Node receiver, String jobID){
+        return "http://" + receiver.getId() + "/api/jobs/" + jobID;
+    }
 
     public Node sendBootstrapHail(){
         Hail hail = new Hail(getBootstrapHailUrl());
@@ -373,7 +373,7 @@ public class MessageService {
 
         StatusResponse statusResponse = new StatusResponse();
         statusResponse.setJobID(jobID);
-
+//        System.out.println(config.getMe() + " is getting status for " + receiverIDs);
         for(String nodeID: receiverIDs){
             RegionStatusResponse regionStatusResponse = new RegionStatusResponse();
 
@@ -384,7 +384,7 @@ public class MessageService {
                 regionStatusResponse = status.execute();
             }else{
                 Node delegator = successorTable.getDelegator(successorTable.getDatabase().getAllNodes().get(nodeID));
-
+//                System.out.println(config.getMe() + " is looking for " + nodeID + " got " + delegator.getId() + " from table " + successorTable.getTable());
                 Status status = new Status(getStatusUrl(delegator, nodeID, jobID, regionID));                               // Ne saljemo direktno cvoru nego delegatoru
 
                 regionStatusResponse = status.execute();
@@ -425,6 +425,17 @@ public class MessageService {
     }
 
 
+    public void broadcastDeleteJob(String jobID) {
+        for(Node node : successorTable.broadcastingNodes()){
+            executorPool.submit(new Runnable() {
+                @Override
+                public void run() {
+                    DeleteJob deleteJob = new DeleteJob(getDeleteJobUrl(node, jobID));
+                    deleteJob.execute();
+                }
+            });
+        }
+    }
 }
 
 

@@ -51,7 +51,6 @@ public class SuccessorTable {
 
         if(table.size() == 0) return null; // Cisto provere radi
 
-        Node ret = null;
         TreeSet<Node> set = new TreeSet<>();
         set.addAll(table);
 
@@ -68,10 +67,6 @@ public class SuccessorTable {
                 return set.last();
             }
 
-            if(tableNode.equals(node) && i == set.size()){
-                return  set.first();
-            }
-
             if(tableNode.equals(node)){
                 return prev;
             }
@@ -79,6 +74,6 @@ public class SuccessorTable {
             i++;
         }
 
-        return ret;
+        return null;
     }
 }

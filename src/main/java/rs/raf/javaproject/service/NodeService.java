@@ -1,6 +1,7 @@
 package rs.raf.javaproject.service;
 
 import lombok.Getter;
+//import math.geom2d.polygon.Polygons2D;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -62,6 +63,7 @@ public class NodeService {
 
     public void quit(){
         synchronized (database.getInfo()) {
+            messageService.sendBootstrapLeft(database.getInfo());
             messageService.broadcastLeaveMessage(this.database.getInfo());
             this.jobExecution.getExit().set(true);
             SpringApplication.exit(context,() -> 0);
@@ -114,7 +116,7 @@ public class NodeService {
     public void restructure() {
         synchronized (database.getInfo()) {
             if (this.jobExecution == null) {
-                this.jobExecution = new JobExecution(this.database, database.getRegion(), new AtomicBoolean((false)), new AtomicBoolean(false));
+                this.jobExecution = new JobExecution(this.database, database.getRegion(), new AtomicBoolean(false), new AtomicBoolean(false));
                 Thread t = new Thread(jobExecution);
                 t.start();
             }
@@ -124,7 +126,7 @@ public class NodeService {
             // AKo je radio neki region, onda rezultat sacuva kao backup
             if (database.getInfo().getMyRegion() != null) {
                 BackupInfo backupInfo = new BackupInfo();
-                backupInfo.setData(new ArrayList<Point>(data));
+                backupInfo.setData(data);
                 backupInfo.setTimestamp(LocalTime.now());
                 backupInfo.setJobID(database.getInfo().getMyRegion().getJob().getId());
                 backupInfo.setRegionID(database.getInfo().getMyRegion().getFullID());
