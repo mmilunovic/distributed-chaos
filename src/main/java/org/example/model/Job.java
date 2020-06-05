@@ -1,17 +1,20 @@
 package org.example.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
 @Data
-public class Job {
+@NoArgsConstructor
+public class Job implements Comparable<Job> {
 
     private String id;
-    private ArrayList<Point> startingPoints;
+    private ArrayList<Point> startingPoints = new ArrayList<>();
     private int width;
     private int height;
+    private Point tracepoint;
     private double proportion;
 
     public Job(String id, int width, int height, double proportion){
@@ -37,5 +40,10 @@ public class Job {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public int compareTo(Job o) {
+        return this.getId().compareTo(o.getId());
     }
 }

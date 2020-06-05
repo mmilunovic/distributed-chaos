@@ -15,6 +15,9 @@ public class JobService {
     @Autowired
     MessageService messageService;
 
+    @Autowired
+    ReconstructionService reconstructionService;
+
     public Collection<Job> getAllJobs() {
         return databaseService.getAllJobs();
     }
@@ -23,6 +26,7 @@ public class JobService {
         if(!databaseService.getAllJobs().contains(job)){
             databaseService.saveJob(job);
             messageService.broadcastStartJob(job, databaseService.getMyBroadcastingNodes());
+            reconstructionService.reconstruct();
         }
     }
 }

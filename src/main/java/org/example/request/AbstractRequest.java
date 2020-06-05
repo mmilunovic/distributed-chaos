@@ -26,11 +26,11 @@ public abstract class AbstractRequest<T> {
 
     public AbstractRequest(String url){
         this.url = url;
-        try {
-            Thread.sleep(300+(new Random()).nextInt(500));
-        } catch (InterruptedException e) {
-            //e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(300+(new Random()).nextInt(500));
+//        } catch (InterruptedException e) {
+//            //e.printStackTrace();
+//        }
     }
 
     protected void setTimeout(int seconds){

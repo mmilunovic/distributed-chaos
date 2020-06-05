@@ -1,15 +1,18 @@
 package org.example.reacurringTasks;
 
+import lombok.Data;
 import org.example.model.Point;
 import org.example.service.DatabaseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+@Data
+@Component
 public class GameOfChaos implements Runnable{
 
-    @Autowired
     DatabaseService databaseService;
 
     private AtomicBoolean pause;
@@ -25,6 +28,9 @@ public class GameOfChaos implements Runnable{
     }
 
     private void doChaos() {
+        sleep(1000);
+        System.out.println(databaseService);
+        System.out.println(databaseService.getMyRegion());
         Point tracepoint = databaseService.getMyRegion().getTracepoint();
         Double proportion = databaseService.getMyRegion().getProportion();
         Point randomPoint = randomStartingPoint();

@@ -100,7 +100,6 @@ public class MessageService {
     }
 
     public void broadcastNodeLeft(Node exitingNode) {
-        // TODO: Successor table mi treba
         for(Node receiver : databaseService.getMyBroadcastingNodes()){
             pool.submit(new Runnable() {
                 @Override

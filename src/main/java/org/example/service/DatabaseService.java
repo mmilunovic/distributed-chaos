@@ -51,6 +51,9 @@ public class DatabaseService {
 
         for(Map.Entry<Node, String> entry: database.getCurrentWork().entrySet()){
             String[] work = entry.getValue().split(":");
+            if (work.length == 1){
+                continue; // Skiping idle nodes
+            }
             String jobID = work[0];
             String regionID = work[1];
 
@@ -124,6 +127,7 @@ public class DatabaseService {
     }
 
     public synchronized void saveData(Point point){
+        System.out.println(point + " is saved ");
         database.getMyData().add(point);
     }
 
@@ -148,6 +152,7 @@ public class DatabaseService {
     }
 
     public synchronized void saveJobs(Collection<Job> jobs){
+        System.out.println(jobs);
         database.getAllJobs().addAll(jobs);
     }
 
@@ -164,8 +169,19 @@ public class DatabaseService {
         database.getAllNodes().remove(node);
     }
 
+    public synchronized void insertWork(Node node, Region region, Job job){
+        if(node.equals(getInfo())){
+            database.setMyRegion(region);
+        }
+        database.getCurrentWork().put(node, job.getId()+":"+region.getId());
+    }
+
+    public synchronized void saveDataCollection(Collection<Point> points){
+
+    }
+
     public synchronized void saveBackup(Backup backup){
-        database.getBackups().add(backup);
+        database.getBackups().put(backup.getID(), backup);
     }
 
 }

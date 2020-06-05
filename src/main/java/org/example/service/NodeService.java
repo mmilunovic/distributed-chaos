@@ -4,6 +4,8 @@ import org.example.JavaServlet;
 import org.example.model.Backup;
 import org.example.model.Node;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -17,6 +19,12 @@ public class NodeService {
     @Autowired
     MessageService messageService;
 
+    @Autowired
+    ReconstructionService reconstructionService;
+
+    @Autowired
+    private ConfigurableApplicationContext context;
+
 
     public Node getInfo() {
         return databaseService.getInfo();
@@ -26,46 +34,47 @@ public class NodeService {
         return databaseService.getAllNodes();
     }
 
-    public boolean ping(String nodeID) {
+    public Boolean ping(String nodeID) {
         if (!databaseService.getInfo().getID().equals(nodeID)) {
             Boolean pingNodeResult = messageService.sendPing(databaseService.getNodeFromID(nodeID), databaseService.getNodeFromID(nodeID), 1);
 
-            if (pingNodeResult == null || pingNodeResult == false) {
-                return false;
+            if (pingNodeResult == null || pingNodeResult == Boolean.FALSE) {
+                return Boolean.FALSE;
             }
         }
-        return true;
+        return Boolean.TRUE;
     }
 
     public void updateNewNode(Node newNode) {
         databaseService.saveNode(newNode);
+        reconstructionService.reconstruct();
     }
 
     public void broadcastNewNode(Node newNode) {
         if(!databaseService.isKnown(newNode)){
             databaseService.saveNode(newNode);
             messageService.broadcastNewNode(databaseService.getMyBroadcastingNodes(), newNode);
+            reconstructionService.reconstruct();
         }
     }
 
     public void nodeLeft(Node exitingNode) {
         System.out.println(databaseService.getInfo().getID() + " is informing that " + exitingNode.getID() + " is leaving...");
-        System.out.println(databaseService.getAllNodes());
-        if(databaseService.getAllNodes().contains(exitingNode)) {
+
+        if(databaseService.isKnown(exitingNode)) {
             databaseService.removeNode(exitingNode);
-            // TODO:
-        /*
-        Update successor and predecessor table
-        * */
+
+            System.out.println(databaseService.getInfo().getID() + " is broadcasting that " + exitingNode.getID() + " is leaving...");
             messageService.broadcastNodeLeft(exitingNode);
+
+            reconstructionService.reconstruct();
         }
     }
 
     public void quit() {
-        // TODO: Ovde je bio synchronized
         System.out.println("I'm leaving: " + databaseService.getInfo().getID());
-        //messageService.broadcastNodeLeft(databaseService.getInfo());
-        JavaServlet.exitThread();
+        messageService.sendBootstrapLeft(databaseService.getInfo());
+        SpringApplication.exit(context,() -> 0);
     }
 
     public void saveBackup(Backup backup) {
