@@ -129,5 +129,9 @@ public class DatabaseService {
         database.getAllNodes().add(node);
     }
 
+    public synchronized void saveJob(Job job){
+        database.getAllJobs().add(job);
+    }
+
 
 }
