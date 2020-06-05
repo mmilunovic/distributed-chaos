@@ -40,7 +40,7 @@ public class NodeService {
     }
 
     public void broadcastNewNode(Node newNode) {
-        if(!databaseService.getAllNodes().contains(newNode)){
+        if(!databaseService.isKnown(newNode)){
             databaseService.saveNode(newNode);
             messageService.broadcastNewNode(databaseService.getMyBroadcastingNodes(), newNode);
         }

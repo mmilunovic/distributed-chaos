@@ -21,7 +21,11 @@ public class DatabaseService {
     }
 
     public synchronized Collection<Job> getAllJobs(){
-        return database.getAllJobs(); // TODO
+        return database.getAllJobs();
+    }
+
+    public synchronized boolean isKnown(Node node){
+        return database.getAllNodes().contains(node);
     }
 
     // Vraca node za odredjeni id ili null ukoliko ne postoji
@@ -90,7 +94,7 @@ public class DatabaseService {
     }
 
     public synchronized Node getSuccessorForNode(Node node){
-        return null; // TODO
+        return  getOffsetNodeFromNode(node, 1);
     }
 
     public synchronized Node getPredecessor(){
@@ -98,11 +102,20 @@ public class DatabaseService {
     }
 
     public synchronized Node getPredecessorForNode(Node node){
-        return null; // TODO
+        return  getOffsetNodeFromNode(node, -1);
+    }
+
+    private Node getOffsetNodeFromNode(Node node, int offset){
+        ArrayList<Node> allNodes = new ArrayList<>(getAllNodes());
+        int position = allNodes.indexOf(node);
+        return allNodes.get((position + offset + allNodes.size()) % allNodes.size());
     }
 
     public synchronized Collection<Node> getBackupNodesForNode(Node node){
-        return null; // TODO
+        ArrayList<Node> backups = new ArrayList<>();
+        backups.add(getSuccessorForNode(node));
+        backups.add(getPredecessorForNode(node));
+        return backups;
     }
 
     public synchronized Collection<Node> getBackupNodesForNodeID(String nodeID){
@@ -142,7 +155,12 @@ public class DatabaseService {
     }
 
     public synchronized Collection<Node> getMyBroadcastingNodes(){
-        return null; // TODO
+        ArrayList<Node> broadcastingNodes = new ArrayList<>();
+        broadcastingNodes.add(getOffsetNodeFromNode(getInfo(), 1));
+        broadcastingNodes.add(getOffsetNodeFromNode(getInfo(), 2));
+        broadcastingNodes.add(getOffsetNodeFromNode(getInfo(), 4));
+
+        return broadcastingNodes;
     }
 
 }

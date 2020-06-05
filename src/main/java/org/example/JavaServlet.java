@@ -51,12 +51,10 @@ public class JavaServlet {
 
             reconstructionService.reconstruct();
 
-            messageService.sendUpdateNewNode(databaseService.getPredecessor());
-            messageService.broadcastNewNode(databaseService.getMyBroadcastingNodes());
+            messageService.sendUpdateNewNode(databaseService.getPredecessor(), databaseService.getInfo());
+            messageService.broadcastNewNode(databaseService.getMyBroadcastingNodes(), databaseService.getInfo());
 
             messageService.sendBootstrapNew(config.getServent());
-
-
 
         }
 
