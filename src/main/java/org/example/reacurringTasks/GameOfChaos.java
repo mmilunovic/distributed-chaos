@@ -30,7 +30,7 @@ public class GameOfChaos implements Runnable{
     }
 
     private void doChaos() {
-        sleep(1000);
+        sleep(100);
 
         if(databaseService.getMyRegion() != null) { // Ako nisam idle
             Point tracepoint = databaseService.getMyRegion().getTracepoint();

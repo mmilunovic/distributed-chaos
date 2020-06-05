@@ -128,10 +128,13 @@ public class MessageService {
         }
     }
 
-    public HashSet<Point> sendGetResult(Job requestedJob, Region requestedRegion, Collection<Node> receivers) {
+    public HashSet<Point> sendGetResult(Collection<Node> receivers) {
         HashSet<Point> result = new HashSet<>();
 
         for(Node receiver : receivers){
+            Job requestedJob = databaseService.getJobFromNode(receiver);
+            Region requestedRegion = databaseService.getRegionFromNode(receiver);
+
             Node delegator = reconstructionService.getDelegatorFromTable(receiver);
             Backup receiverBackup = sendGetBackup(delegator, receiver, requestedJob.getId(), requestedRegion.getId());
             result.addAll(receiverBackup.getData());

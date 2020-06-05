@@ -27,7 +27,7 @@ public class ResultService {
     DatabaseService databaseService;
 
     public void getResult(String jobID) {
-        // TODO
+        getResult(jobID, "-");
     }
 
     public void getResult(String jobID, String regionID) {
@@ -35,11 +35,12 @@ public class ResultService {
 
         Job requestedJob = databaseService.getJobFromID(jobID);
 
-        Region requestedRegion = new Region(regionID);
+        if(requestedJob == null) throw new RuntimeException("Job with " + jobID + " doesnt exist");
+
 
         Collection<Node> receivers = databaseService.getNodesForJobIDAndRegionID(jobID, regionID);
 
-        resultResponse = messageService.sendGetResult(requestedJob, requestedRegion, receivers);
+        resultResponse = messageService.sendGetResult(receivers);
 
         generateResultPNG(resultResponse, requestedJob, regionID);
     }
