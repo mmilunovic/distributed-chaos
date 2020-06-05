@@ -32,5 +32,12 @@ public class NodeController {
         return nodeService.getAllJobs();
     }
 
+    @GetMapping("/ping/{nodeID}")
+    @ResponseBody
+    public Boolean ping(@PathVariable String nodeID){
+        return nodeService.ping(nodeID);
+    }
+
+
 
 }

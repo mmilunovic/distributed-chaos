@@ -13,6 +13,9 @@ public class NodeService {
     @Autowired
     DatabaseService databaseService;
 
+    @Autowired
+    MessageService messageService;
+
 
     public Node getInfo() {
         return databaseService.getInfo();
@@ -24,5 +27,16 @@ public class NodeService {
 
     public Collection<Job> getAllJobs() {
         return databaseService.getAllJobs();
+    }
+
+    public Boolean ping(String nodeID) {
+        if (!databaseService.getInfo().equals(nodeID)) {
+            Boolean pingNodeResult = messageService.sendPing(nodeID, 1);
+
+            if (pingNodeResult == null || pingNodeResult == Boolean.FALSE) {
+                return Boolean.FALSE;
+            }
+        }
+        return Boolean.TRUE;
     }
 }

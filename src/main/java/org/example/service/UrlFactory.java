@@ -17,4 +17,6 @@ public class UrlFactory {
     public String getBootstrapNewUrl(){
         return "http://" + config.getBootstrap() + "/api/bootstrap/new";
     }
+
+    public String getPingUrl(String nodeID) { return "http://" + config.getServent().getID() + "/api/node/ping/" + nodeID; }
 }
