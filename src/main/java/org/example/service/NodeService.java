@@ -25,10 +25,6 @@ public class NodeService {
         return databaseService.getAllNodes();
     }
 
-    public Collection<Job> getAllJobs() {
-        return databaseService.getAllJobs();
-    }
-
     public Boolean ping(String nodeID) {
         if (!databaseService.getInfo().equals(nodeID)) {
             Boolean pingNodeResult = messageService.sendPing(nodeID, 1);

@@ -1,5 +1,6 @@
 package org.example.service;
 
+import org.example.model.Job;
 import org.example.model.Node;
 import org.example.request.bootstrap.HailRequest;
 import org.example.request.bootstrap.NewNodeRequest;
@@ -25,8 +26,8 @@ public class MessageService {
         newNodeRequest.execute();
     }
 
-    public Boolean sendPing(String nodeID, int i) {
-        PingRequest pingRequest = new PingRequest(urlFactory.getPingUrl(nodeID), i);
+    public Boolean sendPing(String nodeID, int timeout) {
+        PingRequest pingRequest = new PingRequest(urlFactory.getPingUrl(nodeID), timeout);
         return pingRequest.execute();
     }
 

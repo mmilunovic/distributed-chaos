@@ -26,12 +26,6 @@ public class NodeController {
         return nodeService.allNodes();
     }
 
-    @GetMapping("/allJobs")
-    @ResponseBody
-    public Collection<Job> getAllJobs(){
-        return nodeService.getAllJobs();
-    }
-
     @GetMapping("/ping/{nodeID}")
     @ResponseBody
     public Boolean ping(@PathVariable String nodeID){
