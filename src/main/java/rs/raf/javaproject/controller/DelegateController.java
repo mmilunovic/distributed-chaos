@@ -23,7 +23,7 @@ public class DelegateController {
     @Autowired
     NodeService nodeService;
 
-    @GetMapping("jobs/{jobID}")
+    @GetMapping("/jobs/{jobID}")
     @ResponseBody
     public Collection<Point> getJobResultFromNode(@PathVariable String nodeID, @PathVariable String jobID){
         return jobService.getJobResultFromNode(nodeID, jobID);

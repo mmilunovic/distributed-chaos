@@ -38,7 +38,7 @@ public class NodeService {
     private ConfigurableApplicationContext context;
 
 
-    public Node info(Node node){
+    public Node info(){
         return database.getInfo();
     }
 

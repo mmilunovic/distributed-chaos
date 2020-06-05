@@ -18,17 +18,15 @@ import java.util.Collection;
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/node")
-public class NodeController implements ApplicationContextAware {
+public class NodeController {
 
     @Autowired
     private NodeService service;
 
-    private ApplicationContext context;
-
     @GetMapping("/info")
     @ResponseBody
-    public Node info(@RequestBody Node node){
-        return service.info(node);
+    public Node info(){
+        return service.info();
     }
 
     @GetMapping("/allNodes")
@@ -47,12 +45,6 @@ public class NodeController implements ApplicationContextAware {
     public void quit(){
         service.quit();
         return;
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext ctx) throws BeansException {
-        this.context = ctx;
-
     }
 
     @GetMapping("/left/{nodeID}")
