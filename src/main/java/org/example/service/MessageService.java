@@ -62,10 +62,15 @@ public class MessageService {
     }
 
     public void broadcastNewNode(Collection<Node> broadcastReceiverNodes, Node servent) {
-        // TODO: pool
         for(Node receiver : broadcastReceiverNodes){
-            BroadcastNewNodeRequest broadcastNewNodeRequest = new BroadcastNewNodeRequest(urlFactory.getBroadcastNewNodeUrl(receiver), servent);
-            broadcastNewNodeRequest.execute();
+            pool.submit(new Runnable() {
+                @Override
+                public void run() {
+                    AddNewNodeRequest addNewNodeRequest = new AddNewNodeRequest(urlFactory.getBroadcastNewNodeUrl(receiver), servent);
+                    addNewNodeRequest.execute();
+                }
+            });
+
         }
     }
 

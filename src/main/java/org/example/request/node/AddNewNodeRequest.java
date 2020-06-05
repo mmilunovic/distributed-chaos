@@ -7,8 +7,8 @@ import com.squareup.okhttp.RequestBody;
 import org.example.model.Node;
 import org.example.request.AbstractRequest;
 
-public class BroadcastNewNodeRequest extends AbstractRequest<Void> {
-    public BroadcastNewNodeRequest(String url, Node servent) {
+public class AddNewNodeRequest extends AbstractRequest<Void> {
+    public AddNewNodeRequest(String url, Node servent) {
         super(url);
         try {
             var body = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(servent);
