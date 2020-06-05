@@ -106,7 +106,7 @@ public class DatabaseService {
     }
 
     public synchronized Collection<Node> getBackupNodesForNodeID(String nodeID){
-        return null; // TODO
+        return getBackupNodesForNode(getNodeFromID(nodeID)); 
     }
 
     public synchronized Node getInfo(){
@@ -129,8 +129,20 @@ public class DatabaseService {
         database.getAllNodes().add(node);
     }
 
+    public synchronized void saveNodes(Collection<Node> nodes){
+        database.getAllNodes().addAll(nodes);
+    }
+
     public synchronized void saveJob(Job job){
         database.getAllJobs().add(job);
+    }
+
+    public synchronized void saveJobs(Collection<Job> jobs){
+        database.getAllJobs().addAll(jobs);
+    }
+
+    public synchronized Collection<Node> getMyBroadcastingNodes(){
+        return null; // TODO
     }
 
 

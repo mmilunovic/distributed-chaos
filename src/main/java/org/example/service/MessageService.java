@@ -10,13 +10,27 @@ import org.example.request.node.PingRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.Collection;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Component
 public class MessageService {
 
     @Autowired
     UrlFactory urlFactory;
+
+    private ExecutorService pool;
+
+    @PostConstruct
+    public void init(){
+        pool = Executors.newFixedThreadPool(20);
+    }
+
+    private void submit(Runnable task){
+        pool.submit(task);
+    }
 
     public Node sendBootstrapHail() {
         HailRequest hailRequest = new HailRequest(urlFactory.getBootstrapHailUrl());
@@ -41,5 +55,13 @@ public class MessageService {
     public Collection<Job> sendGetAllJobs(Node receiver) {
         GetAllJobsRequest getAllJobsRequest = new GetAllJobsRequest(urlFactory.getGetAllJobsUrl(receiver));
         return getAllJobsRequest.execute();
+    }
+
+    public void sendUpdateNewNode(Node receiver) {
+        // TODO
+    }
+
+    public void broadcastNewNode(Collection<Node> broadcastReceiverNodes) {
+        // TODO
     }
 }

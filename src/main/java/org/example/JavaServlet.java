@@ -6,6 +6,7 @@ import org.example.model.Job;
 import org.example.model.Node;
 import org.example.service.DatabaseService;
 import org.example.service.MessageService;
+import org.example.service.ReconstructionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -25,6 +26,9 @@ public class JavaServlet {
     @Autowired
     MessageService messageService;
 
+    @Autowired
+    ReconstructionService reconstructionService;
+
     public static void main(String[] args) {
         SpringApplication.run(JavaServlet.class, args);
     }
@@ -42,8 +46,16 @@ public class JavaServlet {
             messageService.sendBootstrapNew(config.getServent());
         }else{
 
-            Collection<Node> nodesInSystem = messageService.sendGetAllNodes(enteringNode);
-            Collection<Job> jobsInSystem = messageService.sendGetAllJobs(enteringNode);
+            databaseService.saveNodes(messageService.sendGetAllNodes(enteringNode));
+            databaseService.saveJobs(messageService.sendGetAllJobs(enteringNode));
+
+            reconstructionService.reconstruct();
+
+            messageService.sendUpdateNewNode(databaseService.getPredecessor());
+            messageService.broadcastNewNode(databaseService.getMyBroadcastingNodes());
+
+            messageService.sendBootstrapNew(config.getServent());
+
 
 
         }
