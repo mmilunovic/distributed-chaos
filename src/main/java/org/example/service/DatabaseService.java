@@ -17,11 +17,11 @@ public class DatabaseService {
     Database database;
 
     public synchronized Collection<Node> getAllNodes(){
-        return database.getAllNodes();
+        return new ArrayList<>(database.getAllNodes());
     }
 
     public synchronized Collection<Job> getAllJobs(){
-        return database.getAllJobs();
+        return new ArrayList<>(database.getAllJobs());
     }
 
     public synchronized boolean isKnown(Node node){

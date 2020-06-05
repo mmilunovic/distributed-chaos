@@ -37,8 +37,13 @@ public class MessageService {
     }
 
     public void sendBootstrapNew(Node servent) {
-        NewNodeRequest newNodeRequest = new NewNodeRequest(urlFactory.getBootstrapNewUrl(), servent);
-        newNodeRequest.execute();
+        submit(new Runnable() {
+            @Override
+            public void run() {
+                NewNodeRequest newNodeRequest = new NewNodeRequest(urlFactory.getBootstrapNewUrl(), servent);
+                newNodeRequest.execute();
+            }
+        });
     }
 
     public Boolean sendPing(Node receiver, Node delegator,  int timeout) {
@@ -57,8 +62,14 @@ public class MessageService {
     }
 
     public void sendUpdateNewNode(Node receiver, Node servent) {
-        UpdateNewNodeRequest updateNewNodeRequest = new UpdateNewNodeRequest(urlFactory.getSendUpdateNewNodeUrl(receiver),servent);
-        updateNewNodeRequest.execute();
+        submit(new Runnable() {
+            @Override
+            public void run() {
+                UpdateNewNodeRequest updateNewNodeRequest = new UpdateNewNodeRequest(urlFactory.getSendUpdateNewNodeUrl(receiver),servent);
+                updateNewNodeRequest.execute();
+            }
+        });
+
     }
 
     public void broadcastNewNode(Collection<Node> broadcastReceiverNodes, Node servent) {
