@@ -157,7 +157,7 @@ public class MessageService {
 
     public Collection<StatusResponse> sendGetStatus(Job requestedJob, Region requestedRegion, Collection<Node> receivers) {
         Collection<StatusResponse> statusResponseResult = new ArrayList<>();
-
+        System.out.println("RECEIVERS: " + receivers);
         for(Node receiver : receivers){
             Node delegator = reconstructionService.getDelegatorFromTable(receiver);
             Backup receiverBackup = sendGetBackup(delegator, receiver, requestedJob.getId(), requestedRegion.getId());
@@ -166,6 +166,7 @@ public class MessageService {
             statusResponse.setNodeID(receiver.getID());
             statusResponse.setRegionID(databaseService.getRegionFromNode(receiver).getId());
             statusResponse.setNumberofPoints(receiverBackup.getData().size());
+            statusResponseResult.add(statusResponse);
         }
 
         return statusResponseResult;

@@ -12,6 +12,4 @@ public class StatusResponse {
     private String regionID;
     private String nodeID;
     private int numberofPoints;
-
-
 }

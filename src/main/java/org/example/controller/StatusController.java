@@ -15,6 +15,17 @@ public class StatusController {
     @Autowired
     StatusService statusService;
 
+    @GetMapping()
+    @ResponseBody
+    public Collection<StatusResponse> status(){
+        return statusService.getStatus();
+    }
+
+    @GetMapping("/{jobID}/")
+    @ResponseBody
+    public Collection<StatusResponse> status(@PathVariable String jobID){
+        return statusService.getStatus(jobID);
+    }
 
     @GetMapping("/{jobID}/{regionID}")
     @ResponseBody
