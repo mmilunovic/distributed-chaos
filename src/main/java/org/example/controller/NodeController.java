@@ -46,5 +46,8 @@ public class NodeController {
         nodeService.nodeLeft(exitingNode);
     }
 
+    @GetMapping("/quit")
+    public void quit(){ nodeService.quit(); }
+
 
 }

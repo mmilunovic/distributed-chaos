@@ -1,5 +1,6 @@
 package org.example.service;
 
+import org.example.JavaServlet;
 import org.example.model.Node;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -53,5 +54,11 @@ public class NodeService {
         Update successor and predecessor table
         * */
         messageService.broadcastNodeLeft(exitingNode);
+    }
+
+    public void quit() {
+        // TODO: Ovde je bio synchronized
+        messageService.broadcastNodeLeft(databaseService.getInfo());
+        JavaServlet.exitThread();
     }
 }

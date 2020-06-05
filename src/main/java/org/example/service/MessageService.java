@@ -75,7 +75,7 @@ public class MessageService {
     }
 
     public void broadcastNodeLeft(Node exitingNode) {
-        // TODO:
+        // TODO: Successor table mi treba
     }
 
     public void broadcastStartJob(Job job, Collection<Node> myBroadcastingNodes) {
