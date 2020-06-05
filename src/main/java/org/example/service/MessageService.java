@@ -6,10 +6,12 @@ import org.example.request.job.StartJobRequest;
 import org.example.request.node.*;
 import org.example.request.bootstrap.HailRequest;
 import org.example.request.bootstrap.NewNodeRequest;
+import org.example.response.StatusResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.concurrent.ExecutorService;
@@ -152,4 +154,22 @@ public class MessageService {
             }
         });
     }
+
+    public Collection<StatusResponse> sendGetStatus(Job requestedJob, Region requestedRegion, Collection<Node> receivers) {
+        Collection<StatusResponse> statusResponseResult = new ArrayList<>();
+
+        for(Node receiver : receivers){
+            Node delegator = reconstructionService.getDelegatorFromTable(receiver);
+            Backup receiverBackup = sendGetBackup(delegator, receiver, requestedJob.getId(), requestedRegion.getId());
+
+            StatusResponse statusResponse = new StatusResponse();
+            statusResponse.setNodeID(receiver.getID());
+            statusResponse.setRegionID(databaseService.getRegionFromNode(receiver).getId());
+            statusResponse.setNumberofPoints(receiverBackup.getData().size());
+        }
+
+        return statusResponseResult;
+    }
+
+
 }

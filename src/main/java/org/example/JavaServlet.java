@@ -2,7 +2,9 @@ package org.example;
 
 
 import org.example.config.ServentConfig;
+import org.example.model.Job;
 import org.example.model.Node;
+import org.example.model.Point;
 import org.example.service.DatabaseService;
 import org.example.service.MessageService;
 import org.example.service.ReconstructionService;
@@ -62,5 +64,15 @@ public class JavaServlet {
 
         }
 
+        Job job = new Job();
+        job.setId("job1");
+        job.setHeight(100);
+        job.setWidth(100);
+        job.setProportion(0.5);
+        job.getStartingPoints().add(new Point(25.0,25.0));
+        job.getStartingPoints().add(new Point(75.0,25.0));
+        job.getStartingPoints().add(new Point(50.0,75.0));
+
+        databaseService.getAllJobs().add(job);
     }
 }

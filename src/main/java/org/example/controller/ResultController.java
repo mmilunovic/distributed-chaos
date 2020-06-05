@@ -20,6 +20,7 @@ public class ResultController {
     @GetMapping("/{jobID}/{regionID}")
     @ResponseBody
     public void result(@PathVariable String jobID, @PathVariable String regionID){
+        System.out.println("Asking result for: " + jobID + " " + regionID);
         resultService.getResult(jobID, regionID);
     }
 }

@@ -27,6 +27,8 @@ public class JobService {
             databaseService.saveJob(job);
             messageService.broadcastStartJob(job, databaseService.getMyBroadcastingNodes());
             reconstructionService.reconstruct();
+            System.out.println(databaseService.getMyRegion().getId());
+
         }
     }
 

@@ -78,7 +78,7 @@ public class NodeService {
     }
 
     public void saveBackup(Backup backup) {
-        System.out.println("Node " + databaseService.getInfo().getID() + " is saving backup " + backup);
+        //System.out.println("Node " + databaseService.getInfo().getID() + " is saving backup " + backup);
         databaseService.saveBackup(backup);
     }
 

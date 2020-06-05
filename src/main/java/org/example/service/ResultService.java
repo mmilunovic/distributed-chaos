@@ -28,6 +28,7 @@ public class ResultService {
 
     public void getResult(String jobID) {
         // TODO
+
     }
 
     public void getResult(String jobID, String regionID) {

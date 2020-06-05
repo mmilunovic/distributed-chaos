@@ -225,4 +225,8 @@ public class DatabaseService {
         String jobID = work[0];
         return getJobFromID(jobID);
     }
+
+    public Region getRegionFromNode(Node receiver) {
+        return null;
+    }
 }
