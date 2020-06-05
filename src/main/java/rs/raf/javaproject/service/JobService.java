@@ -171,12 +171,6 @@ public class JobService {
                 myResult.addAll(resultResponse.getData());
             }
 
-            for (BackupInfo backupInfo : database.getBackups().values()) {
-                if (backupInfo.getJobID().equals(jobID) && backupInfo.getRegionID().equals(regionID)) {
-                    myResult.addAll(backupInfo.getData());                                  // Dodajemo bakcup za taj posao ako ga imamo
-                }
-            }
-
         }
 
         return myResult;
@@ -214,7 +208,6 @@ public class JobService {
 
 
     public void stopAll(String jobID){
-        // TODO: Zaustavljamo izracunavanje naseg dela posla i saljemo poruku dalje pomocu DELETE /api/jobs/{jobID}
         this.deleteJob(jobID);
     }
 

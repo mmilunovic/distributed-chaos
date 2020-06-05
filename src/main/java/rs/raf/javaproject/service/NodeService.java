@@ -166,6 +166,7 @@ public class NodeService {
         }
 
         int jobIndex = 0;
+        Iterator<String> nodeIterator = database.getAllNodes().keySet().iterator();
         for (String jobID : database.getAllJobs().keySet()) {
 
             Job job = database.getAllJobs().get(jobID);
@@ -209,7 +210,6 @@ public class NodeService {
 
 
             //assign IDs to Regions
-            Iterator<String> nodeIterator = database.getAllNodes().keySet().iterator();
             for (String regionID : regionIDs) {
                 String nodeID = nodeIterator.next();
                 Region region = RegionUtil.getRegionFromID(job, regionID);
@@ -235,11 +235,10 @@ public class NodeService {
 
 
             //set new index and size
-            nodeIDIndexStart = nodeIDIndexStart + nodeIDsSize;
             nodeIDsSize = database.getAllNodes().size()/ database.getAllJobs().size();
             if (database.getAllNodes().size() % database.getAllJobs().size() > jobIndex)
                 nodeIDsSize++;
-
+            nodeIDIndexStart = nodeIDIndexStart + nodeIDsSize;
         }
         System.out.println("Node: " + database.getInfo() + " My Region: " + myRegion);
         if (oldRegion != null)
