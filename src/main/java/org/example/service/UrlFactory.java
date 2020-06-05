@@ -34,4 +34,8 @@ public class UrlFactory {
     public String getStartJobUrl(Node receiver) { return "http://" + receiver.getID() + "/api/jobs/start"; }
 
     public String getBroadcastNodeLeftUrl(Node receiver) { return "http://" + receiver.getID() + "/api/node/left"; }
+
+    public String getSingleResultUrl(Node receiver) { return "http://" + receiver.getID() + "/api/jobs/singleResult"; }
+
+    public String getGetBackupUrl(Node delegator, String jobID, String regionID) { return "http://" + delegator.getID() + "/api/node/getBackup/" + jobID + "/" + regionID;}
 }

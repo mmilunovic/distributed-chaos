@@ -55,5 +55,9 @@ public class NodeController {
     }
     //TODO: Backupi, ili ih staviti na drugi kontroler?
 
+    @PostMapping("/getBackup/{jobID}/{regionID}")
+    public Backup getBackup(@RequestBody Node finalDestination, @PathVariable String jobID, @PathVariable String regionID){
+        return nodeService.getBackup(finalDestination, jobID, regionID);
+    }
 
 }

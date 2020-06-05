@@ -80,4 +80,13 @@ public class NodeService {
     public void saveBackup(Backup backup) {
         databaseService.saveBackup(backup);
     }
+
+    public Backup getBackup(Node finalDestination, String jobID, String regionID) {
+        if(databaseService.getInfo().equals(finalDestination)){
+            return databaseService.getBackupForBackupID(jobID + ":" + regionID);
+        }else{
+            Node delegator = reconstructionService.getDelegatorFromTable(finalDestination);
+            return messageService.sendGetBackup(delegator, finalDestination, jobID, regionID);
+        }
+    }
 }

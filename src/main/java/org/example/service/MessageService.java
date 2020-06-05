@@ -1,8 +1,8 @@
 package org.example.service;
 
-import org.example.model.Job;
-import org.example.model.Node;
+import org.example.model.*;
 import org.example.request.bootstrap.NodeLeftRequest;
+import org.example.request.job.SingleResult;
 import org.example.request.job.StartJobRequest;
 import org.example.request.node.*;
 import org.example.request.bootstrap.HailRequest;
@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -23,6 +24,9 @@ public class MessageService {
 
     @Autowired
     DatabaseService databaseService;
+
+    @Autowired
+    ReconstructionService reconstructionService;
 
     private ExecutorService pool;
 
@@ -123,5 +127,19 @@ public class MessageService {
         }
     }
 
+    public HashSet<Point> sendGetResult(Job requestedJob, Region requestedRegion, Collection<Node> receivers) {
+        HashSet<Point> result = new HashSet<>();
 
+        for(Node receiver : receivers){
+            Node delegator = reconstructionService.getDelegatorFromTable(receiver);
+            Backup receiverBackup = sendGetBackup(delegator, receiver, requestedJob.getId(), requestedRegion.getId());
+            result.addAll(receiverBackup.getData());
+        }
+        return result;
+    }
+
+    public Backup sendGetBackup(Node delegator, Node finalDestination, String jobID, String regionID) {
+        GetBackup getBackup = new GetBackup(urlFactory.getGetBackupUrl(delegator, jobID, regionID), finalDestination);
+        return getBackup.execute();
+    }
 }

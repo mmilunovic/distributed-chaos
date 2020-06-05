@@ -25,6 +25,11 @@ public class JobController {
         jobService.startJob(job);
     }
 
+    @PostMapping("/singleResult")
+    public void singleResult(@RequestBody Job job){
+        jobService.singleResult(job);
+    }
+
     @GetMapping("/stopAll/{jobID}")
     public void stopAll(@PathVariable String jobID){
 

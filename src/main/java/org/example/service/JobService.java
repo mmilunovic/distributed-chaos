@@ -29,4 +29,8 @@ public class JobService {
             reconstructionService.reconstruct();
         }
     }
+
+    public void singleResult(Job job) {
+        System.out.println("Nema nista ovde");
+    }
 }

@@ -3,6 +3,7 @@ package org.example.service;
 import org.example.model.Job;
 import org.example.model.Node;
 import org.example.model.Point;
+import org.example.model.Region;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,18 +27,28 @@ public class ResultService {
     DatabaseService databaseService;
 
     public void getResult(String jobID) {
+        // TODO
+    }
+
+    public void getResult(String jobID, String regionID) {
         HashSet<Point> resultResponse = new HashSet<>();
 
         Job requestedJob = databaseService.getJobFromID(jobID);
 
-        Collection<Node> receivers = databaseService.getNodesForJob(requestedJob);
+        Region requestedRegion = new Region(regionID);
+
+        Collection<Node> receivers = databaseService.getNodesForJobIDAndRegionID(jobID, regionID);
+
+        resultResponse = messageService.sendGetResult(requestedJob, requestedRegion, receivers);
 
         generateResultPNG(resultResponse, requestedJob);
     }
 
     private void generateResultPNG(HashSet<Point> resultResponse, Job job) {
 
-/*
+        int width = job.getWidth();
+        int height = job.getHeight();
+
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
         Graphics2D g2d = bufferedImage.createGraphics();
@@ -52,18 +63,18 @@ public class ResultService {
         }
 
         g2d.setColor(Color.blue);
-        for(Point point: database.getAllJobs().get(jobID).getStartingPoints()){
+        for(Point point: databaseService.getMyRegion().getStartingPoints()){
             g2d.drawLine((int)Math.round(point.getX()), (int)Math.round(point.getY()),
                     (int)Math.round(point.getX()), (int)Math.round(point.getY()));
         }
 
         g2d.dispose();
 
-        File file = new File("result"+ jobID + ".png");
+        File file = new File("result"+ job.getId() + ".png");
         try {
             ImageIO.write(bufferedImage, "png", file);
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }
     }
 }

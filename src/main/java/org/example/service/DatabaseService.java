@@ -184,4 +184,8 @@ public class DatabaseService {
         database.getBackups().put(backup.getID(), backup);
     }
 
+    public Backup getBackupForBackupID(String backupID) {
+        // TODO
+        return null;
+    }
 }

@@ -16,4 +16,10 @@ public class ResultController {
     public void result(@PathVariable String jobID){
         resultService.getResult(jobID);
     }
+
+    @GetMapping("/{jobID}/{regionID}")
+    @ResponseBody
+    public void result(@PathVariable String jobID, @PathVariable String regionID){
+        resultService.getResult(jobID, regionID);
+    }
 }
