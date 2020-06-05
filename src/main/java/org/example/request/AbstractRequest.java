@@ -42,7 +42,8 @@ public abstract class AbstractRequest<T> {
             Response response = client
                     .newCall(request)
                     .execute();
-            return objectMapper.readValue(response.body().string(), returnClass);
+
+            return  objectMapper.readValue(response.body().string(), returnClass);
         }catch (IOException e){
 
         }finally {

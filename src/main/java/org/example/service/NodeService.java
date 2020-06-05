@@ -85,15 +85,10 @@ public class NodeService {
     public Backup getBackup(Node finalDestination, String jobID, String regionID) {
         System.out.println("Node " + databaseService.getInfo().getID() + " is getting backup for " + jobID +":" + regionID + " from " + finalDestination.getID());
         if(databaseService.getInfo().equals(finalDestination)){
-
-            Backup backup = databaseService.getBackupForBackupID(jobID + ":" + regionID);
-            System.out.println("Node " + databaseService.getInfo().getID() + " is returning " + backup);
-            return backup;
+            return databaseService.getBackupForBackupID(jobID + ":" + regionID);
         }else{
             Node delegator = reconstructionService.getDelegatorFromTable(finalDestination);
-            Backup backup = messageService.sendGetBackup(delegator, finalDestination, jobID, regionID);
-            System.out.println("Node " + databaseService.getInfo().getID() + " is receiving " + backup);
-            return backup;
+            return messageService.sendGetBackup(delegator, finalDestination, jobID, regionID);
         }
     }
 }

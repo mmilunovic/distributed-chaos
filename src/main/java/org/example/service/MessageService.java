@@ -138,8 +138,6 @@ public class MessageService {
     }
 
     public Backup sendGetBackup(Node delegator, Node finalDestination, String jobID, String regionID) {
-        System.out.print(databaseService.getInfo() );
-
         GetBackupRequest getBackup = new GetBackupRequest(urlFactory.getGetBackupUrl(delegator, jobID, regionID), finalDestination);
         return getBackup.execute();
     }

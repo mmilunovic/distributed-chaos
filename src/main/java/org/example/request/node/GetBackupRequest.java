@@ -16,7 +16,6 @@ public class GetBackupRequest extends AbstractRequest<Backup> {
     public GetBackupRequest(String url, Node finalDestination) {
         super(url);
 
-        System.out.println( " is sendgin " + url + " with " + finalDestination);
         try {
             setTimeout(30);
             var body = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(finalDestination);
