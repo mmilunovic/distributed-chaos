@@ -8,6 +8,8 @@ import java.util.ArrayList;
 public class Region {
     private String id;
     private ArrayList<Point> startingPoints;
+    private Point tracepoint;
+    private double proportion;
 
     public Region(String id){
         this.id = id;

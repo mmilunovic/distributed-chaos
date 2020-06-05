@@ -1,6 +1,5 @@
 package org.example.controller;
 
-import org.example.model.Job;
 import org.example.model.Node;
 import org.example.service.NodeService;
 import org.springframework.beans.factory.annotation.Autowired;

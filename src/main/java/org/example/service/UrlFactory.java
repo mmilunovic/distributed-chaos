@@ -19,7 +19,7 @@ public class UrlFactory {
         return "http://" + config.getBootstrap() + "/api/bootstrap/new";
     }
 
-    public String getPingUrl(Node receiver) { return "http://" + config.getServent().getID() + "/api/node/ping/" +  receiver.getID(); }
+    public String getPingUrl(Node receiver, Node delegator) { return "http://" + delegator.getID() + "/api/node/ping/" +  receiver.getID(); }
 
     public String getGetAllNodesUrl(Node receiver) { return "http://" + receiver.getID() + "/api/node/allNodes"; }
 

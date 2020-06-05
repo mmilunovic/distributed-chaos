@@ -163,4 +163,8 @@ public class DatabaseService {
         return broadcastingNodes;
     }
 
+    public synchronized  void removeNode(Node node){
+        database.getAllNodes().remove(node);
+    }
+
 }

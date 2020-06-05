@@ -40,8 +40,8 @@ public class MessageService {
         newNodeRequest.execute();
     }
 
-    public Boolean sendPing(Node receiver, int timeout) {
-        PingRequest pingRequest = new PingRequest(urlFactory.getPingUrl(receiver), timeout);
+    public Boolean sendPing(Node receiver, Node delegator,  int timeout) {
+        PingRequest pingRequest = new PingRequest(urlFactory.getPingUrl(receiver, delegator), timeout);
         return pingRequest.execute();
     }
 
