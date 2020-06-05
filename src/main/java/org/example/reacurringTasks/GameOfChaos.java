@@ -1,5 +1,6 @@
 package org.example.reacurringTasks;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.example.model.Point;
 import org.example.service.DatabaseService;
@@ -10,12 +11,13 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Data
-@Component
+@AllArgsConstructor
 public class GameOfChaos implements Runnable{
 
-    DatabaseService databaseService;
+    private DatabaseService databaseService;
 
     private AtomicBoolean pause;
+
 
     @Override
     public void run() {
@@ -29,22 +31,22 @@ public class GameOfChaos implements Runnable{
 
     private void doChaos() {
         sleep(1000);
-        System.out.println(databaseService);
-        System.out.println(databaseService.getMyRegion());
-        Point tracepoint = databaseService.getMyRegion().getTracepoint();
-        Double proportion = databaseService.getMyRegion().getProportion();
-        Point randomPoint = randomStartingPoint();
-        Point newPoint = new Point(
-                tracepoint.getX() + proportion * (randomPoint.getX() - tracepoint.getX()),
-                tracepoint.getY() + proportion * (randomPoint.getY() - tracepoint.getY()));
 
-        databaseService.saveData(newPoint);
-        databaseService.getMyRegion().setTracepoint(tracepoint);
+        if(databaseService.getMyRegion() != null) { // Ako nisam idle
+            Point tracepoint = databaseService.getMyRegion().getTracepoint();
+            Double proportion = databaseService.getMyRegion().getProportion();
+            Point randomPoint = randomStartingPoint();
+            Point newPoint = new Point(
+                    tracepoint.getX() + proportion * (randomPoint.getX() - tracepoint.getX()),
+                    tracepoint.getY() + proportion * (randomPoint.getY() - tracepoint.getY()));
+
+            databaseService.saveData(newPoint);
+        }
     }
 
     private Point randomStartingPoint(){
         Random r = new Random();
-        return databaseService.getMyRegion().getStartingPoints().get(databaseService.getMyRegion().getStartingPoints().size());
+        return databaseService.getMyRegion().getStartingPoints().get(r.nextInt(databaseService.getMyRegion().getStartingPoints().size()));
     }
 
     private void sleep(long duration) {

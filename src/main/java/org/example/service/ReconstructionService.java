@@ -26,8 +26,7 @@ public class ReconstructionService {
         System.out.println(databaseService.getInfo().getID() + " is reconstructing...");
 
         if(gameOfChaos == null){
-            gameOfChaos = new GameOfChaos();
-            gameOfChaos.setPause(new AtomicBoolean(false));
+            gameOfChaos = new GameOfChaos(this.databaseService, new AtomicBoolean(false));
             Thread thread = new Thread(gameOfChaos);
             thread.start();
         }
