@@ -83,11 +83,9 @@ public class JobService {
                 regionStatusResponse = messageService.sendGetRegionStatus(jobID, nodeID);
             }
         }
-        // TODO: Da li ovde treba dodati backupe?
         return regionStatusResponse;
     }
 
-    // TODO ovo ne radi
     public RegionStatusResponse myStatus(String nodeID, String jobID, String regionID){
         RegionStatusResponse regionStatusResponse = new RegionStatusResponse();
         System.out.println(database.getInfo().getId() + " dobija status za " + nodeID + " i " + jobID);
@@ -95,9 +93,11 @@ public class JobService {
         synchronized (database.getInfo()) {
             if (nodeID.equals(database.getInfo().getId())) {
                 regionStatusResponse.setNodeID(nodeID);
-                //BackupInfo backupInfo = database.getBackups().get(jobID + ":" + regionID);
-                regionStatusResponse.setRegionID(database.getRegion().getFullID());
-                regionStatusResponse.setNumberOfPoints(database.getData().size());
+                regionStatusResponse.setRegionID(jobID + ":" + regionID);
+                if (database.getRegion().getFullID().equals(regionID))
+                    regionStatusResponse.setNumberOfPoints(database.getData().size());
+                else
+                    regionStatusResponse.setNumberOfPoints(database.getBackups().get(jobID + ":" + regionID).getData().size());
             } else {
                 List<String> recipient = new ArrayList<>();
                 recipient.add(nodeID);
@@ -157,9 +157,10 @@ public class JobService {
                 if (database.getInfo().getMyRegion() == null)
                     return new ArrayList<>();
 
-                if (database.getInfo().getMyRegion().getJob().getId().equals(jobID)) {
-
+                if (database.getInfo().getMyRegion() != null && database.getInfo().getMyRegion().getJob().getId().equals(jobID)) {
                     myResult.addAll(database.getData());
+                } else {
+                    myResult.addAll(database.getBackups().get(jobID + ":" + regionID).getData());
                 }
 
             } else {
