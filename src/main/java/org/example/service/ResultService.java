@@ -41,14 +41,15 @@ public class ResultService {
 
         resultResponse = messageService.sendGetResult(requestedJob, requestedRegion, receivers);
 
-        generateResultPNG(resultResponse, requestedJob);
+        generateResultPNG(resultResponse, requestedJob, regionID);
     }
 
-    private void generateResultPNG(HashSet<Point> resultResponse, Job job) {
+    private void generateResultPNG(HashSet<Point> resultResponse, Job job, String regionID) {
 
         int width = job.getWidth();
         int height = job.getHeight();
 
+        Region region = databaseService.getRegionInfoByRegionIdAndJob(regionID, job);
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
         Graphics2D g2d = bufferedImage.createGraphics();
@@ -63,7 +64,7 @@ public class ResultService {
         }
 
         g2d.setColor(Color.blue);
-        for(Point point: databaseService.getMyRegion().getStartingPoints()){
+        for(Point point: region.getStartingPoints()){
             g2d.drawLine((int)Math.round(point.getX()), (int)Math.round(point.getY()),
                     (int)Math.round(point.getX()), (int)Math.round(point.getY()));
         }

@@ -69,7 +69,7 @@ public class ReconstructionService {
 //        jobs.add(job2);
 //        jobs.add(job3);
 //        jobs.add(job4);
-
+        databaseService.clearRegions();
         int[] niz = new int[jobs.size()];
 
         for(int i = 0; i < niz.length; i++){
@@ -100,6 +100,7 @@ public class ReconstructionService {
                 int pos = sum;
                 Node node = nodes.get(pos++);
                 Region r = new Region(job);
+                databaseService.saveRegion(job, r);
                 regionQueue.add(r);
                 map.put(r, node);
 
@@ -110,12 +111,14 @@ public class ReconstructionService {
                     Node reconstructed = map.get(region);
                     map.remove(region);
                     Region region0 = Region.createSubRegionFor(0, region);
+                    databaseService.saveRegion(job, region0);
                     regionQueue.add(region0);
 
                     map.put(region0, reconstructed);
                     for(int j = 1; j < n; j++){
                         Node newNode = nodes.get(pos++);
                         Region region1 = Region.createSubRegionFor(j, region);
+                        databaseService.saveRegion(job, region1);
                         map.put(region1, newNode);
                         regionQueue.add(region1);
 

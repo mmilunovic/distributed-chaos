@@ -226,7 +226,34 @@ public class DatabaseService {
         return getJobFromID(jobID);
     }
 
-    public Region getRegionFromNode(Node receiver) {
+    public synchronized void saveRegion(Job job, Region region){
+        database.getRegions().put(job, region);
+    }
+
+    public synchronized void clearRegions(){
+        database.getRegions().clear();
+    }
+
+    public synchronized Region getRegionInfoByRegionIdAndJob(String regionID, Job job){
+
+        for(Map.Entry<Job, Region> pair : database.getRegions().entrySet()){
+            if (pair.getKey().equals(job) && pair.getValue().equals(regionID)){
+                return  pair.getValue();
+            }
+        }
+
         return null;
+    }
+
+
+    public synchronized Region getRegionFromNode(Node node) {
+        String[] work = database.getCurrentWork().get(node).split(":");
+        if(work.length == 1){
+            return null;
+        }
+
+        Job job = getJobFromID(work[0]);
+
+        return getRegionInfoByRegionIdAndJob(work[1], job);
     }
 }
