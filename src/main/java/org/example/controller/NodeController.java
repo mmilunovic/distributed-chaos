@@ -32,6 +32,15 @@ public class NodeController {
         return nodeService.ping(nodeID);
     }
 
+    @PutMapping("/updateNewNode")
+    public void updateNewNode(@RequestBody Node newNode){
+        nodeService.updateNewNode(newNode);
+    }
+
+    @PutMapping("/broadcastNewNode")
+    public void broadcastNewNode(@RequestBody Node newNode){
+        nodeService.broadcastNewNode(newNode);
+    }
 
 
 }

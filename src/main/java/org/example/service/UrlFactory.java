@@ -24,4 +24,8 @@ public class UrlFactory {
     public String getGetAllNodesUrl(Node receiver) { return "http://" + receiver.getID() + "/api/node/allNodes"; }
 
     public String getGetAllJobsUrl(Node receiver) { return "http://" + receiver.getID() + "/api/jobs/allJobs"; }
+
+    public String getSendUpdateNewNodeUrl(Node receiver) { return "http://" + receiver.getID() + "/api/node/updateNewNode"; }
+
+    public String getBroadcastNewNodeUrl(Node receiver) { return "http://" + receiver.getID() + "/api/node/broadcastNewNode"; }
 }

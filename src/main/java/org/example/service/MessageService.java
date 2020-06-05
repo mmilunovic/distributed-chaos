@@ -2,11 +2,9 @@ package org.example.service;
 
 import org.example.model.Job;
 import org.example.model.Node;
-import org.example.request.node.GetAllJobsRequest;
-import org.example.request.node.GetAllNodesRequest;
+import org.example.request.node.*;
 import org.example.request.bootstrap.HailRequest;
 import org.example.request.bootstrap.NewNodeRequest;
-import org.example.request.node.PingRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -57,11 +55,15 @@ public class MessageService {
         return getAllJobsRequest.execute();
     }
 
-    public void sendUpdateNewNode(Node receiver) {
-        // TODO
+    public void sendUpdateNewNode(Node receiver, Node servent) {
+        UpdateNewNodeRequest updateNewNodeRequest = new UpdateNewNodeRequest(urlFactory.getSendUpdateNewNodeUrl(receiver),servent);
+        updateNewNodeRequest.execute();
     }
 
-    public void broadcastNewNode(Collection<Node> broadcastReceiverNodes) {
-        // TODO
+    public void broadcastNewNode(Collection<Node> broadcastReceiverNodes, Node servent) {
+        for(Node receiver : broadcastReceiverNodes){
+            BroadcastNewNodeRequest broadcastNewNodeRequest = new BroadcastNewNodeRequest(urlFactory.getBroadcastNewNodeUrl(receiver), servent);
+            broadcastNewNodeRequest.execute();
+        }
     }
 }

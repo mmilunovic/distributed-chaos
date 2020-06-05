@@ -1,6 +1,5 @@
 package org.example.service;
 
-import org.example.model.Job;
 import org.example.model.Node;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -34,5 +33,16 @@ public class NodeService {
             }
         }
         return Boolean.TRUE;
+    }
+
+    public void updateNewNode(Node newNode) {
+        databaseService.saveNode(newNode);
+    }
+
+    public void broadcastNewNode(Node newNode) {
+        if(!databaseService.getAllNodes().contains(newNode)){
+            databaseService.saveNode(newNode);
+            messageService.broadcastNewNode(databaseService.getMyBroadcastingNodes(), newNode);
+        }
     }
 }
