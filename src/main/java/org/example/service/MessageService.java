@@ -2,6 +2,8 @@ package org.example.service;
 
 import org.example.model.Job;
 import org.example.model.Node;
+import org.example.request.node.GetAllJobsRequest;
+import org.example.request.node.GetAllNodesRequest;
 import org.example.request.bootstrap.HailRequest;
 import org.example.request.bootstrap.NewNodeRequest;
 import org.example.request.node.PingRequest;
@@ -32,10 +34,13 @@ public class MessageService {
     }
 
     public Collection<Node> sendGetAllNodes(Node receiver) {
-        return null; // TODO
+        GetAllNodesRequest getAllNodesRequest = new GetAllNodesRequest(urlFactory.getGetAllNodesUrl(receiver));
+        return getAllNodesRequest.execute();
     }
 
     public Collection<Job> sendGetAllJobs(Node receiver) {
-        return null; // TODO
+        GetAllJobsRequest getAllJobsRequest = new GetAllJobsRequest(urlFactory.getGetAllJobsUrl(receiver));
+
+        return getAllJobsRequest.execute();
     }
 }

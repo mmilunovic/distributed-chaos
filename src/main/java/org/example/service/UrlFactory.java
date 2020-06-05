@@ -1,6 +1,7 @@
 package org.example.service;
 
 import org.example.config.ServentConfig;
+import org.example.model.Node;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,4 +20,8 @@ public class UrlFactory {
     }
 
     public String getPingUrl(String nodeID) { return "http://" + config.getServent().getID() + "/api/node/ping/" + nodeID; }
+
+    public String getGetAllNodesUrl(Node receiver) { return "http://" + receiver.getID() + "/api/node/allNodes"; }
+
+    public String getGetAllJobsUrl(Node receiver) { return "http://" + receiver.getID() + "/api/jobs/allJobs"; }
 }
