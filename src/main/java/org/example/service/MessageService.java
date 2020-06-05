@@ -148,7 +148,6 @@ public class MessageService {
     }
 
     public void sendSaveBackup(Backup backup, Node destination) {
-        // TODO: treba proslediti backup destination
         submit(new Runnable() {
             @Override
             public void run() {
@@ -161,7 +160,6 @@ public class MessageService {
     // TODO ovaj kod ne treba da bude ovde, treba biti u StatusService-u
     public Collection<StatusResponse> sendGetStatus(Collection<Node> receivers) {
         Collection<StatusResponse> statusResponseResult = new ArrayList<>();
-        System.out.println("RECEIVERS: " + receivers);
         for(Node receiver : receivers){
             Job requestedJob = databaseService.getJobFromNode(receiver);
             Region requestedRegion = databaseService.getRegionFromNode(receiver);
@@ -172,7 +170,10 @@ public class MessageService {
             statusResponse.setNodeID(receiver.getID());
             statusResponse.setRegionID(databaseService.getRegionFromNode(receiver).getId());
             statusResponse.setNumberofPoints(receiverBackup.getData().size());
+
             statusResponseResult.add(statusResponse);
+
+            System.out.println("GOT STATUS: " + statusResponse.toString());
         }
 
         return statusResponseResult;

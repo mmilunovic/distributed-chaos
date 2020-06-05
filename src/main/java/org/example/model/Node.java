@@ -14,7 +14,7 @@ public class Node implements Comparable<Node>{
 
     public static final String DELIMITER = ":";
 
-    private String ip; // TODO promeniti u adress
+    private String ip;
     private int port;
 
     public Node(String nodeID){

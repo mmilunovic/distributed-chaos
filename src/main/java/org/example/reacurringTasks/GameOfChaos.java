@@ -36,17 +36,25 @@ public class GameOfChaos implements Runnable{
             Point tracepoint = databaseService.getMyRegion().getTracepoint();
             Double proportion = databaseService.getMyRegion().getProportion();
             Point randomPoint = randomStartingPoint();
-            Point newPoint = new Point(
-                    tracepoint.getX() + proportion * (randomPoint.getX() - tracepoint.getX()),
-                    tracepoint.getY() + proportion * (randomPoint.getY() - tracepoint.getY()));
+            if(randomPoint != null) {
+                Point newPoint = new Point(
+                        tracepoint.getX() + proportion * (randomPoint.getX() - tracepoint.getX()),
+                        tracepoint.getY() + proportion * (randomPoint.getY() - tracepoint.getY()));
 
-            databaseService.saveData(newPoint);
+                databaseService.saveData(newPoint);
+            }
         }
     }
 
     private Point randomStartingPoint(){
         Random r = new Random();
-        return databaseService.getMyRegion().getStartingPoints().get(r.nextInt(databaseService.getMyRegion().getStartingPoints().size()));
+        Point randomStartingPoint = new Point();
+        try {
+             randomStartingPoint = databaseService.getMyRegion().getStartingPoints().get(r.nextInt(databaseService.getMyRegion().getStartingPoints().size()));
+        } catch (Exception e){
+            System.out.println(e);
+        }
+        return randomStartingPoint;
     }
 
     private void sleep(long duration) {
