@@ -40,15 +40,9 @@ public class JavaProjectApplication {
 	@Autowired
 	private NodeService nodeService;
 
-	private static ConfigurableApplicationContext context;
-
 	public static void main(String[] args) {
-	    context = SpringApplication.run(JavaProjectApplication.class, args);
+	    SpringApplication.run(JavaProjectApplication.class, args);
 	}
-
-    public static void exitThread() {
-        SpringApplication.exit(context,() -> 0);
-    }
 
 	@PostConstruct
 	public void init() {

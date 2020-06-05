@@ -2,6 +2,8 @@ package rs.raf.javaproject.service;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
 import rs.raf.javaproject.JavaProjectApplication;
 import rs.raf.javaproject.model.*;
@@ -32,6 +34,9 @@ public class NodeService {
     @Autowired
     private MessageService messageService;
 
+    @Autowired
+    private ConfigurableApplicationContext context;
+
 
     public Node info(Node node){
         return database.getInfo();
@@ -59,7 +64,7 @@ public class NodeService {
         synchronized (database.getInfo()) {
             messageService.broadcastLeaveMessage(this.database.getInfo());
             this.jobExecution.getExit().set(true);
-            JavaProjectApplication.exitThread();
+            SpringApplication.exit(context,() -> 0);
         }
 
     }
