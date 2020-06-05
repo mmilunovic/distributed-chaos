@@ -41,5 +41,10 @@ public class NodeController {
         nodeService.broadcastNewNode(newNode);
     }
 
+    @PostMapping("/left")
+    public void left(@RequestBody Node exitingNode){
+        nodeService.nodeLeft(exitingNode);
+    }
+
 
 }

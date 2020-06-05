@@ -2,6 +2,7 @@ package org.example.service;
 
 import org.example.model.Job;
 import org.example.model.Node;
+import org.example.request.job.StartJobRequest;
 import org.example.request.node.*;
 import org.example.request.bootstrap.HailRequest;
 import org.example.request.bootstrap.NewNodeRequest;
@@ -61,9 +62,26 @@ public class MessageService {
     }
 
     public void broadcastNewNode(Collection<Node> broadcastReceiverNodes, Node servent) {
+        // TODO: pool
         for(Node receiver : broadcastReceiverNodes){
             BroadcastNewNodeRequest broadcastNewNodeRequest = new BroadcastNewNodeRequest(urlFactory.getBroadcastNewNodeUrl(receiver), servent);
             broadcastNewNodeRequest.execute();
+        }
+    }
+
+    public void broadcastNodeLeft(Node exitingNode) {
+        // TODO:
+    }
+
+    public void broadcastStartJob(Job job, Collection<Node> myBroadcastingNodes) {
+        for(Node receiver : myBroadcastingNodes){
+            pool.submit(new Runnable() {
+                @Override
+                public void run() {
+                    StartJobRequest startJobRequest = new StartJobRequest(urlFactory.getStartJobUrl(receiver), job);
+                    startJobRequest.execute();
+                }
+            });
         }
     }
 }

@@ -18,4 +18,11 @@ public class JobService {
     public Collection<Job> getAllJobs() {
         return databaseService.getAllJobs();
     }
+
+    public void startJob(Job job) {
+        if(!databaseService.getAllJobs().contains(job)){
+            databaseService.saveJob(job);
+            messageService.broadcastStartJob(job, databaseService.getMyBroadcastingNodes());
+        }
+    }
 }

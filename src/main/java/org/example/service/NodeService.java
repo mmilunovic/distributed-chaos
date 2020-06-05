@@ -45,4 +45,13 @@ public class NodeService {
             messageService.broadcastNewNode(databaseService.getMyBroadcastingNodes(), newNode);
         }
     }
+
+    public void nodeLeft(Node exitingNode) {
+        databaseService.removeNode(exitingNode);
+        // TODO:
+        /*
+        Update successor and predecessor table
+        * */
+        messageService.broadcastNodeLeft(exitingNode);
+    }
 }
