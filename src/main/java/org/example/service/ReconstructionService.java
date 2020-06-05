@@ -143,6 +143,34 @@ public class ReconstructionService {
     }
 
     public synchronized Node getDelegatorFromTable(Node finalDestination){
+
+        if(finalDestination.equals(databaseService.getInfo())){
+            return databaseService.getInfo();
+        }
+
+        TreeSet<Node> set = new TreeSet<>();
+        set.addAll(databaseService.getSuccessorTable());
+
+        if(set.contains(finalDestination)){
+            return finalDestination;
+        }
+
+        set.add(finalDestination);
+
+        Node prev = null;
+        int i = 0;
+        for(Node tableNode: set){
+            if(tableNode.equals(finalDestination) && i == 0){
+                return set.last();
+            }
+
+            if(tableNode.equals(finalDestination)){
+                return prev;
+            }
+            prev  = tableNode;
+            i++;
+        }
+
         return null;
     }
 

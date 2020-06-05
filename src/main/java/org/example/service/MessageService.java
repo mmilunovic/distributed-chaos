@@ -142,4 +142,8 @@ public class MessageService {
         GetBackup getBackup = new GetBackup(urlFactory.getGetBackupUrl(delegator, jobID, regionID), finalDestination);
         return getBackup.execute();
     }
+
+    public void sendSaveBackup(Backup backup, Node destination) {
+        // TODO: treba proslediti backup destination
+    }
 }

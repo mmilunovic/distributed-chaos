@@ -74,6 +74,10 @@ public class DatabaseService {
 
         for(Map.Entry<Node, String> entry: database.getCurrentWork().entrySet()){
             String[] work = entry.getValue().split(":");
+            if (work.length == 1){
+                continue; // Skiping idle nodes
+            }
+
             String jobID = work[0];
             String regionID = work[1];
 
@@ -188,8 +192,33 @@ public class DatabaseService {
         database.getBackups().put(backup.getID(), backup);
     }
 
-    public Backup getBackupForBackupID(String backupID) {
-        // TODO
-        return null;
+    public synchronized Backup getBackupForBackupID(String backupID) {
+        return database.getBackups().get(backupID);
+    }
+    public synchronized Collection<Node> getSuccessorTable(){
+        ArrayList<Node> list = new ArrayList<>(getAllNodes());
+        ArrayList<Node> table = new ArrayList<>();
+
+        int myPos = list.indexOf(getInfo());
+
+        int size = list.size();
+        for (int step = 1; step < size; step *=2){
+
+            int succPos = (myPos + step) % size;
+            table.add(list.get(succPos));
+        }
+
+        return table;
+    }
+
+    public synchronized Job getMyJob() {
+        String[] work = database.getCurrentWork().get(getInfo()).split(":");
+
+        if(work.length == 1){
+            return null;
+        }
+
+        String jobID = work[0];
+        return getJobFromID(jobID);
     }
 }
