@@ -28,6 +28,7 @@ public class Database {
 
     // backupID - backup
     private final Map<String, Backup> backups;
+    private final Map<Job, Region> regions;
 
 
     public Node getServent() {
