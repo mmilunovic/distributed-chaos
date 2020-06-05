@@ -210,7 +210,7 @@ public class DatabaseService {
     }
 
     public synchronized Job getMyJob() {
-        System.out.println(database.getCurrentWork());
+        //System.out.println(database.getCurrentWork());
         String workID = database.getCurrentWork().get(getInfo());
         if(workID == null){
             return null;
@@ -235,7 +235,7 @@ public class DatabaseService {
     }
 
     public synchronized Region getRegionInfoByRegionIdAndJob(String regionID, Job job){
-        System.out.println(database.getRegions());
+        //System.out.println(database.getRegions());
         for(Map.Entry<String, Region> pair : database.getRegions().entrySet()){
             String[] work = pair.getKey().split(":");
             if (work[0].equals(job.getId()) && work[1].equals(regionID)){
@@ -267,10 +267,10 @@ public class DatabaseService {
 
 
     public synchronized Region getRegionFromNode(Node node) {
-        System.out.println(node);
+        //System.out.println(node);
         String[] work = database.getCurrentWork().get(node).split(":");
 
-        System.out.println(work[0] + " " + work[1]);
+        //System.out.println(work[0] + " " + work[1]);
         if(work.length == 1){
             return null;
         }
@@ -289,5 +289,9 @@ public class DatabaseService {
         }
 
        return getJobFromID(work[0]);
+    }
+
+    public void remoeJob(Job job) {
+        database.getAllJobs().remove(job);
     }
 }

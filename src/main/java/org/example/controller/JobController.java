@@ -27,20 +27,8 @@ public class JobController {
         jobService.startJob(job);
     }
 
-    @PostMapping("/singleResult")
-    public void singleResult(@RequestBody Job job){
-        jobService.singleResult(job);
-    }
-
-    @GetMapping("/stopAll/{jobID}")
-    public void stopAll(@PathVariable String jobID){
-
-        //jobService.stopAll(jobID);
-    }
-
     @DeleteMapping("/{jobID}")
-    public void deleteJob(@RequestBody Node node, @PathVariable String jobID){
-
-        //jobService.deleteJob(jobID);
+    public void deleteJob(@PathVariable String jobID){
+        jobService.deleteJob(jobID);
     }
 }

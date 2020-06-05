@@ -22,10 +22,12 @@ public class GameOfChaos implements Runnable{
     @Override
     public void run() {
         while(true){
-            if(pause.get())
+            if(pause.get()) {
                 sleep(1000);
-            else
+            }
+            else {
                 doChaos();
+            }
         }
     }
 

@@ -37,38 +37,6 @@ public class ReconstructionService {
         ArrayList<Job> jobs = new ArrayList<>(databaseService.getAllJobs());
         ArrayList<Node> nodes = new ArrayList<>(databaseService.getAllNodes());
 
-//        Job job1 = new Job();
-//        job1.setId("job1");
-//        job1.setProportion(0.5);
-//        job1.addPoint(new Point(25,25));
-//        job1.addPoint(new Point(75, 25));
-//        job1.addPoint(new Point(50, 75));
-
-
-//        Job job2 = new Job();
-//        job2.setId("job2");
-//        job2.addPoint(new Point(25,25));
-//        job2.addPoint(new Point(75, 25));
-//        job2.addPoint(new Point(50, 75));
-//
-//
-//        Job job3 = new Job();
-//        job3.setId("job3");
-//        job3.addPoint(new Point(25,25));
-//        job3.addPoint(new Point(75, 25));
-//        job3.addPoint(new Point(50, 75));
-//
-//
-//        Job job4 = new Job();
-//        job4.setId("job4");
-//        job4.addPoint(new Point(25,25));
-//        job4.addPoint(new Point(75, 25));
-//        job4.addPoint(new Point(50, 75));
-
-//        jobs.add(job1);
-//        jobs.add(job2);
-//        jobs.add(job3);
-//        jobs.add(job4);
         databaseService.clearRegions();
         int[] niz = new int[jobs.size()];
 
@@ -78,16 +46,16 @@ public class ReconstructionService {
             if(nodes.size() % jobs.size() > i){
                 niz[i]++;
             }
-            System.out.print(niz[i] + " ");
+//            System.out.print(niz[i] + " ");
         }
-        System.out.println();
+//        System.out.println();
 
         int sum = 0;
         for(int i = 0; i < niz.length; i++){
 
             Job job = jobs.get(i);
 
-            System.out.print(job.getId() + ": ");
+            //System.out.print(job.getId() + ": ");
             int n = job.getStartingPoints().size();
 
             int freeNodes = niz[i];

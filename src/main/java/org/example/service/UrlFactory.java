@@ -43,4 +43,6 @@ public class UrlFactory {
     public String getSaveBackupUrl(Node destination) {
         return "http://" + destination.getID() + "/api/node/backup";
     }
+
+    public String getDeleteJob(Node node, String jobID) { return "http://" + node.getID() + "/api/jobs/" + jobID;}
 }

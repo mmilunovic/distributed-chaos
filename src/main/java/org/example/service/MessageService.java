@@ -2,6 +2,7 @@ package org.example.service;
 
 import org.example.model.*;
 import org.example.request.bootstrap.NodeLeftRequest;
+import org.example.request.job.DeleteJob;
 import org.example.request.job.StartJobRequest;
 import org.example.request.node.*;
 import org.example.request.bootstrap.HailRequest;
@@ -180,4 +181,11 @@ public class MessageService {
     }
 
 
+    public void sendDeleteJob(String jobID) {
+        Job deletedJob = databaseService.getJobFromID(jobID);
+        for(Node node : databaseService.getMyBroadcastingNodes()){
+            DeleteJob deleteJob = new DeleteJob(urlFactory.getDeleteJob(node, jobID));
+            deleteJob.execute();
+        }
+    }
 }

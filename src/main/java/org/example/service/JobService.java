@@ -1,6 +1,7 @@
 package org.example.service;
 
 import org.example.model.Job;
+import org.example.model.Node;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +33,10 @@ public class JobService {
         }
     }
 
-    public void singleResult(Job job) {
-        System.out.println("Nema nista ovde");
+    public void deleteJob(String jobID) {
+        if(databaseService.getAllJobs().contains(databaseService.getJobFromID(jobID))){
+            databaseService.remoeJob(databaseService.getJobFromID(jobID));
+            messageService.sendDeleteJob(jobID);
+        }
     }
 }
