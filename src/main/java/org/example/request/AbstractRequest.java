@@ -29,7 +29,7 @@ public abstract class AbstractRequest<T> {
         try {
             Thread.sleep(300+(new Random()).nextInt(500));
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 

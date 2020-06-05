@@ -19,6 +19,8 @@ public class UrlFactory {
         return "http://" + config.getBootstrap() + "/api/bootstrap/new";
     }
 
+    public String getBoostrapNodeLeftUrl() {return "http://" + config.getBootstrap() + "/api/bootstrap/left"; }
+
     public String getPingUrl(Node receiver, Node delegator) { return "http://" + delegator.getID() + "/api/node/ping/" +  receiver.getID(); }
 
     public String getGetAllNodesUrl(Node receiver) { return "http://" + receiver.getID() + "/api/node/allNodes"; }
@@ -30,4 +32,6 @@ public class UrlFactory {
     public String getBroadcastNewNodeUrl(Node receiver) { return "http://" + receiver.getID() + "/api/node/broadcastNewNode"; }
 
     public String getStartJobUrl(Node receiver) { return "http://" + receiver.getID() + "/api/jobs/start"; }
+
+    public String getBroadcastNodeLeftUrl(Node receiver) { return "http://" + receiver.getID() + "/api/node/left"; }
 }

@@ -26,15 +26,15 @@ public class NodeService {
         return databaseService.getAllNodes();
     }
 
-    public Boolean ping(String nodeID) {
-        if (!databaseService.getInfo().equals(nodeID)) {
+    public boolean ping(String nodeID) {
+        if (!databaseService.getInfo().getID().equals(nodeID)) {
             Boolean pingNodeResult = messageService.sendPing(databaseService.getNodeFromID(nodeID), databaseService.getNodeFromID(nodeID), 1);
 
-            if (pingNodeResult == null || pingNodeResult == Boolean.FALSE) {
-                return Boolean.FALSE;
+            if (pingNodeResult == null || pingNodeResult == false) {
+                return false;
             }
         }
-        return Boolean.TRUE;
+        return true;
     }
 
     public void updateNewNode(Node newNode) {
@@ -49,17 +49,22 @@ public class NodeService {
     }
 
     public void nodeLeft(Node exitingNode) {
-        databaseService.removeNode(exitingNode);
-        // TODO:
+        System.out.println(databaseService.getInfo().getID() + " is informing that " + exitingNode.getID() + " is leaving...");
+        System.out.println(databaseService.getAllNodes());
+        if(databaseService.getAllNodes().contains(exitingNode)) {
+            databaseService.removeNode(exitingNode);
+            // TODO:
         /*
         Update successor and predecessor table
         * */
-        messageService.broadcastNodeLeft(exitingNode);
+            messageService.broadcastNodeLeft(exitingNode);
+        }
     }
 
     public void quit() {
         // TODO: Ovde je bio synchronized
-        messageService.broadcastNodeLeft(databaseService.getInfo());
+        System.out.println("I'm leaving: " + databaseService.getInfo().getID());
+        //messageService.broadcastNodeLeft(databaseService.getInfo());
         JavaServlet.exitThread();
     }
 

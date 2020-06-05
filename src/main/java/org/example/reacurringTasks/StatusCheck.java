@@ -23,23 +23,24 @@ public class StatusCheck{
 
         Boolean weakCheckResult = messageService.sendPing(successor, successor,  1);                             // Send weak check, 1000ms
 
-        if(weakCheckResult == null || weakCheckResult == Boolean.FALSE){
+        if(weakCheckResult == null || weakCheckResult == false){
 
             Node predecessor = databaseService.getPredecessor();
 
+            System.out.println("Node: " + databaseService.getInfo().getID() + " is doing ping for " + "Succ: " + successor.getID() + " Predecessor: " + predecessor.getID());
             Boolean strongCheckResult = messageService.sendPing(successor, predecessor, 10);                      // Send strong check, 10000ms
 
-            if(strongCheckResult == null || strongCheckResult == Boolean.FALSE){
+            if(strongCheckResult == null || strongCheckResult == false){
 
                 databaseService.removeNode(successor);
+
+                messageService.broadcastNodeLeft(successor);
+                messageService.sendBootstrapLeft(successor);
 
                 // TODO:
                 /*
                 predecessorTable.reconstructTable();
                 successorTable.reconstructTable();
-
-                messageService.broadcastLeaveMessage(successor);
-                messageService.sendBootstrapLeft(successor);
 
                 nodeService.restructure();
                 */

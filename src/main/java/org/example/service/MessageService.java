@@ -2,6 +2,7 @@ package org.example.service;
 
 import org.example.model.Job;
 import org.example.model.Node;
+import org.example.request.bootstrap.NodeLeftRequest;
 import org.example.request.job.StartJobRequest;
 import org.example.request.node.*;
 import org.example.request.bootstrap.HailRequest;
@@ -19,6 +20,9 @@ public class MessageService {
 
     @Autowired
     UrlFactory urlFactory;
+
+    @Autowired
+    DatabaseService databaseService;
 
     private ExecutorService pool;
 
@@ -42,6 +46,16 @@ public class MessageService {
             public void run() {
                 NewNodeRequest newNodeRequest = new NewNodeRequest(urlFactory.getBootstrapNewUrl(), servent);
                 newNodeRequest.execute();
+            }
+        });
+    }
+
+    public void sendBootstrapLeft(Node exitingNode) {
+        pool.submit(new Runnable() {
+            @Override
+            public void run() {
+                NodeLeftRequest nodeLeftRequest = new NodeLeftRequest(urlFactory.getBoostrapNodeLeftUrl(), exitingNode);
+                nodeLeftRequest.execute();
             }
         });
     }
@@ -87,6 +101,15 @@ public class MessageService {
 
     public void broadcastNodeLeft(Node exitingNode) {
         // TODO: Successor table mi treba
+        for(Node receiver : databaseService.getMyBroadcastingNodes()){
+            pool.submit(new Runnable() {
+                @Override
+                public void run() {
+                    BroadcastNodeLeftRequest broadcastNodeLeftRequest = new BroadcastNodeLeftRequest(urlFactory.getBroadcastNodeLeftUrl(receiver), exitingNode);
+                    broadcastNodeLeftRequest.execute();
+                }
+            });
+        }
     }
 
     public void broadcastStartJob(Job job, Collection<Node> myBroadcastingNodes) {
@@ -100,4 +123,6 @@ public class MessageService {
             });
         }
     }
+
+
 }
