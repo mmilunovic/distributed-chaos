@@ -227,8 +227,8 @@ public class JobService {
     private void drawResult(ResultResponse resultResponse, String jobID){
         HashSet<Point> resultPoints = resultResponse.getData();
         // TODO: Promeni ovo
-        int height = 100;
-        int width = 100;
+        int height = (int)database.getAllJobs().get(jobID).getHeight();
+        int width = (int)database.getAllJobs().get(jobID).getWidth();
 
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
