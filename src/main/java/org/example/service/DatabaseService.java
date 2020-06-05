@@ -1,9 +1,6 @@
 package org.example.service;
 
-import org.example.model.Job;
-import org.example.model.Node;
-import org.example.model.Point;
-import org.example.model.Region;
+import org.example.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.example.repository.Database;
@@ -165,6 +162,10 @@ public class DatabaseService {
 
     public synchronized  void removeNode(Node node){
         database.getAllNodes().remove(node);
+    }
+
+    public synchronized void saveBackup(Backup backup){
+        database.getBackups().add(backup);
     }
 
 }

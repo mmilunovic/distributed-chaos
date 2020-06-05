@@ -24,4 +24,16 @@ public class JobController {
     public void start(@RequestBody Job job){
         jobService.startJob(job);
     }
+
+    @GetMapping("/stopAll/{jobID}")
+    public void stopAll(@PathVariable String jobID){
+
+        //jobService.stopAll(jobID);
+    }
+
+    @DeleteMapping("/{jobID}")
+    public void deleteJob(@PathVariable String jobID){
+
+        //jobService.deleteJob(jobID);
+    }
 }

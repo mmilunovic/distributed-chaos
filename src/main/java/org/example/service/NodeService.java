@@ -1,6 +1,7 @@
 package org.example.service;
 
 import org.example.JavaServlet;
+import org.example.model.Backup;
 import org.example.model.Node;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -60,5 +61,9 @@ public class NodeService {
         // TODO: Ovde je bio synchronized
         messageService.broadcastNodeLeft(databaseService.getInfo());
         JavaServlet.exitThread();
+    }
+
+    public void saveBackup(Backup backup) {
+        databaseService.saveBackup(backup);
     }
 }

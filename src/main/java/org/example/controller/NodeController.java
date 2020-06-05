@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import org.example.model.Backup;
 import org.example.model.Node;
 import org.example.service.NodeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,12 @@ public class NodeController {
 
     @GetMapping("/quit")
     public void quit(){ nodeService.quit(); }
+
+    @PostMapping("/backup")
+    public void saveBackup(@RequestBody Backup backup){
+        nodeService.saveBackup(backup);
+    }
+    //TODO: Backupi, ili ih staviti na drugi kontroler?
 
 
 }
