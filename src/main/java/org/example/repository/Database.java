@@ -29,4 +29,7 @@ public class Database {
     private final ArrayList<Backup> backups;
 
 
+    public Node getServent() {
+        return config.getServent();
+    }
 }

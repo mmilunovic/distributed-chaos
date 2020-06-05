@@ -65,7 +65,7 @@ public class DatabaseService {
     }
 
     public synchronized Node getInfo(){
-        return null; // TODO
+        return database.getServent(); // TODO
     }
 
     public synchronized void saveData(Point point){
@@ -80,6 +80,9 @@ public class DatabaseService {
         return null; // TODO
     }
 
+    public synchronized void saveNode(Node node){
+
+    }
 
 
 }
