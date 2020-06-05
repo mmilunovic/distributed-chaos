@@ -1,6 +1,5 @@
 package org.example.config;
 
-import jdk.jfr.DataAmount;
 import lombok.Data;
 import org.example.model.Node;
 import org.springframework.beans.factory.annotation.Value;
