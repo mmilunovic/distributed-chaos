@@ -1,6 +1,7 @@
 package org.example.controller;
 
 import org.example.model.Node;
+import org.example.model.Region;
 import org.example.service.DatabaseService;
 import org.example.service.ReconstructionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +27,7 @@ public class TestController {
 
     @GetMapping("/delegate/{nodeID}")
     @ResponseBody
-    public Node getNodes(@PathVariable String nodeID){
-        System.out.println(databaseService.getSuccessorTable());
-        return reconstructionService.getDelegatorFromTable(databaseService.getNodeFromID(nodeID));
+    public Region getNodes(@PathVariable String nodeID){
+        return databaseService.getRegionFromNode(databaseService.getNodeFromID(nodeID));
     }
 }

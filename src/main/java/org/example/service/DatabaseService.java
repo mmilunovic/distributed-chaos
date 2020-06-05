@@ -226,8 +226,8 @@ public class DatabaseService {
         return getJobFromID(jobID);
     }
 
-    public synchronized void saveRegion(Job job, Region region){
-        database.getRegions().put(job, region);
+    public synchronized void saveRegion(String workID, Region region){
+        database.getRegions().put(workID, region);
     }
 
     public synchronized void clearRegions(){
@@ -235,9 +235,10 @@ public class DatabaseService {
     }
 
     public synchronized Region getRegionInfoByRegionIdAndJob(String regionID, Job job){
-
-        for(Map.Entry<Job, Region> pair : database.getRegions().entrySet()){
-            if (pair.getKey().equals(job) && pair.getValue().getId().equals(regionID)){
+        System.out.println(database.getRegions());
+        for(Map.Entry<String, Region> pair : database.getRegions().entrySet()){
+            String[] work = pair.getKey().split(":");
+            if (work[0].equals(job.getId()) && work[1].equals(regionID)){
                 return  pair.getValue();
             }
         }
@@ -252,10 +253,12 @@ public class DatabaseService {
             String[] workInfo = work.getValue().split(":");
 
             if(workInfo.length == 1){
-                return null;
+                continue;
             }
 
-
+            if(workInfo[1].startsWith(superRegionID)){
+                nodes.add(work.getKey());
+            }
 
         }
 
@@ -264,8 +267,10 @@ public class DatabaseService {
 
 
     public synchronized Region getRegionFromNode(Node node) {
+        System.out.println(node);
         String[] work = database.getCurrentWork().get(node).split(":");
 
+        System.out.println(work[0] + " " + work[1]);
         if(work.length == 1){
             return null;
         }
