@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.TreeSet;
 
 @Component
@@ -18,15 +19,15 @@ public class Database {
     ServentConfig config;
 
     private final TreeSet<Node> allNodes;
-    private final ArrayList<Job> allJobs;
+    private final TreeSet<Job> allJobs;
     // node - jobID:regionID
     private final HashMap<Node, String> currentWork;
 
     private final ArrayList<Point> myData;
-//    private Point tracePoint; // TODO : moved to Region
     private Region myRegion;
 
-    private final ArrayList<Backup> backups;
+    // backupID - backup
+    private final Map<String, Backup> backups;
 
 
     public Node getServent() {

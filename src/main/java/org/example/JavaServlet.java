@@ -31,14 +31,9 @@ public class JavaServlet {
     @Autowired
     ReconstructionService reconstructionService;
 
-    private static ConfigurableApplicationContext context;
 
     public static void main(String[] args) {
-        context = SpringApplication.run(JavaServlet.class, args);
-    }
-
-    public static void exitThread() {
-        SpringApplication.exit(context,() -> 0);
+        SpringApplication.run(JavaServlet.class, args);
     }
 
     @PostConstruct
@@ -52,6 +47,7 @@ public class JavaServlet {
 
         if(enteringNode.getIp() == null){
             messageService.sendBootstrapNew(config.getServent());
+            reconstructionService.reconstruct();
         }else{
 
             databaseService.saveNodes(messageService.sendGetAllNodes(enteringNode));

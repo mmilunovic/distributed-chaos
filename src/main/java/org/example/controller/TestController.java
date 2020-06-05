@@ -20,6 +20,6 @@ public class TestController {
     @GetMapping
     @ResponseBody
     public Collection<Node> getNodes(){
-        return databaseService.getBackupNodesForNode(databaseService.getInfo());
+        return databaseService.getNodesForJobIDAndRegionID("job1", "-");
     }
 }
