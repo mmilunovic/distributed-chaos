@@ -279,4 +279,15 @@ public class DatabaseService {
 
         return getRegionInfoByRegionIdAndJob(work[1], job);
     }
+
+    public synchronized Job getJobFromNode(Node node) {
+        String[] work = database.getCurrentWork().get(node).split(":");
+
+        System.out.println(work[0] + " " + work[1]);
+        if(work.length == 1){
+            return null;
+        }
+
+       return getJobFromID(work[0]);
+    }
 }

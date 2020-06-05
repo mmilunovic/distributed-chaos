@@ -155,10 +155,13 @@ public class MessageService {
         });
     }
 
-    public Collection<StatusResponse> sendGetStatus(Job requestedJob, Region requestedRegion, Collection<Node> receivers) {
+    // TODO ovaj kod ne treba da bude ovde, treba biti u StatusService-u
+    public Collection<StatusResponse> sendGetStatus(Collection<Node> receivers) {
         Collection<StatusResponse> statusResponseResult = new ArrayList<>();
         System.out.println("RECEIVERS: " + receivers);
         for(Node receiver : receivers){
+            Job requestedJob = databaseService.getJobFromNode(receiver);
+            Region requestedRegion = databaseService.getRegionFromNode(receiver);
             Node delegator = reconstructionService.getDelegatorFromTable(receiver);
             Backup receiverBackup = sendGetBackup(delegator, receiver, requestedJob.getId(), requestedRegion.getId());
 

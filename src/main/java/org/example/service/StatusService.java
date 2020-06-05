@@ -7,6 +7,7 @@ import org.example.response.StatusResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -26,16 +27,18 @@ public class StatusService {
 
         Collection<Node> receivers = databaseService.getNodesForJobIDAndRegionID(jobID, regionID);
 
-        return messageService.sendGetStatus(requestedJob, requestedRegion, receivers);
+        return messageService.sendGetStatus(receivers);
     }
 
     public Collection<StatusResponse> getStatus(String jobID) {
-        // TODO
-        return null;
+        return getStatus(jobID, "-");
     }
 
     public Collection<StatusResponse> getStatus() {
-        // TODO
-        return null;
+        ArrayList<StatusResponse> statusResponseList = new ArrayList<>();
+        for(Job job : databaseService.getAllJobs()){
+            statusResponseList.addAll(getStatus(job.getId()));
+        }
+        return statusResponseList;
     }
 }

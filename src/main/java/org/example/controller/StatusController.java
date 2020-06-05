@@ -15,13 +15,13 @@ public class StatusController {
     @Autowired
     StatusService statusService;
 
-    @GetMapping()
+    @GetMapping
     @ResponseBody
     public Collection<StatusResponse> status(){
         return statusService.getStatus();
     }
 
-    @GetMapping("/{jobID}/")
+    @GetMapping("/{jobID}")
     @ResponseBody
     public Collection<StatusResponse> status(@PathVariable String jobID){
         return statusService.getStatus(jobID);

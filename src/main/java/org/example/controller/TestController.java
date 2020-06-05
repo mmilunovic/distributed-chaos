@@ -25,9 +25,9 @@ public class TestController {
         return databaseService.getSuccessorTable();
     }
 
-    @GetMapping("/delegate/{nodeID}")
+    @GetMapping("/{jobID}/{regionID}")
     @ResponseBody
-    public Region getNodes(@PathVariable String nodeID){
-        return databaseService.getRegionFromNode(databaseService.getNodeFromID(nodeID));
+    public Collection<Node> getNodes(@PathVariable String jobID, @PathVariable String regionID){
+        return databaseService.getNodesForJobIDAndRegionID(jobID, regionID);
     }
 }
