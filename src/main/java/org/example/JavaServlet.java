@@ -2,6 +2,7 @@ package org.example;
 
 
 import org.example.config.ServentConfig;
+import org.example.model.Job;
 import org.example.model.Node;
 import org.example.service.DatabaseService;
 import org.example.service.MessageService;
@@ -10,6 +11,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.annotation.PostConstruct;
+import java.util.Collection;
 
 @SpringBootApplication
 public class JavaServlet {
@@ -36,9 +38,13 @@ public class JavaServlet {
 
         Node enteringNode = messageService.sendBootstrapHail();
 
-        if(enteringNode.getAddress() == null){
+        if(enteringNode.getIp() == null){
             messageService.sendBootstrapNew(config.getServent());
         }else{
+
+            Collection<Node> nodesInSystem = messageService.sendGetAllNodes(enteringNode);
+            Collection<Job> jobsInSystem = messageService.sendGetAllJobs(enteringNode);
+
 
         }
 
