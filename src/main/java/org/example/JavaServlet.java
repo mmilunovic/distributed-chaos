@@ -39,7 +39,7 @@ public class JavaServlet {
         if(enteringNode.getAddress() == null){
             messageService.sendBootstrapNew();
         }else{
-            
+
         }
 
     }
