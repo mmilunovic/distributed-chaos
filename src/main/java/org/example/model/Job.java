@@ -3,6 +3,7 @@ package org.example.model;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 @Data
 public class Job {
@@ -25,5 +26,16 @@ public class Job {
         this.startingPoints.add(point);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Job job = (Job) o;
+        return Objects.equals(id, job.id);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

@@ -23,7 +23,7 @@ public class Database {
     private final HashMap<Node, String> currentWork;
 
     private final ArrayList<Point> myData;
-    private Point tracePoint;
+//    private Point tracePoint; // TODO : moved to Region
     private Region myRegion;
 
     private final ArrayList<Backup> backups;
