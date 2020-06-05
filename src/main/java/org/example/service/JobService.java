@@ -24,7 +24,7 @@ public class JobService {
     }
 
     public void startJob(Job job) {
-        if(!databaseService.getAllJobs().contains(job)){
+        if(!databaseService.isKnownJob(job)){
             databaseService.saveJob(job);
             messageService.broadcastStartJob(job, databaseService.getMyBroadcastingNodes());
             reconstructionService.reconstruct();
@@ -34,7 +34,7 @@ public class JobService {
     }
 
     public void deleteJob(String jobID) {
-        if(databaseService.getAllJobs().contains(databaseService.getJobFromID(jobID))){
+        if(databaseService.isKnownJob(jobID)){
             databaseService.remoeJob(databaseService.getJobFromID(jobID));
             messageService.sendDeleteJob(jobID);
         }

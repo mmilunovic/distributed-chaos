@@ -291,7 +291,15 @@ public class DatabaseService {
        return getJobFromID(work[0]);
     }
 
+    public boolean isKnownJob(Job job){
+        return database.getAllJobs().contains(job);
+    }
+
     public void remoeJob(Job job) {
         database.getAllJobs().remove(job);
+    }
+
+    public boolean isKnownJob(String jobID) {
+        return isKnownJob(getJobFromID(jobID));
     }
 }
