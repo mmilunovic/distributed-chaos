@@ -2,6 +2,7 @@ package org.example.service;
 
 import org.example.model.Node;
 import org.example.request.bootstrap.HailRequest;
+import org.example.request.bootstrap.NewNodeRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +18,8 @@ public class MessageService {
         return hailRequest.execute();
     }
 
-    public void sendBootstrapNew() {
+    public void sendBootstrapNew(Node servent) {
+        NewNodeRequest newNodeRequest = new NewNodeRequest(urlFactory.getBootstrapNewUrl(), servent);
+        newNodeRequest.execute();
     }
 }
