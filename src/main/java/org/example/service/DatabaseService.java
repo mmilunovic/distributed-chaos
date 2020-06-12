@@ -178,6 +178,10 @@ public class DatabaseService {
         database.getAllNodes().remove(node);
     }
 
+    public synchronized void clearWork(){
+        database.getCurrentWork().clear();
+    }
+
     public synchronized void insertWork(Node node, Region region, Job job){
         if(node.equals(getInfo())){
             database.setMyRegion(region);
@@ -291,6 +295,9 @@ public class DatabaseService {
     }
 
     public boolean isKnownJob(Job job){
+        if(job == null){
+            return false;
+        }
         return database.getAllJobs().contains(job);
     }
 

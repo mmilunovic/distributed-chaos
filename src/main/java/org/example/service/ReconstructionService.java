@@ -33,6 +33,7 @@ public class ReconstructionService {
 
         gameOfChaos.getPause().set(true);
 
+        databaseService.clearWork();
 
         ArrayList<Job> jobs = new ArrayList<>(databaseService.getAllJobs());
         ArrayList<Node> nodes = new ArrayList<>(databaseService.getAllNodes());
@@ -86,7 +87,6 @@ public class ReconstructionService {
                         databaseService.saveRegion(job.getId()+":"+region1.getId(), region1);
                         map.put(region1, newNode);
                         regionQueue.add(region1);
-
                     }
 
                     freeNodes -= n-1;
@@ -99,12 +99,10 @@ public class ReconstructionService {
                 for(Map.Entry<Region, Node> entry: map.entrySet()){
                     databaseService.insertWork(entry.getValue(), entry.getKey(), job);
                 }
-
             }
 
             sum+= niz[i];
         }
-
 
         gameOfChaos.getPause().set(false);
 

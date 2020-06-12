@@ -37,6 +37,7 @@ public class JobService {
         if(databaseService.isKnownJob(jobID)){
             databaseService.remoeJob(databaseService.getJobFromID(jobID));
             messageService.sendDeleteJob(jobID);
+            reconstructionService.reconstruct();
         }
     }
 }

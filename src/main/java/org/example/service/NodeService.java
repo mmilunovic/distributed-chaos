@@ -84,6 +84,10 @@ public class NodeService {
 
     public Backup getBackup(Node finalDestination, String jobID, String regionID) {
         System.out.println("Node " + databaseService.getInfo().getID() + " is getting backup for " + jobID +":" + regionID + " from " + finalDestination.getID());
+        if(!databaseService.getAllNodes().contains(finalDestination)){
+            System.out.println("-----------------------------------------------------Treba da uzmem backup od cvora koji je mrtav");
+            return new Backup();
+        }
         if(databaseService.getInfo().equals(finalDestination)){
             return databaseService.getBackupForBackupID(jobID + ":" + regionID);
         }else{
